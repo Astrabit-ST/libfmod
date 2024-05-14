@@ -1,0 +1,14 @@
+[package]
+name = "libfmod"
+version = "0.1.0"
+edition = "2021"
+authors = ["Speak2Erase <lily@nowaffles.com>"]
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+magnus = { version = "0.6.4", features = ["rb-sys"] }
+rb-sys = "0.9.97"
+fmod-oxide = { version = "2.2.0", git = "https://github.com/Speak2Erase/fmod-oxide" }
