@@ -211,3 +211,68 @@ identity_impl!(
     char,
     ()
 );
+
+macro_rules! tuple_wrap {
+    ($(
+      ($($n:tt $name:ident)+)
+    )+) => {
+        $(
+          paste::paste! {
+            impl<$( $name, [<$name Wrap>],)*> $crate::WrapFMOD<( $( [<$name Wrap>], )* )> for ( $( $name, )* )
+            where $( $name: $crate::WrapFMOD<[<$name Wrap>]>, )*
+            {
+                fn wrap_fmod(self) ->
+                    $crate::Result<(
+                        $(
+                            [<$name Wrap>],
+                        )*
+                    )>
+                {
+                    Ok((
+                        $(
+                            self.$n.wrap_fmod()?,
+                        )*
+                    ))
+                }
+            }
+
+            impl<$( $name, [<$name Unwrap>],)*> $crate::UnwrapFMOD<( $( [<$name Unwrap>], )* )> for ( $( $name, )* )
+            where $( $name: $crate::UnwrapFMOD<[<$name Unwrap>]>, )*
+            {
+                fn unwrap_fmod(self) ->
+                    $crate::Result<(
+                        $(
+                            [<$name Unwrap>],
+                        )*
+                    )>
+                {
+                    Ok((
+                        $(
+                            self.$n.unwrap_fmod()?,
+                        )*
+                    ))
+                }
+            }
+          }
+        )+
+    };
+}
+
+tuple_wrap! {
+  (0 T0)
+  (0 T0 1 T1)
+  (0 T0 1 T1 2 T2)
+  (0 T0 1 T1 2 T2 3 T3)
+  (0 T0 1 T1 2 T2 3 T3 4 T4)
+  (0 T0 1 T1 2 T2 3 T3 4 T4 5 T5)
+  (0 T0 1 T1 2 T2 3 T3 4 T4 5 T5 6 T6)
+  (0 T0 1 T1 2 T2 3 T3 4 T4 5 T5 6 T6 7 T7)
+  (0 T0 1 T1 2 T2 3 T3 4 T4 5 T5 6 T6 7 T7 8 T8)
+  (0 T0 1 T1 2 T2 3 T3 4 T4 5 T5 6 T6 7 T7 8 T8 9 T9)
+  (0 T0 1 T1 2 T2 3 T3 4 T4 5 T5 6 T6 7 T7 8 T8 9 T9 10 T10)
+  (0 T0 1 T1 2 T2 3 T3 4 T4 5 T5 6 T6 7 T7 8 T8 9 T9 10 T10 11 T11)
+  (0 T0 1 T1 2 T2 3 T3 4 T4 5 T5 6 T6 7 T7 8 T8 9 T9 10 T10 11 T11 12 T12)
+  (0 T0 1 T1 2 T2 3 T3 4 T4 5 T5 6 T6 7 T7 8 T8 9 T9 10 T10 11 T11 12 T12 13 T13)
+  (0 T0 1 T1 2 T2 3 T3 4 T4 5 T5 6 T6 7 T7 8 T8 9 T9 10 T10 11 T11 12 T12 13 T13 14 T14)
+  (0 T0 1 T1 2 T2 3 T3 4 T4 5 T5 6 T6 7 T7 8 T8 9 T9 10 T10 11 T11 12 T12 13 T13 14 T14 15 T15)
+}
