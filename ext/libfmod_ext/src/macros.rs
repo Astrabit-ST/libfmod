@@ -121,14 +121,44 @@ macro_rules! ruby_struct {
     };
 }
 
-pub trait WrapFMOD<T> {
-    fn wrap_fmod(self) -> Result<T>;
+#[macro_export]
+macro_rules! ruby_bitflags {
+    (mod $flag_name:ident: $fmod_ty:path {
+      $( const $flag:ident; )*
+    }) => {
+      const _: () = {
+        use bitflags::Flags;
+        use magnus::Module;
+        type _Wrapped = $fmod_ty;
+        type _Bits = <$fmod_ty as Flags>::Bits;
+
+        impl $crate::UnwrapFMOD<_Wrapped> for _Bits {
+          fn unwrap_fmod(self) -> $crate::Result<_Wrapped> {
+              Ok(self.into())
+          }
+        }
+
+        impl $crate::WrapFMOD<_Bits> for _Wrapped {
+          fn wrap_fmod(self) -> $crate::Result<_Bits> {
+              Ok(self.into())
+          }
+        }
+
+        impl $crate::Bindable for _Wrapped {
+          fn bind(module: impl Module) -> $crate::Result<()> {
+            let class = module.define_module(stringify!($flag_name))?;
+            $(
+              class.const_set::<_, _Bits>(stringify!($flag), _Wrapped::$flag.wrap_fmod()?)?;
+            )*
+            Ok(())
+          }
+        }
+      };
+    };
 }
 
-impl<T> WrapFMOD<T> for T {
-    fn wrap_fmod(self) -> Result<T> {
-        Ok(self)
-    }
+pub trait WrapFMOD<T> {
+    fn wrap_fmod(self) -> Result<T>;
 }
 
 impl<T> WrapFMOD<T> for fmod::Result<T> {
@@ -141,12 +171,43 @@ pub trait UnwrapFMOD<T>: Sized {
     fn unwrap_fmod(self) -> Result<T>;
 }
 
-impl<T> UnwrapFMOD<T> for T {
-    fn unwrap_fmod(self) -> Result<T> {
-        Ok(self)
-    }
-}
-
 pub trait Bindable {
     fn bind(module: impl magnus::Module) -> Result<()>;
 }
+
+macro_rules! identity_impl {
+    ($($identity:ty),*) => {
+      $(
+        impl $crate::WrapFMOD<$identity> for $identity {
+            fn wrap_fmod(self) -> Result<$identity> {
+                Ok(self)
+            }
+        }
+
+        impl $crate::UnwrapFMOD<$identity> for $identity {
+            fn unwrap_fmod(self) -> Result<$identity> {
+                Ok(self)
+            }
+        }
+      )*
+    };
+}
+
+identity_impl!(
+    u8,
+    u16,
+    u32,
+    u64,
+    usize,
+    i8,
+    i16,
+    i32,
+    i64,
+    isize,
+    f32,
+    f64,
+    bool,
+    String,
+    char,
+    ()
+);

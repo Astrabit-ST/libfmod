@@ -1,6 +1,8 @@
 use crate::{Result, WrapFMOD};
 
-use crate::{extern_struct, extern_struct_bind, extern_struct_fns, ruby_struct, Bindable};
+use crate::{
+    extern_struct, extern_struct_bind, extern_struct_fns, ruby_bitflags, ruby_struct, Bindable,
+};
 
 ruby_struct! {
   struct Vector: fmod::Vector {
@@ -35,9 +37,29 @@ extern_struct_bind! {
     }
 }
 
+ruby_bitflags! {
+    mod InitFlags: fmod::InitFlags {
+        const NORMAL;
+        const STREAM_FROM_UPDATE;
+        const MIX_FROM_UPDATE;
+        const RIGHTHANDED_3D;
+        const CLIP_OUTPUT;
+        const CHANNEL_LOWPASS;
+        const CHANNEL_DISTANCE_FILTER;
+        const PROFILE_ENABLE;
+        const VOL_0_BECOMES_VIRTUAL;
+        const GEOMETRY_USE_CLOSEST;
+        const PREFER_DOLBY_DOWNMIX;
+        const THREAD_UNSAFE;
+        const PROFILE_METER_ALL;
+        const MEMORY_TRACKING;
+    }
+}
+
 pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::Vector::bind(module)?;
     fmod::System::bind(module)?;
+    fmod::InitFlags::bind(module)?;
 
     Ok(())
 }
