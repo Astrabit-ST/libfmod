@@ -5,7 +5,7 @@ require "rb_sys/extensiontask"
 
 task build: :compile
 
-RbSys::ExtensionTask.new("libfmod") do |ext|
+RbSys::ExtensionTask.new("libfmod_ext") do |ext|
   ext.lib_dir = "lib/libfmod"
 end
 

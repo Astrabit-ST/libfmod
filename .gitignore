@@ -13,3 +13,11 @@
 mkmf.log
 target/
 fmod/
+libfmod.so.13
+libfmod.so.13.20
+libfmodL.so.13
+libfmodL.so.13.20
+libfmodstudio.so.13
+libfmodstudio.so.13.20
+libfmodstudioL.so.13
+libfmodstudioL.so.13.20

@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
-require_relative "lib/libfmod"
-
 Gem::Specification.new do |spec|
   spec.name = "libfmod"
-  spec.version = "#{(FMOD::VERSION >> 16).to_s(16)}.#{(FMOD::VERSION >> 8 & 0xFF).to_s(16)}.#{(FMOD::VERSION & 0xFF).to_s(16)}"
+  spec.version = "2.2.20"
   spec.authors = ["Speak2Erase"]
   spec.email = ["melody@nowaffles.com"]
 
@@ -30,7 +28,7 @@ Gem::Specification.new do |spec|
   spec.bindir = "exe"
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
-  spec.extensions = ["ext/libfmod/Cargo.toml"]
+  spec.extensions = ["ext/libfmod_ext/Cargo.toml"]
 
   # Uncomment to register a new dependency of your gem
   # spec.add_dependency "example-gem", "~> 1.0"

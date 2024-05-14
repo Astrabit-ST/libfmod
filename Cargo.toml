@@ -3,5 +3,5 @@
 # in the ext/ directory.
 
 [workspace]
-members = ["./ext/libfmod"]
+members = ["./ext/libfmod_ext"]
 resolver = "2"

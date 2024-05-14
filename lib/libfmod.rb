@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require_relative "libfmod/libfmod"
+require_relative "libfmod/libfmod_ext"
 
-module FMOD
-end
+
