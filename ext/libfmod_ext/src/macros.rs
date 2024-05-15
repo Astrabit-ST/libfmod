@@ -76,17 +76,18 @@ macro_rules! num_enum {
         $( $variant:ident ),* $(,)?
       }
     ) => {
+      pub type $name = $repr;
       const _: () = {
         type _Wrapped = $fmod_ty;
-        impl $crate::UnwrapFMOD<_Wrapped> for $repr {
+        impl $crate::UnwrapFMOD<_Wrapped> for $name {
           fn unwrap_fmod(self) -> $crate::Result<_Wrapped> {
             let _wrapped = self.try_into().map_err(Into::into).wrap_fmod()?;
             Ok(_wrapped)
           }
         }
 
-        impl $crate::WrapFMOD<$repr> for _Wrapped {
-          fn wrap_fmod(self) -> $crate::Result<$repr> {
+        impl $crate::WrapFMOD<$name> for _Wrapped {
+          fn wrap_fmod(self) -> $crate::Result<$name> {
             Ok(self.into())
           }
         }
@@ -111,10 +112,11 @@ macro_rules! ruby_struct {
     (struct $name:ident: $fmod_ty:path {
       $( $member:ident: $member_ty:ty ),* $(,)?
     }) => {
+      pub type $name = magnus::RStruct;
       const _: () = {
         static CLASS: once_cell::sync::OnceCell<magnus::value::Opaque<magnus::RClass>> = once_cell::sync::OnceCell::new();
         type _Wrapped = $fmod_ty;
-        impl $crate::UnwrapFMOD<_Wrapped> for magnus::RStruct {
+        impl $crate::UnwrapFMOD<_Wrapped> for $name {
           fn unwrap_fmod(self) -> $crate::Result<_Wrapped> {
             Ok(_Wrapped {
               $(
@@ -124,8 +126,8 @@ macro_rules! ruby_struct {
           }
         }
 
-        impl $crate::WrapFMOD<magnus::RStruct> for _Wrapped {
-          fn wrap_fmod(self) -> $crate::Result<magnus::RStruct> {
+        impl $crate::WrapFMOD<$name> for _Wrapped {
+          fn wrap_fmod(self) -> $crate::Result<$name> {
             use magnus::{Class, value::InnerValue, TryConvert};
             // FIXME put this in a Lazy somehow
             let ruby = magnus::Ruby::get().unwrap();
@@ -135,7 +137,7 @@ macro_rules! ruby_struct {
                 self.$member.wrap_fmod()?,
               )*
             ))?;
-            magnus::RStruct::try_convert(rstruct)
+            $name::try_convert(rstruct)
           }
         }
 
@@ -160,20 +162,20 @@ macro_rules! ruby_bitflags {
     (mod $flag_name:ident: $fmod_ty:path {
       $( const $flag:ident; )*
     }) => {
+      pub type $flag_name = <$fmod_ty as bitflags::Flags>::Bits;
       const _: () = {
         use bitflags::Flags;
         use magnus::Module;
         type _Wrapped = $fmod_ty;
-        type _Bits = <$fmod_ty as Flags>::Bits;
 
-        impl $crate::UnwrapFMOD<_Wrapped> for _Bits {
+        impl $crate::UnwrapFMOD<_Wrapped> for $flag_name {
           fn unwrap_fmod(self) -> $crate::Result<_Wrapped> {
               Ok(self.into())
           }
         }
 
-        impl $crate::WrapFMOD<_Bits> for _Wrapped {
-          fn wrap_fmod(self) -> $crate::Result<_Bits> {
+        impl $crate::WrapFMOD<$flag_name> for _Wrapped {
+          fn wrap_fmod(self) -> $crate::Result<$flag_name> {
               Ok(self.into())
           }
         }
@@ -182,7 +184,7 @@ macro_rules! ruby_bitflags {
           fn bind(module: impl Module) -> $crate::Result<()> {
             let class = module.define_module(stringify!($flag_name))?;
             $(
-              class.const_set::<_, _Bits>(stringify!($flag), _Wrapped::$flag.wrap_fmod()?)?;
+              class.const_set::<_, $flag_name>(stringify!($flag), _Wrapped::$flag.wrap_fmod()?)?;
             )*
             Ok(())
           }

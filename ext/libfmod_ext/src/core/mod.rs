@@ -25,9 +25,7 @@ extern_struct!(struct System: fmod::System => "FMOD::System");
 
 extern_struct_fns! {
     impl System {
-        fn lock_dsp() -> ();
-
-        fn get_driver_info(id: i32) -> (magnus::RString, magnus::RStruct, i32, u32, i32);
+        fn get_driver_info(id: i32) -> (magnus::RString, Guid, i32, SpeakerMode, i32);
     }
 }
 
@@ -40,7 +38,6 @@ impl System {
 
 extern_struct_bind! {
     impl Bindable for System: fmod::System {
-        fn lock_dsp -> 0;
         fn get_driver_info -> 1;
         |class| {
             use magnus::Object;
