@@ -6,11 +6,19 @@ use crate::{
 };
 
 ruby_struct! {
-  struct Vector: fmod::Vector {
-    x: f32,
-    y: f32,
-    z: f32,
+  struct Guid: fmod::Guid {
+    data_1: u32,
+    data_2: u16,
+    data_3: u16,
+    data_4: [u8; 8],
   }
+}
+
+num_enum! {
+    #[repr(u32)]
+    enum SpeakerMode: fmod::SpeakerMode {
+
+    }
 }
 
 extern_struct!(struct System: fmod::System => "FMOD::System");
@@ -18,6 +26,8 @@ extern_struct!(struct System: fmod::System => "FMOD::System");
 extern_struct_fns! {
     impl System {
         fn lock_dsp() -> ();
+
+        fn get_driver_info(id: i32) -> (magnus::RString, magnus::RStruct, i32, u32, i32);
     }
 }
 
@@ -31,6 +41,7 @@ impl System {
 extern_struct_bind! {
     impl Bindable for System: fmod::System {
         fn lock_dsp -> 0;
+        fn get_driver_info -> 1;
         |class| {
             use magnus::Object;
             class.define_singleton_method("new", magnus::function!(System::new, 0))?;
@@ -38,44 +49,9 @@ extern_struct_bind! {
     }
 }
 
-ruby_bitflags! {
-    mod InitFlags: fmod::InitFlags {
-        const NORMAL;
-        const STREAM_FROM_UPDATE;
-        const MIX_FROM_UPDATE;
-        const RIGHTHANDED_3D;
-        const CLIP_OUTPUT;
-        const CHANNEL_LOWPASS;
-        const CHANNEL_DISTANCE_FILTER;
-        const PROFILE_ENABLE;
-        const VOL_0_BECOMES_VIRTUAL;
-        const GEOMETRY_USE_CLOSEST;
-        const PREFER_DOLBY_DOWNMIX;
-        const THREAD_UNSAFE;
-        const PROFILE_METER_ALL;
-        const MEMORY_TRACKING;
-    }
-}
-
-num_enum! {
-    #[repr(u32)]
-    enum TimeUnit: fmod::TimeUnit {
-        MS,
-        PCM,
-        PCMBytes,
-        RawBytes,
-        PCMFraction,
-        ModOrder,
-        ModRow,
-        ModPattern,
-    }
-}
-
 pub fn bind(module: magnus::RModule) -> Result<()> {
-    fmod::Vector::bind(module)?;
     fmod::System::bind(module)?;
-    fmod::InitFlags::bind(module)?;
-    fmod::TimeUnit::bind(module)?;
+    fmod::Guid::bind(module)?;
 
     Ok(())
 }
