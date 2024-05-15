@@ -1,4 +1,4 @@
-use crate::{Result, WrapFMOD};
+use crate::{IntoRuby, Result};
 
 use crate::{
     extern_struct, extern_struct_bind, extern_struct_fns, num_enum, ruby_bitflags, ruby_struct,
@@ -31,7 +31,7 @@ extern_struct_fns! {
 
 impl System {
     fn new() -> Result<Self> {
-        let system = unsafe { fmod::System::new() }.wrap_fmod()?;
+        let system = unsafe { fmod::System::new() }.into_ruby()?;
         Ok(Self(system))
     }
 }

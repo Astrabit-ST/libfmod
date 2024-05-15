@@ -15,14 +15,14 @@ macro_rules! extern_struct {
         #[derive(Clone, Copy, Debug, PartialEq, Eq)]
         pub struct $name(pub $fmod_ty);
 
-        impl $crate::UnwrapFMOD<$fmod_ty> for $name {
-            fn unwrap_fmod(self) -> $crate::Result<$fmod_ty> {
+        impl $crate::FromRuby<$fmod_ty> for $name {
+            fn from_ruby(self) -> $crate::Result<$fmod_ty> {
                 Ok(self.0)
             }
         }
 
-        impl $crate::WrapFMOD<$name> for $fmod_ty {
-            fn wrap_fmod(self) -> $crate::Result<$name> {
+        impl $crate::IntoRuby<$name> for $fmod_ty {
+            fn into_ruby(self) -> $crate::Result<$name> {
                 Ok($name(self))
             }
         }
@@ -38,8 +38,8 @@ macro_rules! extern_struct_fns {
         $(
           pub fn $fn_name(&self, $($arg_name: $arg_type),*) -> $crate::Result<$fn_return> {
             #[allow(unused_imports)]
-            use $crate::{UnwrapFMOD, WrapFMOD};
-            self.0.$fn_name($($arg_name.unwrap_fmod()?),*).wrap_fmod()?.wrap_fmod()
+            use $crate::{FromRuby, IntoRuby};
+            self.0.$fn_name($($arg_name.from_ruby()?),*).into_ruby()?.into_ruby()
           }
         )*
       }
@@ -79,15 +79,15 @@ macro_rules! num_enum {
       pub type $name = $repr;
       const _: () = {
         type _Wrapped = $fmod_ty;
-        impl $crate::UnwrapFMOD<_Wrapped> for $name {
-          fn unwrap_fmod(self) -> $crate::Result<_Wrapped> {
-            let _wrapped = self.try_into().map_err(Into::into).wrap_fmod()?;
+        impl $crate::FromRuby<_Wrapped> for $name {
+          fn from_ruby(self) -> $crate::Result<_Wrapped> {
+            let _wrapped = self.try_into().map_err(Into::into).into_ruby()?;
             Ok(_wrapped)
           }
         }
 
-        impl $crate::WrapFMOD<$name> for _Wrapped {
-          fn wrap_fmod(self) -> $crate::Result<$name> {
+        impl $crate::IntoRuby<$name> for _Wrapped {
+          fn into_ruby(self) -> $crate::Result<$name> {
             Ok(self.into())
           }
         }
@@ -98,7 +98,7 @@ macro_rules! num_enum {
             use magnus::Module;
             let module = module.define_module(stringify!($name))?;
             $(
-              module.const_set(stringify!($variant), _Wrapped::$variant.wrap_fmod()?)?;
+              module.const_set(stringify!($variant), _Wrapped::$variant.into_ruby()?)?;
             )*
             Ok(())
           }
@@ -116,25 +116,25 @@ macro_rules! ruby_struct {
       const _: () = {
         static CLASS: once_cell::sync::OnceCell<magnus::value::Opaque<magnus::RClass>> = once_cell::sync::OnceCell::new();
         type _Wrapped = $fmod_ty;
-        impl $crate::UnwrapFMOD<_Wrapped> for $name {
-          fn unwrap_fmod(self) -> $crate::Result<_Wrapped> {
+        impl $crate::FromRuby<_Wrapped> for $name {
+          fn from_ruby(self) -> $crate::Result<_Wrapped> {
             Ok(_Wrapped {
               $(
-                  $member: self.aref::<_, $member_ty>(stringify!($member))?.unwrap_fmod()?,
+                  $member: self.aref::<_, $member_ty>(stringify!($member))?.from_ruby()?,
               )*
             })
           }
         }
 
-        impl $crate::WrapFMOD<$name> for _Wrapped {
-          fn wrap_fmod(self) -> $crate::Result<$name> {
+        impl $crate::IntoRuby<$name> for _Wrapped {
+          fn into_ruby(self) -> $crate::Result<$name> {
             use magnus::{Class, value::InnerValue, TryConvert};
             // FIXME put this in a Lazy somehow
             let ruby = magnus::Ruby::get().unwrap();
             let rstruct = CLASS.get().unwrap().get_inner_with(&ruby);
             let rstruct = rstruct.new_instance((
               $(
-                self.$member.wrap_fmod()?,
+                self.$member.into_ruby()?,
               )*
             ))?;
             $name::try_convert(rstruct)
@@ -168,14 +168,14 @@ macro_rules! ruby_bitflags {
         use magnus::Module;
         type _Wrapped = $fmod_ty;
 
-        impl $crate::UnwrapFMOD<_Wrapped> for $flag_name {
-          fn unwrap_fmod(self) -> $crate::Result<_Wrapped> {
+        impl $crate::FromRuby<_Wrapped> for $flag_name {
+          fn from_ruby(self) -> $crate::Result<_Wrapped> {
               Ok(self.into())
           }
         }
 
-        impl $crate::WrapFMOD<$flag_name> for _Wrapped {
-          fn wrap_fmod(self) -> $crate::Result<$flag_name> {
+        impl $crate::IntoRuby<$flag_name> for _Wrapped {
+          fn into_ruby(self) -> $crate::Result<$flag_name> {
               Ok(self.into())
           }
         }
@@ -184,7 +184,7 @@ macro_rules! ruby_bitflags {
           fn bind(module: impl Module) -> $crate::Result<()> {
             let class = module.define_module(stringify!($flag_name))?;
             $(
-              class.const_set::<_, $flag_name>(stringify!($flag), _Wrapped::$flag.wrap_fmod()?)?;
+              class.const_set::<_, $flag_name>(stringify!($flag), _Wrapped::$flag.into_ruby()?)?;
             )*
             Ok(())
           }
@@ -193,18 +193,19 @@ macro_rules! ruby_bitflags {
     };
 }
 
-pub trait WrapFMOD<T> {
-    fn wrap_fmod(self) -> Result<T>;
+pub trait IntoRuby<T> {
+    fn into_ruby(self) -> Result<T>;
 }
 
-impl<T> WrapFMOD<T> for fmod::Result<T> {
-    fn wrap_fmod(self) -> Result<T> {
+impl<T> IntoRuby<T> for fmod::Result<T> {
+    fn into_ruby(self) -> Result<T> {
         self.map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))
     }
 }
 
-pub trait UnwrapFMOD<T>: Sized {
-    fn unwrap_fmod(self) -> Result<T>;
+pub trait FromRuby<T>: Sized {
+    #[allow(clippy::wrong_self_convention)]
+    fn from_ruby(self) -> Result<T>;
 }
 
 pub trait Bindable {
@@ -214,14 +215,14 @@ pub trait Bindable {
 macro_rules! identity_impl {
     ($($identity:ty),*) => {
       $(
-        impl $crate::WrapFMOD<$identity> for $identity {
-            fn wrap_fmod(self) -> Result<$identity> {
+        impl $crate::IntoRuby<$identity> for $identity {
+            fn into_ruby(self) -> Result<$identity> {
                 Ok(self)
             }
         }
 
-        impl $crate::UnwrapFMOD<$identity> for $identity {
-            fn unwrap_fmod(self) -> Result<$identity> {
+        impl $crate::FromRuby<$identity> for $identity {
+            fn from_ruby(self) -> Result<$identity> {
                 Ok(self)
             }
         }
@@ -263,14 +264,14 @@ unsafe fn ruby_string_as_cstr(string: magnus::RString) -> Result<*mut i8> {
     Ok(ptr)
 }
 
-impl<'a> WrapFMOD<magnus::RString> for &'a Utf8CStr {
-    fn wrap_fmod(self) -> Result<magnus::RString> {
+impl<'a> IntoRuby<magnus::RString> for &'a Utf8CStr {
+    fn into_ruby(self) -> Result<magnus::RString> {
         Ok(magnus::RString::new(self))
     }
 }
 
-impl<'a> UnwrapFMOD<&'a Utf8CStr> for magnus::RString {
-    fn unwrap_fmod(self) -> Result<&'a Utf8CStr> {
+impl<'a> FromRuby<&'a Utf8CStr> for magnus::RString {
+    fn from_ruby(self) -> Result<&'a Utf8CStr> {
         // FIXME assert UTF-8
         unsafe {
             // this is pretty dangerous because the lifetime of the string is not tied to the lifetime of the Ruby object
@@ -282,14 +283,14 @@ impl<'a> UnwrapFMOD<&'a Utf8CStr> for magnus::RString {
     }
 }
 
-impl WrapFMOD<magnus::RString> for Utf8CString {
-    fn wrap_fmod(self) -> Result<magnus::RString> {
+impl IntoRuby<magnus::RString> for Utf8CString {
+    fn into_ruby(self) -> Result<magnus::RString> {
         Ok(magnus::RString::new(&self))
     }
 }
 
-impl UnwrapFMOD<Utf8CString> for magnus::RString {
-    fn unwrap_fmod(self) -> Result<Utf8CString> {
+impl FromRuby<Utf8CString> for magnus::RString {
+    fn from_ruby(self) -> Result<Utf8CString> {
         // Quite a lot safer than the above impl
         // Still pretty awful though!
         unsafe {
@@ -306,10 +307,10 @@ macro_rules! tuple_wrap {
     )+) => {
         $(
           paste::paste! {
-            impl<$( $name, [<$name Wrap>],)*> $crate::WrapFMOD<( $( [<$name Wrap>], )* )> for ( $( $name, )* )
-            where $( $name: $crate::WrapFMOD<[<$name Wrap>]>, )*
+            impl<$( $name, [<$name Wrap>],)*> $crate::IntoRuby<( $( [<$name Wrap>], )* )> for ( $( $name, )* )
+            where $( $name: $crate::IntoRuby<[<$name Wrap>]>, )*
             {
-                fn wrap_fmod(self) ->
+                fn into_ruby(self) ->
                     $crate::Result<(
                         $(
                             [<$name Wrap>],
@@ -318,16 +319,16 @@ macro_rules! tuple_wrap {
                 {
                     Ok((
                         $(
-                            self.$n.wrap_fmod()?,
+                            self.$n.into_ruby()?,
                         )*
                     ))
                 }
             }
 
-            impl<$( $name, [<$name Unwrap>],)*> $crate::UnwrapFMOD<( $( [<$name Unwrap>], )* )> for ( $( $name, )* )
-            where $( $name: $crate::UnwrapFMOD<[<$name Unwrap>]>, )*
+            impl<$( $name, [<$name Unwrap>],)*> $crate::FromRuby<( $( [<$name Unwrap>], )* )> for ( $( $name, )* )
+            where $( $name: $crate::FromRuby<[<$name Unwrap>]>, )*
             {
-                fn unwrap_fmod(self) ->
+                fn from_ruby(self) ->
                     $crate::Result<(
                         $(
                             [<$name Unwrap>],
@@ -336,7 +337,7 @@ macro_rules! tuple_wrap {
                 {
                     Ok((
                         $(
-                            self.$n.unwrap_fmod()?,
+                            self.$n.from_ruby()?,
                         )*
                     ))
                 }
@@ -366,11 +367,11 @@ tuple_wrap! {
 }
 
 // magnus does not provide an impl of IntoValue for arrays so we have to use magnus::RArray
-impl<const N: usize, T> WrapFMOD<magnus::RArray> for [T; N]
+impl<const N: usize, T> IntoRuby<magnus::RArray> for [T; N]
 where
     T: magnus::IntoValue,
 {
-    fn wrap_fmod(self) -> Result<magnus::RArray> {
+    fn into_ruby(self) -> Result<magnus::RArray> {
         let arr = magnus::RArray::with_capacity(N);
         for item in self.into_iter() {
             arr.push(item.into_value())?;
@@ -379,16 +380,16 @@ where
     }
 }
 
-impl<const N: usize, T, TUnwrap> UnwrapFMOD<[TUnwrap; N]> for [T; N]
+impl<const N: usize, T, TUnwrap> FromRuby<[TUnwrap; N]> for [T; N]
 where
-    T: UnwrapFMOD<TUnwrap>,
+    T: FromRuby<TUnwrap>,
 {
-    fn unwrap_fmod(self) -> Result<[TUnwrap; N]> {
+    fn from_ruby(self) -> Result<[TUnwrap; N]> {
         use std::mem::MaybeUninit;
 
         let mut result: [MaybeUninit<TUnwrap>; N] = unsafe { MaybeUninit::uninit().assume_init() };
         for (i, item) in self.into_iter().enumerate().skip(1) {
-            let item = item.unwrap_fmod()?;
+            let item = item.from_ruby()?;
             result[i].write(item);
         }
         // we initialize every element in the array, so this is safe
