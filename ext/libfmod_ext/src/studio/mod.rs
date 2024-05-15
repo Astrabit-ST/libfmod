@@ -5,6 +5,7 @@ mod enums;
 mod flags;
 mod structs;
 
+mod bank;
 mod system;
 
 pub fn bind(module: magnus::RModule) -> Result<()> {
@@ -15,6 +16,7 @@ pub fn bind(module: magnus::RModule) -> Result<()> {
     structs::bind(module)?;
 
     system::bind(module)?;
+    bank::bind(module)?;
 
     Ok(())
 }

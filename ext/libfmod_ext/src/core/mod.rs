@@ -1,5 +1,9 @@
 use crate::Result;
 
-pub fn bind(_module: magnus::RModule) -> Result<()> {
+pub mod structs;
+
+pub fn bind(module: magnus::RModule) -> Result<()> {
+    structs::bind(module)?;
+
     Ok(())
 }

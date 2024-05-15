@@ -20,8 +20,19 @@ ruby_bitflags! {
   }
 }
 
+ruby_bitflags! {
+  #[repr(u32)]
+  mod LoadBankFlags: fmod::studio::LoadBankFlags {
+    const NORMAL;
+    const NONBLOCKING;
+    const DECOMPRESS_SAMPLES;
+    const UNENCRYPTED;
+  }
+}
+
 pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::studio::InitFlags::bind(module)?;
+    fmod::studio::LoadBankFlags::bind(module)?;
 
     Ok(())
 }

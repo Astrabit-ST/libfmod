@@ -4,13 +4,16 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-use crate::{Bindable, FromRuby, IntoRuby, Result};
+use crate::{core::structs::Guid, Bindable, FromRuby, IntoRuby, Result};
 use magnus::prelude::*;
 use std::cell::RefCell;
 
 use crate::{extern_struct, extern_struct_bind, extern_struct_fns};
 
-use super::flags::InitFlags as StudioInitFlags;
+use super::{
+    bank::Bank,
+    flags::{InitFlags as StudioInitFlags, LoadBankFlags},
+};
 
 extern_struct! {
     struct System: fmod::studio::System => "FMOD::Studio::System"
@@ -80,8 +83,37 @@ extern_struct_bind! {
   }
 }
 
+extern_struct_fns! {
+  impl System {
+    fn load_bank_file(filename: magnus::RString, flags: LoadBankFlags) -> Bank;
+    fn load_bank_memory(buffer: magnus::RString, flags: LoadBankFlags) -> Bank;
+    fn unload_all_banks() -> ();
+    fn get_bank(path_or_id: magnus::RString) -> Bank;
+    fn get_bank_by_id(id: Guid) -> Bank;
+    fn bank_count() -> i32;
+    fn get_bank_list() -> magnus::r_array::TypedArray<Bank>;
+    // TODO userdata & callback
+  }
+}
+
+impl System {
+    fn new() -> Result<Self> {
+        unsafe { fmod::studio::System::new() }.into_ruby()
+    }
+}
+
 extern_struct_bind! {
   impl Bindable for System: fmod::studio::System {
+    fn load_bank_file -> 2;
+    fn load_bank_memory -> 2;
+    fn unload_all_banks -> 0;
+    fn get_bank -> 1;
+    fn get_bank_by_id -> 1;
+    fn bank_count -> 0;
+    fn get_bank_list -> 0;
+    |class| {
+      class.define_singleton_method("new", magnus::function!(System::new, 0))?;
+    }
   }
 }
 

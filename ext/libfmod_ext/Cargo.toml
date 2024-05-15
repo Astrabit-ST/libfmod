@@ -9,7 +9,9 @@ publish = false
 crate-type = ["cdylib"]
 
 [dependencies]
-magnus = { version = "0.6.4", features = ["rb-sys"] }
+magnus = { version = "0.7.0", features = [
+  "rb-sys",
+], git = "https://github.com/matsadler/magnus" }
 rb-sys = { version = "0.9.97", features = ["ruby-macros"] }
 fmod-oxide = { version = "2.2.0", git = "https://github.com/Speak2Erase/fmod-oxide" }
 paste = "1.0.15"

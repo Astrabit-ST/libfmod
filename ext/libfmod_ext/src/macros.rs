@@ -39,7 +39,7 @@ macro_rules! extern_struct_fns {
           pub fn $fn_name(&self, $($arg_name: $arg_type),*) -> $crate::Result<$fn_return> {
             #[allow(unused_imports)]
             use $crate::{FromRuby, IntoRuby};
-            self.0.$fn_name($($arg_name.from_ruby()?),*).into_ruby()?.into_ruby()
+            self.0.$fn_name($($arg_name.from_ruby()?),*).into_ruby()
           }
         )*
       }
@@ -281,6 +281,19 @@ impl<'a> FromRuby<&'a Utf8CStr> for magnus::RString {
     }
 }
 
+impl<'a> FromRuby<&'a [u8]> for magnus::RString {
+    fn from_ruby(self) -> Result<&'a [u8]> {
+        use magnus::{rb_sys::AsRawValue, value::ReprValue};
+        // this is really dangerous but all uses of this wont be holding onto the slice long
+        Ok(unsafe {
+            let value = self.as_value().as_raw();
+            let ptr = rb_sys::RSTRING_PTR(value);
+            let len = rb_sys::RSTRING_LEN(value);
+            std::slice::from_raw_parts(ptr.cast(), len as usize)
+        })
+    }
+}
+
 impl IntoRuby<magnus::RString> for Utf8CString {
     fn into_ruby(self) -> Result<magnus::RString> {
         Ok(magnus::RString::new(&self))
@@ -393,6 +406,31 @@ where
         // we initialize every element in the array, so this is safe
         let result = result.map(|item| unsafe { item.assume_init() });
         Ok(result)
+    }
+}
+
+// currently unreleased feature. we need to use it to constraint TWrap, otherwise rust complains
+impl<T, TWrap> IntoRuby<magnus::r_array::TypedArray<TWrap>> for Vec<T>
+where
+    T: IntoRuby<TWrap>,
+    TWrap: magnus::IntoValue,
+{
+    fn into_ruby(self) -> Result<magnus::r_array::TypedArray<TWrap>> {
+        let ruby = unsafe { magnus::Ruby::get_unchecked() };
+        let arr = ruby.typed_ary_new();
+        for item in self.into_iter() {
+            arr.push(item.into_ruby()?)?;
+        }
+        Ok(arr)
+    }
+}
+
+impl<T, TWrap> FromRuby<Vec<TWrap>> for Vec<T>
+where
+    T: FromRuby<TWrap>,
+{
+    fn from_ruby(self) -> Result<Vec<TWrap>> {
+        self.into_iter().map(|item| item.from_ruby()).collect()
     }
 }
 
