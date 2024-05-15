@@ -12,7 +12,7 @@ use crate::{extern_struct, extern_struct_bind, extern_struct_fns};
 
 use super::bus::Bus;
 use super::event_description::EventDescription;
-use super::vca::Vca;
+use super::vca::VCA;
 
 extern_struct! {
     struct Bank: fmod::studio::Bank => "FMOD::Studio::Bank"
@@ -36,7 +36,7 @@ extern_struct_fns! {
         fn string_count() -> i32;
         fn get_string_info(index: i32) -> (Guid, String);
         fn vca_count() -> i32;
-        fn get_vca_list() -> TypedArray<Vca>;
+        fn get_vca_list() -> TypedArray<VCA>;
     }
 }
 
