@@ -69,8 +69,38 @@ macro_rules! extern_struct_bind {
 #[macro_export]
 macro_rules! num_enum {
     (
+      #[repr($repr:ty)]
+      enum $name:ident: $fmod_ty:path {
+        $( $variant:ident ),* $(,)?
+      }
+    ) => {
+      const _: () = {
+        type _Wrapped = $fmod_ty;
+        impl $crate::UnwrapFMOD<_Wrapped> for $repr {
+          fn unwrap_fmod(self) -> $crate::Result<_Wrapped> {
+            let _wrapped = self.try_into().map_err(Into::into).wrap_fmod()?;
+            Ok(_wrapped)
+          }
+        }
 
-    ) => {};
+        impl $crate::WrapFMOD<$repr> for _Wrapped {
+          fn wrap_fmod(self) -> $crate::Result<$repr> {
+            Ok(self.into())
+          }
+        }
+
+        impl $crate::Bindable for $fmod_ty {
+          fn bind(module: impl magnus::Module) -> $crate::Result<()> {
+            use magnus::Module;
+            let module = module.define_module(stringify!($name))?;
+            $(
+              module.const_set(stringify!($variant), _Wrapped::$variant.wrap_fmod()?)?;
+            )*
+            Ok(())
+          }
+        }
+      };
+    };
 }
 
 #[macro_export]

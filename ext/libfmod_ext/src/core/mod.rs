@@ -1,7 +1,8 @@
 use crate::{Result, WrapFMOD};
 
 use crate::{
-    extern_struct, extern_struct_bind, extern_struct_fns, ruby_bitflags, ruby_struct, Bindable,
+    extern_struct, extern_struct_bind, extern_struct_fns, num_enum, ruby_bitflags, ruby_struct,
+    Bindable,
 };
 
 ruby_struct! {
@@ -56,10 +57,25 @@ ruby_bitflags! {
     }
 }
 
+num_enum! {
+    #[repr(u32)]
+    enum TimeUnit: fmod::TimeUnit {
+        MS,
+        PCM,
+        PCMBytes,
+        RawBytes,
+        PCMFraction,
+        ModOrder,
+        ModRow,
+        ModPattern,
+    }
+}
+
 pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::Vector::bind(module)?;
     fmod::System::bind(module)?;
     fmod::InitFlags::bind(module)?;
+    fmod::TimeUnit::bind(module)?;
 
     Ok(())
 }
