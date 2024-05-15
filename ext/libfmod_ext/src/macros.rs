@@ -110,7 +110,7 @@ macro_rules! num_enum {
 #[macro_export]
 macro_rules! ruby_struct {
     (struct $name:ident: $fmod_ty:path {
-      $( $member:ident: $member_ty:ty ),* $(,)?
+      $( $member:ident: $member_ty:ty),* $(,)?
     }) => {
       pub type $name = magnus::RStruct;
       const _: () = {
@@ -118,9 +118,13 @@ macro_rules! ruby_struct {
         type _Wrapped = $fmod_ty;
         impl $crate::FromRuby<_Wrapped> for $name {
           fn from_ruby(self) -> $crate::Result<_Wrapped> {
+            $(
+              let $member: $member_ty = self.aref(stringify!($member))?;
+              let $member = $member.from_ruby()?;
+            )*
             Ok(_Wrapped {
               $(
-                  $member: self.aref::<_, $member_ty>(stringify!($member))?.from_ruby()?,
+                  $member,
               )*
             })
           }
@@ -159,12 +163,11 @@ macro_rules! ruby_struct {
 
 #[macro_export]
 macro_rules! ruby_bitflags {
-    (mod $flag_name:ident: $fmod_ty:path {
-      $( const $flag:ident; )*
+    (#[repr($repr_ty:ty)] mod $flag_name:ident: $fmod_ty:path {
+      $( const $flag:ident; )* $(;)?
     }) => {
-      pub type $flag_name = <$fmod_ty as bitflags::Flags>::Bits;
+      pub type $flag_name = $repr_ty; // ideally we would use bitflags::Flags::Bits here but it gives weird conflicts with the FromRuby<Result> impl
       const _: () = {
-        use bitflags::Flags;
         use magnus::Module;
         type _Wrapped = $fmod_ty;
 
@@ -182,6 +185,7 @@ macro_rules! ruby_bitflags {
 
         impl $crate::Bindable for _Wrapped {
           fn bind(module: impl Module) -> $crate::Result<()> {
+            use $crate::IntoRuby;
             let class = module.define_module(stringify!($flag_name))?;
             $(
               class.const_set::<_, $flag_name>(stringify!($flag), _Wrapped::$flag.into_ruby()?)?;
@@ -195,12 +199,6 @@ macro_rules! ruby_bitflags {
 
 pub trait IntoRuby<T> {
     fn into_ruby(self) -> Result<T>;
-}
-
-impl<T> IntoRuby<T> for fmod::Result<T> {
-    fn into_ruby(self) -> Result<T> {
-        self.map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))
-    }
 }
 
 pub trait FromRuby<T>: Sized {
@@ -395,5 +393,43 @@ where
         // we initialize every element in the array, so this is safe
         let result = result.map(|item| unsafe { item.assume_init() });
         Ok(result)
+    }
+}
+
+impl<T, TWrap> IntoRuby<TWrap> for fmod::Result<T>
+where
+    T: IntoRuby<TWrap>,
+{
+    fn into_ruby(self) -> Result<TWrap> {
+        self.map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?
+            .into_ruby()
+    }
+}
+
+impl<T, TWrap> FromRuby<TWrap> for fmod::Result<T>
+where
+    T: FromRuby<TWrap>,
+{
+    fn from_ruby(self) -> Result<TWrap> {
+        self.map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?
+            .from_ruby()
+    }
+}
+
+impl<T, TWrap> IntoRuby<Option<TWrap>> for Option<T>
+where
+    T: IntoRuby<TWrap>,
+{
+    fn into_ruby(self) -> Result<Option<TWrap>> {
+        self.map(|item| item.into_ruby()).transpose()
+    }
+}
+
+impl<T, TWrap> FromRuby<Option<TWrap>> for Option<T>
+where
+    T: FromRuby<TWrap>,
+{
+    fn from_ruby(self) -> Result<Option<TWrap>> {
+        self.map(|item| item.from_ruby()).transpose()
     }
 }
