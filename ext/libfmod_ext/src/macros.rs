@@ -81,7 +81,10 @@ macro_rules! num_enum {
         type _Wrapped = $fmod_ty;
         impl $crate::FromRuby<_Wrapped> for $name {
           fn from_ruby(self) -> $crate::Result<_Wrapped> {
-            let _wrapped = self.try_into().map_err(Into::into).into_ruby()?;
+            let _wrapped: _Wrapped = _Wrapped::try_from(self)
+              .map_err(|e|
+                magnus::Error::new(magnus::exception::runtime_error(), e.to_string())
+              )?;
             Ok(_wrapped)
           }
         }
@@ -96,6 +99,7 @@ macro_rules! num_enum {
         impl $crate::Bindable for $fmod_ty {
           fn bind(module: impl magnus::Module) -> $crate::Result<()> {
             use magnus::Module;
+            use $crate::{IntoRuby};
             let module = module.define_module(stringify!($name))?;
             $(
               module.const_set(stringify!($variant), _Wrapped::$variant.into_ruby()?)?;

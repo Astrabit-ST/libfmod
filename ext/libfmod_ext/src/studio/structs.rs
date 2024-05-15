@@ -18,8 +18,17 @@ ruby_struct! {
   }
 }
 
+ruby_struct! {
+  struct MemoryUsage: fmod::studio::MemoryUsage {
+    exclusive: i32,
+    inclusive: i32,
+    sample_data: i32,
+  }
+}
+
 pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::studio::AdvancedSettings::bind(module)?;
+    fmod::studio::MemoryUsage::bind(module)?;
 
     Ok(())
 }

@@ -7,6 +7,16 @@ use crate::{Bindable, Result};
 
 use crate::num_enum;
 
+num_enum! {
+    #[repr(u32)]
+    enum StopMode: fmod::studio::StopMode {
+        AllowFadeout,
+        Immediate,
+    }
+}
+
 pub fn bind(module: magnus::RModule) -> Result<()> {
+    fmod::studio::StopMode::bind(module)?;
+
     Ok(())
 }
