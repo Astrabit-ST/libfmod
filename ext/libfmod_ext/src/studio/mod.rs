@@ -6,7 +6,10 @@ mod flags;
 mod structs;
 
 mod bank;
+mod bus;
+mod event_description;
 mod system;
+mod vca;
 
 pub fn bind(module: magnus::RModule) -> Result<()> {
     let module = module.define_module("Studio")?;
@@ -17,6 +20,9 @@ pub fn bind(module: magnus::RModule) -> Result<()> {
 
     system::bind(module)?;
     bank::bind(module)?;
+    bus::bind(module)?;
+    event_description::bind(module)?;
+    vca::bind(module)?;
 
     Ok(())
 }
