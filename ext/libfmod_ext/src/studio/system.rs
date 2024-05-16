@@ -43,7 +43,7 @@ extern_struct_fns! {
     fn load_command_replay(filename: magnus::RString, flags: CommandReplayFlags) -> CommandReplay;
     // TODO core system
     fn lookup_id(path: magnus::RString) -> Guid;
-    fn lookup_path(id: Guid) -> String;
+    fn lookup_path(id: Guid) -> magnus::RString;
     fn is_valid() -> bool;
     fn update() -> ();
     fn flush_commands() -> ();
@@ -71,8 +71,8 @@ extern_struct_fns! {
     fn get_parameter_description_by_id(id: ParameterID) -> ParameterDescription;
     fn parameter_description_count() -> i32;
     fn get_parameter_description_list() -> magnus::r_array::TypedArray<ParameterDescription>;
-    fn get_parameter_label_by_name(name: magnus::RString, index: i32) -> String;
-    fn get_parameter_label_by_id(id: ParameterID, index: i32) -> String;
+    fn get_parameter_label_by_name(name: magnus::RString, index: i32) -> magnus::RString;
+    fn get_parameter_label_by_id(id: ParameterID, index: i32) -> magnus::RString;
     // TODO plugin
     fn get_buffer_usage() -> BufferUsage;
     fn reset_buffer_usage() -> ();

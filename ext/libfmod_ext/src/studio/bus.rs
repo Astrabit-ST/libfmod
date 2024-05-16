@@ -31,7 +31,7 @@ extern_struct_fns! {
       fn get_cpu_usage() -> (u32, u32);
       fn get_memory_usage() -> MemoryUsage;
       fn get_id() -> Guid;
-      fn get_path() -> String;
+      fn get_path() -> magnus::RString;
       fn is_valid() -> bool;
     }
 }

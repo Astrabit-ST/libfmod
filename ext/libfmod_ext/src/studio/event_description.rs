@@ -29,7 +29,7 @@ extern_struct_fns! {
         // TODO userdata & callbacks
         fn get_id() -> Guid;
         fn get_length() -> i32;
-        fn get_path() -> String;
+        fn get_path() -> magnus::RString;
         fn is_valid() -> bool;
         fn create_instance() -> EventInstance;
         fn instance_count() -> i32;
@@ -39,9 +39,9 @@ extern_struct_fns! {
         fn get_parameter_description_by_id(id: ParameterID) -> ParameterDescription;
         fn get_parameter_description_by_index(index: i32) -> ParameterDescription;
         fn parameter_description_count() -> i32;
-        fn get_parameter_label_by_name(name: magnus::RString, label_index: i32) -> String;
-        fn get_parameter_label_by_id(id: ParameterID, label_index: i32) -> String;
-        fn get_parameter_label_by_index(index: i32, label_index: i32) -> String;
+        fn get_parameter_label_by_name(name: magnus::RString, label_index: i32) -> magnus::RString;
+        fn get_parameter_label_by_id(id: ParameterID, label_index: i32) -> magnus::RString;
+        fn get_parameter_label_by_index(index: i32, label_index: i32) -> magnus::RString;
         fn load_sample_data() -> ();
         fn unload_sample_data() -> ();
         // TODO loading state

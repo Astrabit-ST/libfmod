@@ -19,7 +19,7 @@ extern_struct_fns! {
       fn set_volume(volume: f32) -> ();
       fn get_volume() -> (f32, f32);
       fn get_id() -> Guid;
-      fn get_path() -> String;
+      fn get_path() -> magnus::RString;
       fn is_valid() -> bool;
     }
 }

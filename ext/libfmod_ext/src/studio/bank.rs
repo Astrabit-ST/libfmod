@@ -21,7 +21,7 @@ extern_struct! {
 extern_struct_fns! {
     impl Bank {
         fn get_id() -> Guid;
-        fn get_path() -> String;
+        fn get_path() -> magnus::RString;
         fn is_valid() -> bool;
         // TODO userdata
         // TODO loading state
@@ -34,7 +34,7 @@ extern_struct_fns! {
         fn event_count() -> i32;
         fn get_event_list() -> TypedArray<EventDescription>;
         fn string_count() -> i32;
-        fn get_string_info(index: i32) -> (Guid, String);
+        fn get_string_info(index: i32) -> (Guid, magnus::RString);
         fn vca_count() -> i32;
         fn get_vca_list() -> TypedArray<VCA>;
     }

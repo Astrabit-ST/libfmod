@@ -97,7 +97,7 @@ dependencies = [
 [[package]]
 name = "fmod-oxide"
 version = "2.2.0"
-source = "git+https://github.com/Speak2Erase/fmod-oxide#330506f4e8aea24ca7f0bcc8a6401ee8c4ca17f6"
+source = "git+https://github.com/Speak2Erase/fmod-oxide#227347654257e373ca4bb5b378e47f602f01afa5"
 dependencies = [
  "bitflags",
  "fmod-sys",
@@ -110,7 +110,7 @@ dependencies = [
 [[package]]
 name = "fmod-sys"
 version = "2.2.20"
-source = "git+https://github.com/Speak2Erase/fmod-oxide#330506f4e8aea24ca7f0bcc8a6401ee8c4ca17f6"
+source = "git+https://github.com/Speak2Erase/fmod-oxide#227347654257e373ca4bb5b378e47f602f01afa5"
 dependencies = [
  "bindgen",
  "cc",
@@ -160,7 +160,7 @@ dependencies = [
 [[package]]
 name = "lanyard"
 version = "0.1.2"
-source = "git+https://github.com/Speak2Erase/fmod-oxide#330506f4e8aea24ca7f0bcc8a6401ee8c4ca17f6"
+source = "git+https://github.com/Speak2Erase/fmod-oxide#227347654257e373ca4bb5b378e47f602f01afa5"
 
 [[package]]
 name = "lazy_static"

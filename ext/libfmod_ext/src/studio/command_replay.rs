@@ -32,7 +32,7 @@ extern_struct_fns! {
         fn command_at_time(time: f32) -> i32;
         fn get_command_count() -> i32;
         fn get_command_info(index: i32) -> CommandInfo;
-        fn get_command_string(index: i32) -> String;
+        fn get_command_string(index: i32) -> magnus::RString;
         fn get_length() -> f32;
         fn get_system() -> System;
         fn is_valid() -> bool;
