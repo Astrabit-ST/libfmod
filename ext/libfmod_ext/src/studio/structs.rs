@@ -50,11 +50,37 @@ ruby_struct! {
   }
 }
 
+ruby_struct! {
+  struct BufferInfo: fmod::studio::BufferInfo {
+    current_usage: i32,
+    peak_usage: i32,
+    capacity: i32,
+    stall_count: i32,
+    stall_time: f32,
+  }
+}
+
+ruby_struct! {
+  struct BufferUsage: fmod::studio::BufferUsage {
+    studio_command_queue: BufferInfo,
+    studio_handle: BufferInfo,
+  }
+}
+
+ruby_struct! {
+  struct CPUUsage: fmod::studio::CpuUsage {
+    update: f32
+  }
+}
+
 pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::studio::AdvancedSettings::bind(module)?;
     fmod::studio::MemoryUsage::bind(module)?;
     fmod::studio::ParameterID::bind(module)?;
     fmod::studio::ParameterDescription::bind(module)?;
+    fmod::studio::BufferInfo::bind(module)?;
+    fmod::studio::BufferUsage::bind(module)?;
+    fmod::studio::CpuUsage::bind(module)?;
 
     Ok(())
 }

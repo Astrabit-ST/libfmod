@@ -7,9 +7,11 @@ mod structs;
 
 mod bank;
 mod bus;
+mod command_replay;
 mod event_description;
 mod event_instance;
 mod system;
+mod system_builder;
 mod vca;
 
 pub fn bind(module: magnus::RModule) -> Result<()> {
@@ -19,11 +21,13 @@ pub fn bind(module: magnus::RModule) -> Result<()> {
     flags::bind(module)?;
     structs::bind(module)?;
 
+    system_builder::bind(module)?;
     system::bind(module)?;
     bank::bind(module)?;
     bus::bind(module)?;
     event_description::bind(module)?;
     event_instance::bind(module)?;
+    command_replay::bind(module)?;
     vca::bind(module)?;
 
     Ok(())

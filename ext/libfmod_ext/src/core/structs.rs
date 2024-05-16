@@ -33,10 +33,22 @@ ruby_struct! {
   }
 }
 
+ruby_struct! {
+  struct CPUUsage: fmod::CpuUsage {
+    dsp: f32,
+    stream: f32,
+    geometry: f32,
+    update: f32,
+    convolution_1: f32,
+    convolution_2: f32,
+  }
+}
+
 pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::Guid::bind(module)?;
     fmod::Vector::bind(module)?;
     fmod::Attributes3D::bind(module)?;
+    fmod::CpuUsage::bind(module)?;
 
     Ok(())
 }

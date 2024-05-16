@@ -41,10 +41,31 @@ ruby_bitflags! {
   }
 }
 
+ruby_bitflags! {
+  #[repr(u32)]
+  mod CommandCaptureFlags: fmod::studio::CommandCaptureFlags {
+    const NORMAL;
+    const FILE_FLUSH;
+    const SKIP_INITIAL_STATE;
+  }
+}
+
+ruby_bitflags! {
+  #[repr(u32)]
+  mod CommandReplayFlags: fmod::studio::CommandReplayFlags {
+    const NORMAL;
+    const SKIP_CLEANUP;
+    const FAST_FORWARD;
+    const SKIP_BANK_LOAD;
+  }
+}
+
 pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::studio::InitFlags::bind(module)?;
     fmod::studio::LoadBankFlags::bind(module)?;
     fmod::studio::ParameterFlags::bind(module)?;
+    fmod::studio::CommandCaptureFlags::bind(module)?;
+    fmod::studio::CommandReplayFlags::bind(module)?;
 
     Ok(())
 }

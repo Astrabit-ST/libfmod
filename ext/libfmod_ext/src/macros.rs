@@ -36,7 +36,7 @@ macro_rules! extern_struct_fns {
     }) => {
       impl $name {
         $(
-          pub fn $fn_name(&self, $($arg_name: $arg_type),*) -> $crate::Result<$fn_return> {
+          pub(crate) fn $fn_name(&self, $($arg_name: $arg_type),*) -> $crate::Result<$fn_return> {
             #[allow(unused_imports)]
             use $crate::{FromRuby, IntoRuby};
             self.0.$fn_name($($arg_name.from_ruby()?),*).into_ruby()
