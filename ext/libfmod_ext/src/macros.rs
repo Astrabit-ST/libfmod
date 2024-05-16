@@ -475,3 +475,13 @@ where
         self.map(|item| item.from_ruby()).transpose()
     }
 }
+
+impl<T, TWrap> FromRuby<TWrap> for &T
+where
+    T: Clone,
+    T: FromRuby<TWrap>,
+{
+    fn from_ruby(self) -> Result<TWrap> {
+        T::from_ruby(self.clone())
+    }
+}

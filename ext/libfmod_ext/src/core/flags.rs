@@ -27,8 +27,17 @@ ruby_bitflags! {
     }
 }
 
+ruby_bitflags! {
+    #[repr(u32)]
+    mod DriverState: fmod::DriverState {
+        const DEFAULT;
+        const CONNECTED;
+    }
+}
+
 pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::InitFlags::bind(module)?;
+    fmod::DriverState::bind(module)?;
 
     Ok(())
 }

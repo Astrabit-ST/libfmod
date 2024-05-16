@@ -49,9 +49,111 @@ num_enum! {
     }
 }
 
+num_enum! {
+    #[repr(u32)]
+    enum DspType: fmod::DspType {
+        Unknown,
+        Mixer,
+        Oscillator,
+        Lowpass,
+        ItLowpass,
+        Highpass,
+        Echo,
+        Fader,
+        Flange,
+        Distortion,
+        Normalize,
+        Limiter,
+        ParamEq,
+        PitchShift,
+        Chorus,
+        VstPlugin,
+        WinampPlugin,
+        ItEcho,
+        Compressor,
+        SfxReverb,
+        LowpassSimple,
+        Delay,
+        Tremolo,
+        LadspaPlugin,
+        Send,
+        Return,
+        HighpassSimple,
+        Pan,
+        ThreeEq,
+        Fft,
+        LoudnessMeter,
+        EnvelopeFollower,
+        ConvolutionReverb,
+        ChannelMix,
+        ObjectPan,
+        MultibandEq,
+    }
+}
+
+num_enum! {
+    #[repr(u32)]
+    enum PluginType: fmod::PluginType {
+        Output,
+        Codec,
+        DSP
+    }
+}
+
+num_enum! {
+    #[repr(u32)]
+    enum PortType: fmod::PortType {
+        Music,
+        CopyrightMusic,
+        Voice,
+        Controller,
+        Personal,
+        Vibration,
+        AUX,
+    }
+}
+
+num_enum! {
+    #[repr(u32)]
+    enum TimeUnit: fmod::TimeUnit {
+        MS,
+        PCM,
+        PCMBytes,
+        RawBytes,
+        PCMFraction,
+        ModOrder,
+        ModRow,
+        ModPattern,
+    }
+}
+
+num_enum! {
+    #[repr(i32)]
+    enum Speaker: fmod::Speaker {
+        None,
+        FrontLeft,
+        FrontRight,
+        FrontCenter,
+        LowFrequency,
+        SurroundLeft,
+        SurroundRight,
+        BackLeft,
+        BackRight,
+        TopFrontLeft,
+        TopFrontRight,
+        TopBackLeft,
+        TopBackRight,
+    }
+}
+
 pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::SpeakerMode::bind(module)?;
     fmod::OutputType::bind(module)?;
+    fmod::DspType::bind(module)?;
+    fmod::PluginType::bind(module)?;
+    fmod::PortType::bind(module)?;
+    fmod::TimeUnit::bind(module)?;
+    fmod::Speaker::bind(module)?;
 
     Ok(())
 }
