@@ -16,8 +16,27 @@ ruby_struct! {
   }
 }
 
+ruby_struct! {
+  struct Vector: fmod::Vector {
+    x: f32,
+    y: f32,
+    z: f32,
+  }
+}
+
+ruby_struct! {
+  struct Attributes3D: fmod::Attributes3D {
+    position: Vector,
+    velocity: Vector,
+    forward: Vector,
+    up: Vector,
+  }
+}
+
 pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::Guid::bind(module)?;
+    fmod::Vector::bind(module)?;
+    fmod::Attributes3D::bind(module)?;
 
     Ok(())
 }

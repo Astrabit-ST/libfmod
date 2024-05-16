@@ -15,8 +15,50 @@ num_enum! {
     }
 }
 
+num_enum! {
+    #[repr(u32)]
+    enum ParameterKind: fmod::studio::ParameterKind {
+        GameControlled,
+        AutomaticDistance,
+        AutomaticEventConeAngle,
+        AutomaticEventOrientation,
+        AutomaticDirection,
+        AutomaticElevation,
+        AutomaticListenerOrientation,
+        AutomaticSpeed,
+        AutomaticSpeedAbsolute ,
+        AutomaticDistanceNormalized,
+    }
+}
+
+num_enum! {
+    #[repr(u32)]
+    enum PlaybackState: fmod::studio::PlaybackState {
+        Playing,
+        Sustaining,
+        Stopped,
+        Starting,
+        Stopping,
+    }
+}
+
+num_enum! {
+    #[repr(u32)]
+    enum EventProperty: fmod::studio::EventProperty {
+        ChannelPriority,
+        ScheduleDelay,
+        ScheduleLookahead,
+        MinimumDistance,
+        MaximumDistance,
+        Cooldown,
+    }
+}
+
 pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::studio::StopMode::bind(module)?;
+    fmod::studio::ParameterKind::bind(module)?;
+    fmod::studio::PlaybackState::bind(module)?;
+    fmod::studio::EventProperty::bind(module)?;
 
     Ok(())
 }

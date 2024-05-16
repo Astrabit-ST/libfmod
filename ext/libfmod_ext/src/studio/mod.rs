@@ -8,6 +8,7 @@ mod structs;
 mod bank;
 mod bus;
 mod event_description;
+mod event_instance;
 mod system;
 mod vca;
 
@@ -22,6 +23,7 @@ pub fn bind(module: magnus::RModule) -> Result<()> {
     bank::bind(module)?;
     bus::bind(module)?;
     event_description::bind(module)?;
+    event_instance::bind(module)?;
     vca::bind(module)?;
 
     Ok(())

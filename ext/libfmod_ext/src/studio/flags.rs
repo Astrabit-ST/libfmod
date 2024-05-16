@@ -30,9 +30,21 @@ ruby_bitflags! {
   }
 }
 
+ruby_bitflags! {
+  #[repr(u32)]
+  mod ParameterFlags: fmod::studio::ParameterFlags {
+    const READONLY;
+    const AUTOMATIC;
+    const GLOBAL;
+    const DISCRETE;
+    const LABELED;
+  }
+}
+
 pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::studio::InitFlags::bind(module)?;
     fmod::studio::LoadBankFlags::bind(module)?;
+    fmod::studio::ParameterFlags::bind(module)?;
 
     Ok(())
 }

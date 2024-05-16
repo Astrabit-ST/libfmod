@@ -5,6 +5,10 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 use crate::{Bindable, Result};
 
+use super::enums::ParameterKind;
+use super::flags::ParameterFlags;
+use crate::core::structs::Guid;
+
 use crate::ruby_struct;
 
 ruby_struct! {
@@ -26,9 +30,31 @@ ruby_struct! {
   }
 }
 
+ruby_struct! {
+  struct ParameterID: fmod::studio::ParameterID {
+    data_1: u32,
+    data_2: u32,
+  }
+}
+
+ruby_struct! {
+  struct ParameterDescription: fmod::studio::ParameterDescription {
+    name: magnus::RString,
+    id: ParameterID,
+    minimum: f32,
+    maximum: f32,
+    default_value: f32,
+    kind: ParameterKind,
+    flags: ParameterFlags,
+    guid: Guid,
+  }
+}
+
 pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::studio::AdvancedSettings::bind(module)?;
     fmod::studio::MemoryUsage::bind(module)?;
+    fmod::studio::ParameterID::bind(module)?;
+    fmod::studio::ParameterDescription::bind(module)?;
 
     Ok(())
 }
