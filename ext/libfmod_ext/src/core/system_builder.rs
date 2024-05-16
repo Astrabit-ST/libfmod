@@ -15,7 +15,7 @@ use super::{
     system::System,
 };
 
-#[magnus::wrap(class = "FMOD::Studio::SystemBuilder", free_immediately, size)]
+#[magnus::wrap(class = "FMOD::SystemBuilder", free_immediately, size)]
 pub struct SystemBuilder(RefCell<Option<fmod::SystemBuilder>>);
 
 unsafe impl Send for SystemBuilder {}
