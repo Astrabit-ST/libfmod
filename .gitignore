@@ -21,3 +21,11 @@ libfmodstudio.so.13
 libfmodstudio.so.13.20
 libfmodstudioL.so.13
 libfmodstudioL.so.13.20
+fmod_vc.lib
+fmod.dll
+fmodL_vc.lib
+fmodL.dll
+fmodstudio_vc.lib
+fmodstudio.dll
+fmodstudioL_vc.lib
+fmodstudioL.dll

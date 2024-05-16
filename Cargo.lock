@@ -97,7 +97,7 @@ dependencies = [
 [[package]]
 name = "fmod-oxide"
 version = "2.2.0"
-source = "git+https://github.com/Speak2Erase/fmod-oxide#7ac9e9c115cea79b246d4d1ceb01c326fbd25a31"
+source = "git+https://github.com/Speak2Erase/fmod-oxide#330506f4e8aea24ca7f0bcc8a6401ee8c4ca17f6"
 dependencies = [
  "bitflags",
  "fmod-sys",
@@ -110,7 +110,7 @@ dependencies = [
 [[package]]
 name = "fmod-sys"
 version = "2.2.20"
-source = "git+https://github.com/Speak2Erase/fmod-oxide#7ac9e9c115cea79b246d4d1ceb01c326fbd25a31"
+source = "git+https://github.com/Speak2Erase/fmod-oxide#330506f4e8aea24ca7f0bcc8a6401ee8c4ca17f6"
 dependencies = [
  "bindgen",
  "cc",
@@ -160,7 +160,7 @@ dependencies = [
 [[package]]
 name = "lanyard"
 version = "0.1.2"
-source = "git+https://github.com/Speak2Erase/fmod-oxide#7ac9e9c115cea79b246d4d1ceb01c326fbd25a31"
+source = "git+https://github.com/Speak2Erase/fmod-oxide#330506f4e8aea24ca7f0bcc8a6401ee8c4ca17f6"
 
 [[package]]
 name = "lazy_static"
@@ -445,9 +445,9 @@ dependencies = [
 
 [[package]]
 name = "toml_datetime"
-version = "0.6.5"
+version = "0.6.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3550f4e9685620ac18a50ed434eb3aec30db8ba93b0287467bca5826ea25baf1"
+checksum = "4badfd56924ae69bcc9039335b2e017639ce3f9b001c393c1b2d1ef846ce2cbf"
 
 [[package]]
 name = "toml_edit"
