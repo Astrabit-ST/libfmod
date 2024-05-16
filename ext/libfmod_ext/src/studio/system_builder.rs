@@ -3,7 +3,7 @@
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
-use crate::{Bindable, FromRuby, IntoRuby, Result};
+use crate::{core::flags::InitFlags, Bindable, FromRuby, IntoRuby, Result};
 use magnus::prelude::*;
 use std::cell::RefCell;
 
@@ -22,6 +22,7 @@ impl SystemBuilder {
         unsafe { fmod::studio::SystemBuilder::new() }.into_ruby()
     }
 
+    // FIXME return self (maybe make our own builder?)
     pub fn settings(&self, settings: magnus::RStruct) -> Result<()> {
         let advanced_settings = settings.from_ruby()?;
         let mut builder = self.0.borrow_mut();
@@ -41,7 +42,7 @@ impl SystemBuilder {
         &self,
         max_channels: i32,
         studio_flags: StudioInitFlags,
-        flags: u32,
+        flags: InitFlags,
     ) -> Result<System> {
         let mut builder = self.0.borrow_mut();
 
@@ -54,7 +55,7 @@ impl SystemBuilder {
         };
 
         builder
-            .build(max_channels, studio_flags.from_ruby()?, flags.into())
+            .build(max_channels, studio_flags.from_ruby()?, flags.from_ruby()?)
             .into_ruby()
     }
 }
