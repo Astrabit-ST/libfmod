@@ -147,6 +147,7 @@ extern_struct_bind! {
     fn get_parameter_by_id -> 1;
     fn set_parameter_by_id -> 3;
     fn set_parameter_by_id_with_label -> 3;
+    fn set_parameter_by_ids -> 3;
     fn get_parameter_by_name -> 1;
     fn set_parameter_by_name -> 3;
     fn set_parameter_by_name_with_label -> 3;

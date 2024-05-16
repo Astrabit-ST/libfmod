@@ -5,7 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 use crate::{Bindable, Result};
 
-use super::enums::ParameterKind;
+use super::enums::{InstanceType, ParameterKind};
 use super::flags::ParameterFlags;
 use crate::core::structs::Guid;
 
@@ -73,6 +73,19 @@ ruby_struct! {
   }
 }
 
+ruby_struct! {
+  struct CommandInfo: fmod::studio::CommandInfo {
+    command_name: magnus::RString,
+    parent_command_index: i32,
+    frame_number: i32,
+    frame_time: f32,
+    instance_type: InstanceType,
+    output_type: InstanceType,
+    instance_handle: u32,
+    output_handle: u32,
+  }
+}
+
 pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::studio::AdvancedSettings::bind(module)?;
     fmod::studio::MemoryUsage::bind(module)?;
@@ -81,6 +94,7 @@ pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::studio::BufferInfo::bind(module)?;
     fmod::studio::BufferUsage::bind(module)?;
     fmod::studio::CpuUsage::bind(module)?;
+    fmod::studio::CommandInfo::bind(module)?;
 
     Ok(())
 }

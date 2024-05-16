@@ -54,11 +54,27 @@ num_enum! {
     }
 }
 
+num_enum! {
+    #[repr(u32)]
+    enum InstanceType: fmod::studio::InstanceType {
+        None,
+        System,
+        EventDescription,
+        EventInstance,
+        ParameterInstance,
+        Bus,
+        Vca,
+        Bank,
+        CommandReplay,
+    }
+}
+
 pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::studio::StopMode::bind(module)?;
     fmod::studio::ParameterKind::bind(module)?;
     fmod::studio::PlaybackState::bind(module)?;
     fmod::studio::EventProperty::bind(module)?;
+    fmod::studio::InstanceType::bind(module)?;
 
     Ok(())
 }
