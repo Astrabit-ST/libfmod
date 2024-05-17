@@ -11,6 +11,7 @@ mod geometry;
 mod reverb_3d;
 mod sound;
 mod sound_group;
+mod sync_point;
 mod system;
 mod system_builder;
 
