@@ -8,7 +8,7 @@ use crate::{Bindable, Result};
 
 use crate::{extern_struct, extern_struct_bind, extern_struct_fns};
 
-use super::dsp_connection::DspConnection;
+use super::dsp_connection::DSPConnection;
 use super::enums::{DspConnectionType, DspType, SpeakerMode};
 use super::flags::ChannelMask;
 use super::structs::DspMeteringInfo;
@@ -23,13 +23,13 @@ extern_struct_fns! {
     fn set_channel_format(mask: ChannelMask, channel_count: i32, speaker_mode: SpeakerMode) -> ();
     fn get_channel_format() -> (ChannelMask, i32, SpeakerMode);
     fn get_output_channel_format(mask: ChannelMask, channel_count: i32, speaker_mode: SpeakerMode) -> (ChannelMask, i32, SpeakerMode);
-    fn add_input(input: &DSP, kind: DspConnectionType) -> DspConnection;
-    fn get_input(index: i32) -> (DSP, DspConnection);
-    fn get_output(index: i32) -> (DSP, DspConnection);
+    fn add_input(input: &DSP, kind: DspConnectionType) -> DSPConnection;
+    fn get_input(index: i32) -> (DSP, DSPConnection);
+    fn get_output(index: i32) -> (DSP, DSPConnection);
     fn get_input_count() -> i32;
     fn get_output_count() -> i32;
     fn disconnect_all(inputs: bool, outputs: bool) -> ();
-    fn disconnect_from(target: Option<&DSP>, connection: Option<&DspConnection>) -> ();
+    fn disconnect_from(target: Option<&DSP>, connection: Option<&DSPConnection>) -> ();
     fn reset() -> ();
     fn release() -> ();
     fn get_type() -> DspType;
