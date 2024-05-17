@@ -10,7 +10,6 @@ use crate::{extern_struct, extern_struct_bind, extern_struct_fns};
 
 use super::structs::Vector;
 
-// TODO subclass channelcontrol
 extern_struct! {
   struct Geometry: fmod::Geometry => "FMOD::Geometry"
 }

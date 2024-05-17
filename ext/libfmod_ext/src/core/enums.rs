@@ -146,6 +146,15 @@ num_enum! {
     }
 }
 
+num_enum! {
+    #[repr(u32)]
+    enum SoundGroupBehavior: fmod::SoundGroupBehavior {
+        Fail,
+        Mute,
+        StealLowest
+    }
+}
+
 pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::SpeakerMode::bind(module)?;
     fmod::OutputType::bind(module)?;
@@ -154,6 +163,7 @@ pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::PortType::bind(module)?;
     fmod::TimeUnit::bind(module)?;
     fmod::Speaker::bind(module)?;
+    fmod::SoundGroupBehavior::bind(module)?;
 
     Ok(())
 }

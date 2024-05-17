@@ -10,7 +10,6 @@ use crate::{extern_struct, extern_struct_bind, extern_struct_fns};
 
 use super::structs::{ReverbProperties, Vector};
 
-// TODO subclass channelcontrol
 extern_struct! {
   struct Reverb3D: fmod::Reverb3D => "FMOD::Reverb3D"
 }

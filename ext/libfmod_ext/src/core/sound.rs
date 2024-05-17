@@ -8,7 +8,6 @@ use crate::{Bindable, Result};
 
 use crate::{extern_struct, extern_struct_bind, extern_struct_fns};
 
-// TODO subclass channelcontrol
 extern_struct! {
   struct Sound: fmod::Sound => "FMOD::Sound"
 }
