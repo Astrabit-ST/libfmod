@@ -62,12 +62,22 @@ ruby_struct! {
   }
 }
 
+ruby_struct! {
+  struct DspMeteringInfo: fmod::DspMeteringInfo {
+    sample_count: i32,
+    peak_level: [f32; 32],
+    rms_level: [f32; 32],
+    channel_count: i16,
+  }
+}
+
 pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::Guid::bind(module)?;
     fmod::Vector::bind(module)?;
     fmod::Attributes3D::bind(module)?;
     fmod::CpuUsage::bind(module)?;
     fmod::ReverbProperties::bind(module)?;
+    fmod::DspMeteringInfo::bind(module)?;
 
     let class = fmod::ReverbProperties::class();
     let module: magnus::RModule = class.define_module("Presets")?;

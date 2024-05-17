@@ -7,6 +7,7 @@ pub mod structs;
 mod channel;
 mod channel_group;
 mod dsp;
+mod dsp_connection;
 mod geometry;
 mod reverb_3d;
 mod sound;
@@ -29,6 +30,7 @@ pub fn bind(module: magnus::RModule) -> Result<()> {
     reverb_3d::bind(module)?;
     sound::bind(module)?;
     geometry::bind(module)?;
+    dsp_connection::bind(module)?;
 
     Ok(())
 }

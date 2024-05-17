@@ -35,9 +35,34 @@ ruby_bitflags! {
     }
 }
 
+ruby_bitflags! {
+    #[repr(u32)]
+    mod ChannelMask: fmod::ChannelMask {
+        const FRONT_LEFT;
+        const FRONT_RIGHT;
+        const FRONT_CENTER;
+        const LOW_FREQUENCY;
+        const SURROUND_LEFT;
+        const SURROUND_RIGHT;
+        const BACK_LEFT;
+        const BACK_RIGHT;
+        const BACK_CENTER;
+        const MONO;
+        const STEREO;
+        const LRC;
+        const QUAD;
+        const SURROUND;
+        const _5POINT1;
+        const _5POINT1_REARS;
+        const _7POINT0;
+        const _7POINT1;
+    }
+}
+
 pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::InitFlags::bind(module)?;
     fmod::DriverState::bind(module)?;
+    fmod::ChannelMask::bind(module)?;
 
     Ok(())
 }

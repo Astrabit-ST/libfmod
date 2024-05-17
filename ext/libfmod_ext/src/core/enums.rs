@@ -155,6 +155,16 @@ num_enum! {
     }
 }
 
+num_enum! {
+    #[repr(u32)]
+    enum DspConnectionType: fmod::DspConnectionType {
+        Standard,
+        Sidechain,
+        Send,
+        SendSidechain,
+    }
+}
+
 pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::SpeakerMode::bind(module)?;
     fmod::OutputType::bind(module)?;
@@ -164,6 +174,7 @@ pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::TimeUnit::bind(module)?;
     fmod::Speaker::bind(module)?;
     fmod::SoundGroupBehavior::bind(module)?;
+    fmod::DspConnectionType::bind(module)?;
 
     Ok(())
 }
