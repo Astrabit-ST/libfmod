@@ -17,7 +17,7 @@ extern_struct! {
 }
 
 extern_struct_fns! {
-    impl CommandReplay {
+    impl CommandReplay: fmod::studio::CommandReplay {
         // TODO userdata & callbacks
         fn release() -> ();
         fn start() -> ();

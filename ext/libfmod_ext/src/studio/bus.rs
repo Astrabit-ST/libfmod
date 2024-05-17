@@ -17,7 +17,7 @@ extern_struct! {
 }
 
 extern_struct_fns! {
-    impl Bus {
+    impl Bus: fmod::studio::Bus {
       fn set_paused(paused: bool) -> ();
       fn get_paused() -> bool;
       fn stop_all_events(stop_mode: StopMode) -> ();

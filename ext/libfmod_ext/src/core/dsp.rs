@@ -19,7 +19,7 @@ extern_struct! {
 }
 
 extern_struct_fns! {
-  impl DSP {
+  impl DSP: fmod::Dsp {
     fn set_channel_format(mask: ChannelMask, channel_count: i32, speaker_mode: SpeakerMode) -> ();
     fn get_channel_format() -> (ChannelMask, i32, SpeakerMode);
     fn get_output_channel_format(mask: ChannelMask, channel_count: i32, speaker_mode: SpeakerMode) -> (ChannelMask, i32, SpeakerMode);

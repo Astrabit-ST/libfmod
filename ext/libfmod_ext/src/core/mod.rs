@@ -5,6 +5,7 @@ pub mod flags;
 pub mod structs;
 
 mod channel;
+mod channel_control;
 mod channel_group;
 mod dsp;
 mod dsp_connection;
@@ -21,11 +22,12 @@ pub fn bind(module: magnus::RModule) -> Result<()> {
     enums::bind(module)?;
     flags::bind(module)?;
 
+    channel_control::bind(module)?;
+    channel_group::bind(module)?;
+    channel::bind(module)?;
     system_builder::bind(module)?;
     system::bind(module)?;
     dsp::bind(module)?;
-    channel_group::bind(module)?;
-    channel::bind(module)?;
     sound_group::bind(module)?;
     reverb_3d::bind(module)?;
     sound::bind(module)?;

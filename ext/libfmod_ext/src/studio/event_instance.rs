@@ -18,7 +18,7 @@ extern_struct! {
 }
 
 extern_struct_fns! {
-    impl EventInstance {
+    impl EventInstance: fmod::studio::EventInstance {
       fn set_3d_attributes(attributes: Attributes3D) -> ();
       fn get_3d_attributes() -> Attributes3D;
       fn set_listener_mask(mask: u32) -> ();

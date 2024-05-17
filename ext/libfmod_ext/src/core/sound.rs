@@ -18,7 +18,7 @@ extern_struct! {
 }
 
 extern_struct_fns! {
-  impl Sound {
+  impl Sound: fmod::Sound {
     // TODO openstate
     fn set_3d_cone_settings(inside: f32, outside: f32, volume: f32) -> ();
     fn get_3d_cone_settings() -> (f32, f32, f32);

@@ -15,7 +15,7 @@ extern_struct! {
 }
 
 extern_struct_fns! {
-  impl Reverb3D {
+  impl Reverb3D: fmod::Reverb3D {
     fn set_3d_attributes(position: Option<Vector>, min_distance: f32, max_distance: f32) -> ();
     fn get_3d_attributes() -> (Vector, f32, f32);
     fn set_properties(properties: ReverbProperties) -> ();

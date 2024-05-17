@@ -29,7 +29,7 @@ extern_struct! {
 }
 
 extern_struct_fns! {
-  impl System {
+  impl System: fmod::studio::System {
     fn load_bank_file(filename: magnus::RString, flags: LoadBankFlags) -> Bank;
     fn load_bank_memory(buffer: magnus::RString, flags: LoadBankFlags) -> Bank;
     fn unload_all_banks() -> ();

@@ -31,7 +31,7 @@ macro_rules! extern_struct {
 
 #[macro_export]
 macro_rules! extern_struct_fns {
-    (impl $name:ident {
+    (impl $name:ident: $fmod_ty:path {
       $( fn $fn_name:ident($($arg_name:ident: $arg_type:ty),* $(,)?) -> $fn_return:ty );* $(;)?
     }) => {
       impl $name {
@@ -39,7 +39,8 @@ macro_rules! extern_struct_fns {
           pub(crate) fn $fn_name(&self, $($arg_name: $arg_type),*) -> $crate::Result<$fn_return> {
             #[allow(unused_imports)]
             use $crate::{FromRuby, IntoRuby};
-            self.0.$fn_name($($arg_name.from_ruby()?),*).into_ruby()
+            let this: $fmod_ty = self.from_ruby()?;
+            this.$fn_name($($arg_name.from_ruby()?),*).into_ruby()
           }
         )*
       }
@@ -48,7 +49,7 @@ macro_rules! extern_struct_fns {
 
 #[macro_export]
 macro_rules! extern_struct_bind {
-    (impl Bindable for $name:ident: $fmod_ty:path {
+    (impl Bindable for $name:ident: $fmod_ty:path $( , super = $superclass:path )? {
       $( fn $fn_name:ident -> $arity:literal );* $(;)?
       $( |$class_ident:ident| $block:block)?
     }) => {
@@ -58,7 +59,9 @@ macro_rules! extern_struct_bind {
           #[allow(unused_imports)]
           fn bind(module: impl magnus::Module) -> $crate::Result<()> {
             use magnus::Module;
-            let class = module.define_class(stringify!($name), magnus::class::object())?;
+            let _superclass = magnus::class::object();
+            $( let _superclass = $superclass(); )?
+            let class = module.define_class(stringify!($name), _superclass)?;
             $(
               paste::paste! {
                 class.define_method(stringify!($fn_name), magnus::method!($name::$fn_name, $arity))?;
@@ -69,7 +72,8 @@ macro_rules! extern_struct_bind {
             Ok(())
           }
 
-          fn class() -> impl magnus::Module {
+          #[allow(refining_impl_trait)]
+          fn class() -> magnus::RClass {
             use magnus::value::InnerValue;
             let ruby = magnus::Ruby::get().unwrap();
             CLASS.get().unwrap().get_inner_with(&ruby)
@@ -120,7 +124,8 @@ macro_rules! num_enum {
             Ok(())
           }
 
-          fn class() -> impl magnus::Module {
+          #[allow(refining_impl_trait)]
+          fn class() -> magnus::RModule {
             use magnus::value::InnerValue;
             let ruby = magnus::Ruby::get().unwrap();
             MODULE.get().unwrap().get_inner_with(&ruby)
@@ -180,7 +185,8 @@ macro_rules! ruby_struct {
             module.const_set(stringify!($name), class)
           }
 
-          fn class() -> impl magnus::Module {
+          #[allow(refining_impl_trait)]
+          fn class() -> magnus::RClass {
             use magnus::value::InnerValue;
             let ruby = magnus::Ruby::get().unwrap();
             CLASS.get().unwrap().get_inner_with(&ruby)
@@ -224,7 +230,8 @@ macro_rules! ruby_bitflags {
             Ok(())
           }
 
-          fn class() -> impl magnus::Module {
+          #[allow(refining_impl_trait)]
+          fn class() -> magnus::RModule {
             use magnus::value::InnerValue;
             let ruby = magnus::Ruby::get().unwrap();
             MODULE.get().unwrap().get_inner_with(&ruby)

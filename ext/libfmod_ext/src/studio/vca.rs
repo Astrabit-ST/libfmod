@@ -15,7 +15,7 @@ extern_struct! {
 }
 
 extern_struct_fns! {
-    impl VCA {
+    impl VCA: fmod::studio::Vca {
       fn set_volume(volume: f32) -> ();
       fn get_volume() -> (f32, f32);
       fn get_id() -> Guid;

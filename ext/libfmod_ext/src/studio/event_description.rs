@@ -17,7 +17,7 @@ extern_struct! {
 }
 
 extern_struct_fns! {
-    impl EventDescription {
+    impl EventDescription: fmod::studio::EventDescription {
         fn is_3d() -> bool;
         fn is_doppler_enabled() -> bool;
         fn is_oneshot() -> bool;

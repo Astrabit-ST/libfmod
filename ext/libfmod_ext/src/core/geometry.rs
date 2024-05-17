@@ -15,7 +15,7 @@ extern_struct! {
 }
 
 extern_struct_fns! {
-  impl Geometry {
+  impl Geometry: fmod::Geometry {
     fn set_active(active: bool) -> ();
     fn get_active() -> bool;
     fn get_max_polygons() -> (i32, i32);

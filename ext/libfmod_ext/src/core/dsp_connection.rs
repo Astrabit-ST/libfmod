@@ -16,7 +16,7 @@ extern_struct! {
 }
 
 extern_struct_fns! {
-  impl DSPConnection {
+  impl DSPConnection: fmod::DspConnection {
     fn get_input() -> DSP;
     fn get_output() -> DSP;
     fn get_type() -> DspConnectionType;

@@ -17,7 +17,7 @@ extern_struct! {
 }
 
 extern_struct_fns! {
-  impl SoundGroup {
+  impl SoundGroup: fmod::SoundGroup {
     fn get_name() -> magnus::RString;
     fn release() -> ();
     // TODO userdata

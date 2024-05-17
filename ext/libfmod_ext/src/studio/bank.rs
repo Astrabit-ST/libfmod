@@ -19,7 +19,7 @@ extern_struct! {
 }
 
 extern_struct_fns! {
-    impl Bank {
+    impl Bank: fmod::studio::Bank {
         fn get_id() -> Guid;
         fn get_path() -> magnus::RString;
         fn is_valid() -> bool;

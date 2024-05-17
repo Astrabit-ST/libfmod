@@ -37,14 +37,14 @@ impl System {
 }
 
 extern_struct_fns! {
-  impl System {
+  impl System: fmod::System {
     // TODO create_sound, stream, dsp
     fn create_dsp_by_type(dsp_type: DspType) -> DSP;
     fn create_channel_group(name: magnus::RString) -> ChannelGroup;
     fn create_sound_group(name: magnus::RString) -> SoundGroup;
     fn create_reverb_3d() -> Reverb3D;
-    fn play_sound(sound: &Sound, channel_group: Option<&ChannelGroup>, paused: bool) -> Channel;
-    fn play_dsp(dsp: &DSP, channel_group: Option<&ChannelGroup>, paused: bool) -> Channel;
+    fn play_sound(sound: &Sound, channel_group: Option<ChannelGroup>, paused: bool) -> Channel;
+    fn play_dsp(dsp: &DSP, channel_group: Option<ChannelGroup>, paused: bool) -> Channel;
     fn get_channel(channel_id: i32) -> Channel;
     // TODO get dsp info
     fn get_master_channel_group() -> ChannelGroup;
@@ -97,8 +97,8 @@ extern_struct_fns! {
     fn get_3d_listener_attributes(listener: i32) -> (Vector, Vector, Vector, Vector);
     fn set_reverb_properties(instance: i32, properties: Option<ReverbProperties>) -> ();
     fn get_reverb_properties(instance: i32) -> ReverbProperties;
-    fn attach_channel_group_to_port(kind: PortType, index: Option<u64>, channel_group: &ChannelGroup, pass_through: bool) -> ();
-    fn detach_channel_group_from_port(channel_group: &ChannelGroup) -> ();
+    fn attach_channel_group_to_port(kind: PortType, index: Option<u64>, channel_group: ChannelGroup, pass_through: bool) -> ();
+    fn detach_channel_group_from_port(channel_group: ChannelGroup) -> ();
     fn get_software_channels() -> i32;
     fn get_software_format() -> (i32, SpeakerMode, i32);
     fn get_dsp_buffer_size() -> (u32, i32);
