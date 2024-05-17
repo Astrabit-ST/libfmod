@@ -464,6 +464,15 @@ where
     }
 }
 
+impl<T, TWrap> IntoRuby<Vec<TWrap>> for Vec<T>
+where
+    T: IntoRuby<TWrap>,
+{
+    fn into_ruby(self) -> Result<Vec<TWrap>> {
+        self.into_iter().map(|item| item.into_ruby()).collect()
+    }
+}
+
 impl<T, TWrap> FromRuby<Vec<TWrap>> for Vec<T>
 where
     T: FromRuby<TWrap>,
