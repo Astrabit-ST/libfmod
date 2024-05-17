@@ -18,7 +18,7 @@ use super::{
     reverb_3d::Reverb3D,
     sound::Sound,
     sound_group::SoundGroup,
-    structs::{CPUUsage, Guid, Vector},
+    structs::{CPUUsage, Guid, ReverbProperties, Vector},
     system_builder::SystemBuilder,
 };
 
@@ -95,7 +95,8 @@ extern_struct_fns! {
     fn is_recording(driver_id: i32) -> bool;
     fn set_3d_listener_attributes(listener: i32, pos: Option<Vector>, velocity: Option<Vector>, forward: Option<Vector>, up: Option<Vector>) -> ();
     fn get_3d_listener_attributes(listener: i32) -> (Vector, Vector, Vector, Vector);
-    // TODO reverb props
+    fn set_reverb_properties(instance: i32, properties: Option<ReverbProperties>) -> ();
+    fn get_reverb_properties(instance: i32) -> ReverbProperties;
     fn attach_channel_group_to_port(kind: PortType, index: Option<u64>, channel_group: &ChannelGroup, pass_through: bool) -> ();
     fn detach_channel_group_from_port(channel_group: &ChannelGroup) -> ();
     fn get_software_channels() -> i32;
@@ -166,6 +167,8 @@ extern_struct_bind! {
     fn is_recording -> 1;
     fn set_3d_listener_attributes -> 5;
     fn get_3d_listener_attributes -> 1;
+    fn set_reverb_properties -> 2;
+    fn get_reverb_properties -> 1;
     fn attach_channel_group_to_port -> 4;
     fn detach_channel_group_from_port -> 1;
     fn get_software_channels -> 0;

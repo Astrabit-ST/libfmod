@@ -52,19 +52,30 @@ macro_rules! extern_struct_bind {
       $( fn $fn_name:ident -> $arity:literal );* $(;)?
       $( |$class_ident:ident| $block:block)?
     }) => {
-      impl $crate::Bindable for $fmod_ty {
-        fn bind(module: impl magnus::Module) -> $crate::Result<()> {
-          use magnus::Module;
-          let class = module.define_class(stringify!($name), magnus::class::object())?;
-          $(
-            paste::paste! {
-              class.define_method(stringify!($fn_name), magnus::method!($name::$fn_name, $arity))?;
-            }
-          )*
-          $( let $class_ident = class; $block )?
-          Ok(())
+      const _: () ={
+        static CLASS: once_cell::sync::OnceCell<magnus::value::Opaque<magnus::RClass>> = once_cell::sync::OnceCell::new();
+        impl $crate::Bindable for $fmod_ty {
+          #[allow(unused_imports)]
+          fn bind(module: impl magnus::Module) -> $crate::Result<()> {
+            use magnus::Module;
+            let class = module.define_class(stringify!($name), magnus::class::object())?;
+            $(
+              paste::paste! {
+                class.define_method(stringify!($fn_name), magnus::method!($name::$fn_name, $arity))?;
+              }
+            )*
+            let _ = CLASS.set(class.into());
+            $( let $class_ident = class; $block )?
+            Ok(())
+          }
+
+          fn class() -> impl magnus::Module {
+            use magnus::value::InnerValue;
+            let ruby = magnus::Ruby::get().unwrap();
+            CLASS.get().unwrap().get_inner_with(&ruby)
+          }
         }
-      }
+      };
     };
 }
 
@@ -79,6 +90,7 @@ macro_rules! num_enum {
       pub type $name = $repr;
       const _: () = {
         type _Wrapped = $fmod_ty;
+        static MODULE: once_cell::sync::OnceCell<magnus::value::Opaque<magnus::RModule>> = once_cell::sync::OnceCell::new();
         impl $crate::FromRuby<_Wrapped> for $name {
           fn from_ruby(self) -> $crate::Result<_Wrapped> {
             let _wrapped: _Wrapped = _Wrapped::try_from(self)
@@ -104,7 +116,14 @@ macro_rules! num_enum {
             $(
               module.const_set(stringify!($variant), _Wrapped::$variant.into_ruby()?)?;
             )*
+            let _ = MODULE.set(module.into());
             Ok(())
+          }
+
+          fn class() -> impl magnus::Module {
+            use magnus::value::InnerValue;
+            let ruby = magnus::Ruby::get().unwrap();
+            MODULE.get().unwrap().get_inner_with(&ruby)
           }
         }
       };
@@ -160,6 +179,12 @@ macro_rules! ruby_struct {
             let _ = CLASS.set(class.into());
             module.const_set(stringify!($name), class)
           }
+
+          fn class() -> impl magnus::Module {
+            use magnus::value::InnerValue;
+            let ruby = magnus::Ruby::get().unwrap();
+            CLASS.get().unwrap().get_inner_with(&ruby)
+          }
         }
       };
     };
@@ -174,6 +199,7 @@ macro_rules! ruby_bitflags {
       const _: () = {
         use magnus::Module;
         type _Wrapped = $fmod_ty;
+        static MODULE: once_cell::sync::OnceCell<magnus::value::Opaque<magnus::RModule>> = once_cell::sync::OnceCell::new();
 
         impl $crate::FromRuby<_Wrapped> for $flag_name {
           fn from_ruby(self) -> $crate::Result<_Wrapped> {
@@ -194,7 +220,14 @@ macro_rules! ruby_bitflags {
             $(
               class.const_set::<_, $flag_name>(stringify!($flag), _Wrapped::$flag.into_ruby()?)?;
             )*
+            let _ = MODULE.set(class.into());
             Ok(())
+          }
+
+          fn class() -> impl magnus::Module {
+            use magnus::value::InnerValue;
+            let ruby = magnus::Ruby::get().unwrap();
+            MODULE.get().unwrap().get_inner_with(&ruby)
           }
         }
       };
@@ -212,6 +245,8 @@ pub trait FromRuby<T>: Sized {
 
 pub trait Bindable {
     fn bind(module: impl magnus::Module) -> Result<()>;
+
+    fn class() -> impl magnus::Module;
 }
 
 macro_rules! identity_impl {
