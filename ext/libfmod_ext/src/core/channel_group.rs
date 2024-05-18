@@ -8,7 +8,9 @@ use crate::{Bindable, FromRuby, IntoRuby, Result};
 
 use crate::{extern_struct_bind, extern_struct_fns};
 
+use super::channel::Channel;
 use super::channel_control::ChannelControl;
+use super::dsp_connection::DSPConnection;
 
 // public api
 pub type ChannelGroup = magnus::typed_data::Obj<ChannelControl>;
@@ -38,12 +40,26 @@ impl FromRuby<fmod::ChannelGroup> for ChannelGroup {
 extern_struct_fns! {
   impl ChannelGroupImpl: fmod::ChannelGroup {
     fn get_channel_count() -> i32;
+    fn get_channel(index: i32) -> Channel;
+    fn get_name() -> magnus::RString;
+    fn release() -> ();
+    fn add_group(group: ChannelGroup, propgate_dsp_clock: bool) -> DSPConnection;
+    fn get_group_count() -> i32;
+    fn get_group(index: i32) -> ChannelGroup;
+    fn get_parent_group() -> ChannelGroup;
   }
 }
 
 extern_struct_bind! {
   impl Bindable for ChannelGroupImpl: fmod::ChannelGroup, super = fmod::ChannelControl::class {
     fn get_channel_count -> 0;
+    fn get_channel -> 1;
+    fn get_name -> 0;
+    fn release -> 0;
+    fn add_group -> 2;
+    fn get_group_count -> 0;
+    fn get_group -> 1;
+    fn get_parent_group -> 0;
   }
 }
 
