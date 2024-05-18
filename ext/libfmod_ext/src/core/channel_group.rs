@@ -10,7 +10,7 @@ use magnus::prelude::*;
 use crate::{extern_struct_bind, extern_struct_fns};
 
 use super::channel::Channel;
-use super::channel_control::ChannelControl;
+use super::channel_control::{ChannelControl, ChannelControlType};
 use super::dsp_connection::DSPConnection;
 
 // public api
@@ -20,7 +20,7 @@ type ChannelGroupImpl = ChannelControl;
 
 impl IntoRuby<ChannelGroup> for fmod::ChannelGroup {
     fn into_ruby(self) -> Result<ChannelGroup> {
-        let channel_control = ChannelControl(*self);
+        let channel_control = ChannelControl(*self, ChannelControlType::ChannelGroup);
         let obj = magnus::typed_data::Obj::wrap_as(channel_control, fmod::ChannelGroup::class());
         Ok(obj)
     }
@@ -28,13 +28,13 @@ impl IntoRuby<ChannelGroup> for fmod::ChannelGroup {
 
 impl FromRuby<fmod::ChannelGroup> for ChannelGroupImpl {
     fn from_ruby(self) -> Result<fmod::ChannelGroup> {
-        Ok(self.into_channel_group())
+        self.into_channel_group()
     }
 }
 
 impl FromRuby<fmod::ChannelGroup> for ChannelGroup {
     fn from_ruby(self) -> Result<fmod::ChannelGroup> {
-        Ok(self.into_channel_group())
+        self.into_channel_group()
     }
 }
 

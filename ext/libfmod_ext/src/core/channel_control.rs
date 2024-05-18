@@ -4,7 +4,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 #![allow(clippy::upper_case_acronyms)]
-use crate::{Bindable, FromRuby, IntoRuby, Result};
+use crate::{Bindable, FromRuby, Result};
 use magnus::prelude::*;
 
 use crate::{extern_struct_bind, extern_struct_fns};
@@ -13,13 +13,15 @@ use super::{dsp::DSP, structs::Vector, system::System};
 
 #[derive(Clone, Copy)]
 #[magnus::wrap(class = "FMOD::ChannelControl", size, free_immediately)]
-// FIXME add type validation
-pub struct ChannelControl(pub(super) fmod::ChannelControl);
+pub struct ChannelControl(
+    pub(super) fmod::ChannelControl,
+    pub(super) ChannelControlType,
+);
 
-impl IntoRuby<ChannelControl> for fmod::ChannelControl {
-    fn into_ruby(self) -> Result<ChannelControl> {
-        Ok(ChannelControl(self))
-    }
+#[derive(Clone, Copy)]
+pub enum ChannelControlType {
+    Channel,
+    ChannelGroup,
 }
 
 impl FromRuby<fmod::ChannelControl> for ChannelControl {
@@ -29,16 +31,30 @@ impl FromRuby<fmod::ChannelControl> for ChannelControl {
 }
 
 impl ChannelControl {
-    pub fn into_channel(self) -> fmod::Channel {
+    pub fn into_channel(self) -> Result<fmod::Channel> {
+        if !matches!(self.1, ChannelControlType::Channel) {
+            return Err(magnus::Error::new(
+                magnus::exception::runtime_error(),
+                "ChannelControl is not a Channel",
+            ));
+        }
+
         let channel: *mut fmod::ffi::FMOD_CHANNELCONTROL = self.0.into();
         let channel: *mut fmod::ffi::FMOD_CHANNEL = channel.cast();
-        fmod::Channel::from(channel)
+        Ok(fmod::Channel::from(channel))
     }
 
-    pub fn into_channel_group(self) -> fmod::ChannelGroup {
+    pub fn into_channel_group(self) -> Result<fmod::ChannelGroup> {
+        if !matches!(self.1, ChannelControlType::ChannelGroup) {
+            return Err(magnus::Error::new(
+                magnus::exception::runtime_error(),
+                "ChannelControl is not a ChannelGroup",
+            ));
+        }
+
         let channel_group: *mut fmod::ffi::FMOD_CHANNELCONTROL = self.0.into();
         let channel_group: *mut fmod::ffi::FMOD_CHANNELGROUP = channel_group.cast();
-        fmod::ChannelGroup::from(channel_group)
+        Ok(fmod::ChannelGroup::from(channel_group))
     }
 }
 

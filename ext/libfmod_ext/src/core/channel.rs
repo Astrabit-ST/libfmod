@@ -10,7 +10,7 @@ use crate::{Bindable, FromRuby, IntoRuby, Result};
 
 use crate::{extern_struct_bind, extern_struct_fns};
 
-use super::channel_control::ChannelControl;
+use super::channel_control::{ChannelControl, ChannelControlType};
 use super::channel_group::ChannelGroup;
 use super::enums::TimeUnit;
 use super::sound::Sound;
@@ -22,7 +22,7 @@ type ChannelImpl = ChannelControl;
 
 impl IntoRuby<Channel> for fmod::Channel {
     fn into_ruby(self) -> Result<Channel> {
-        let channel_control = ChannelControl(*self);
+        let channel_control = ChannelControl(*self, ChannelControlType::Channel);
         let obj = magnus::typed_data::Obj::wrap_as(channel_control, fmod::Channel::class());
         Ok(obj)
     }
@@ -30,13 +30,13 @@ impl IntoRuby<Channel> for fmod::Channel {
 
 impl FromRuby<fmod::Channel> for Channel {
     fn from_ruby(self) -> Result<fmod::Channel> {
-        Ok(self.into_channel())
+        self.into_channel()
     }
 }
 
 impl FromRuby<fmod::Channel> for ChannelImpl {
     fn from_ruby(self) -> Result<fmod::Channel> {
-        Ok(self.into_channel())
+        self.into_channel()
     }
 }
 
