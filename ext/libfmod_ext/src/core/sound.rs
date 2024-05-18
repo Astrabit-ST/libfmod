@@ -11,6 +11,7 @@ use crate::{extern_struct, extern_struct_bind, extern_struct_fns};
 use super::enums::TimeUnit;
 use super::sound_group::SoundGroup;
 use super::structs::Vector;
+use super::sync_point::SyncPoint;
 use super::system::System;
 
 extern_struct! {
@@ -50,7 +51,10 @@ extern_struct_fns! {
     fn get_sub_sound_count() -> i32;
     fn get_sub_sound(index: i32) -> Sound;
     fn get_sub_sound_parent() -> Option<Sound>;
-    // TODO sync point
+    fn get_sync_point(index: i32) -> SyncPoint;
+    fn get_sync_point_info(point: &SyncPoint, unit: TimeUnit) -> (magnus::RString, u32);
+    fn add_sync_point(offset: u32, unit: TimeUnit, name: magnus::RString) -> SyncPoint;
+    fn delete_sync_point(point: &SyncPoint) -> ();
   }
 }
 
@@ -82,6 +86,10 @@ extern_struct_bind! {
     fn get_sub_sound_count -> 0;
     fn get_sub_sound -> 1;
     fn get_sub_sound_parent -> 0;
+    fn get_sync_point -> 1;
+    fn get_sync_point_info -> 2;
+    fn add_sync_point -> 3;
+    fn delete_sync_point -> 1;
   }
 }
 

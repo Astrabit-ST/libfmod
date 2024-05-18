@@ -33,6 +33,7 @@ pub fn bind(module: magnus::RModule) -> Result<()> {
     sound::bind(module)?;
     geometry::bind(module)?;
     dsp_connection::bind(module)?;
+    sync_point::bind(module)?;
 
     Ok(())
 }
