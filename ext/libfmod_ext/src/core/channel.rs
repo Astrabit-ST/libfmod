@@ -4,6 +4,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 #![allow(clippy::upper_case_acronyms)]
+use magnus::prelude::*;
+
 use crate::{Bindable, FromRuby, IntoRuby, Result};
 
 use crate::{extern_struct_bind, extern_struct_fns};
@@ -59,7 +61,7 @@ extern_struct_fns! {
 }
 
 extern_struct_bind! {
-  impl Bindable for ChannelImpl: fmod::Channel, super = fmod::ChannelControl::class {
+  impl Bindable for ChannelImpl: fmod::Channel, super = fmod::ChannelControl::class, class_name = "Channel" {
     fn is_virtual -> 0;
     fn get_current_sound -> 0;
     fn get_index -> 0;
@@ -75,6 +77,9 @@ extern_struct_bind! {
     fn get_loop_count -> 0;
     fn set_loop_points -> 4;
     fn get_loop_points -> 2;
+    |class| {
+      class.undef_default_alloc_func();
+    }
   }
 }
 

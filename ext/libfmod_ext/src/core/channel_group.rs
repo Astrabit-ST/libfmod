@@ -5,6 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 #![allow(clippy::upper_case_acronyms)]
 use crate::{Bindable, FromRuby, IntoRuby, Result};
+use magnus::prelude::*;
 
 use crate::{extern_struct_bind, extern_struct_fns};
 
@@ -51,7 +52,7 @@ extern_struct_fns! {
 }
 
 extern_struct_bind! {
-  impl Bindable for ChannelGroupImpl: fmod::ChannelGroup, super = fmod::ChannelControl::class {
+  impl Bindable for ChannelGroupImpl: fmod::ChannelGroup, super = fmod::ChannelControl::class, class_name = "ChannelGroup" {
     fn get_channel_count -> 0;
     fn get_channel -> 1;
     fn get_name -> 0;
@@ -60,6 +61,9 @@ extern_struct_bind! {
     fn get_group_count -> 0;
     fn get_group -> 1;
     fn get_parent_group -> 0;
+    |class| {
+      class.undef_default_alloc_func();
+    }
   }
 }
 

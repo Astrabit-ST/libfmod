@@ -49,19 +49,21 @@ macro_rules! extern_struct_fns {
 
 #[macro_export]
 macro_rules! extern_struct_bind {
-    (impl Bindable for $name:ident: $fmod_ty:path $( , super = $superclass:path )? {
+    (impl Bindable for $name:ident: $fmod_ty:path $( , super = $superclass:path )? $( , class_name = $class_name:literal )? {
       $( fn $fn_name:ident -> $arity:literal );* $(;)?
       $( |$class_ident:ident| $block:block)?
     }) => {
       const _: () ={
         static CLASS: once_cell::sync::OnceCell<magnus::value::Opaque<magnus::RClass>> = once_cell::sync::OnceCell::new();
         impl $crate::Bindable for $fmod_ty {
-          #[allow(unused_imports)]
+          #[allow(unused_imports, unused_variables)]
           fn bind(module: impl magnus::Module) -> $crate::Result<()> {
             use magnus::Module;
             let _superclass = magnus::class::object();
             $( let _superclass = $superclass(); )?
-            let class = module.define_class(stringify!($name), _superclass)?;
+            let class_name = stringify!($name);
+            $( let class_name = $class_name; )?
+            let class = module.define_class(class_name, _superclass)?;
             $(
               paste::paste! {
                 class.define_method(stringify!($fn_name), magnus::method!($name::$fn_name, $arity))?;
