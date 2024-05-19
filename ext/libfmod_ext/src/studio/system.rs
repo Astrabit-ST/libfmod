@@ -114,11 +114,10 @@ impl System {
 
     fn get_sound_info(&self, key: magnus::RString) -> Result<SoundInfo> {
         let key = key.from_ruby()?;
-        let info = self
-            .0
-            .get_sound_info(key)
+        // FIXME BAD BAD DANGER
+        let info = unsafe { self.0.get_sound_info(key) }
             .map_err(|e| magnus::Error::new(crate::error::class(), e.to_string()))?;
-        let info: fmod::studio::SoundInfo<'static> = unsafe { std::mem::transmute(info) }; // FIXME BAD BAD DANGER
+
         info.into_ruby()
     }
 }
