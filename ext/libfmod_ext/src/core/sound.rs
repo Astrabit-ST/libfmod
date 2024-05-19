@@ -9,8 +9,9 @@ use crate::{Bindable, Result};
 use crate::{extern_struct, extern_struct_bind, extern_struct_fns};
 
 use super::enums::{OpenState, TimeUnit};
+use super::flags::Mode;
 use super::sound_group::SoundGroup;
-use super::structs::Vector;
+use super::structs::{Tag, Vector};
 use super::sync_point::SyncPoint;
 use super::system::System;
 
@@ -29,7 +30,7 @@ extern_struct_fns! {
     fn get_3d_min_max_distance() -> (f32, f32);
     fn set_defaults(frequency: f32, priority: i32) -> ();
     fn get_defaults() -> (f32, i32);
-    // TODO mode
+    fn get_mode() -> Mode;
     fn set_loop_count(count: i32) -> ();
     fn get_loop_count() -> i32;
     fn set_loop_points(start: u32, start_type: TimeUnit, end: u32, end_type: TimeUnit) -> ();
@@ -40,7 +41,7 @@ extern_struct_fns! {
     fn get_name() -> magnus::RString;
     fn get_length(time_unit: TimeUnit) -> u32;
     fn get_tag_count() -> (i32, i32);
-    // TODO tag
+    fn get_tag(name: Option<magnus::RString>, index: i32) -> Tag;
     fn get_music_channel_count() -> i32;
     fn set_music_channel_volume(channel: i32, volume: f32) -> ();
     fn get_music_channel_volume(channel: i32) -> f32;
@@ -68,6 +69,7 @@ extern_struct_bind! {
     fn get_3d_min_max_distance -> 0;
     fn set_defaults -> 2;
     fn get_defaults -> 0;
+    fn get_mode -> 0;
     fn set_loop_count -> 1;
     fn get_loop_count -> 0;
     fn set_loop_points -> 4;
@@ -77,6 +79,7 @@ extern_struct_bind! {
     fn get_name -> 0;
     fn get_length -> 1;
     fn get_tag_count -> 0;
+    fn get_tag -> 2;
     fn get_music_channel_count -> 0;
     fn set_music_channel_volume -> 2;
     fn get_music_channel_volume -> 1;

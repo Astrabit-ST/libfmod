@@ -4,7 +4,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 use crate::{Bindable, IntoRuby, Result};
-use magnus::prelude::*;
+use magnus::{prelude::*, value::InnerValue, IntoValue};
 
 use crate::ruby_struct;
 
@@ -71,6 +71,47 @@ ruby_struct! {
   }
 }
 
+pub type Tag = magnus::RStruct;
+
+const _: () = {
+    static CLASS: once_cell::sync::OnceCell<magnus::value::Opaque<magnus::RClass>> =
+        once_cell::sync::OnceCell::new();
+
+    impl IntoRuby<Tag> for fmod::Tag {
+        fn into_ruby(self) -> Result<Tag> {
+            let _type = self.kind.into_ruby()?;
+            let name = self.name.into_ruby()?;
+            let data = match self.data {
+                fmod::TagData::Binary(d) => magnus::RString::from_slice(&d).into_value(),
+                fmod::TagData::Integer(i) => i.into_value(),
+                fmod::TagData::Float(f) => f.into_value(),
+                fmod::TagData::String(s)
+                | fmod::TagData::Utf8String(s)
+                | fmod::TagData::Utf16StringBE(s)
+                | fmod::TagData::Utf16String(s) => s.into_value(),
+            };
+            let updated = self.updated.into_ruby()?;
+            let rstruct = Self::class().new_instance((_type, name, data, updated))?;
+            Tag::try_convert(rstruct)
+        }
+    }
+
+    impl Bindable for fmod::Tag {
+        fn bind(module: impl magnus::Module) -> Result<()> {
+            let rstruct =
+                magnus::r_struct::define_struct(Some("Tag"), ("type", "name", "data", "updated"))?;
+            let _ = CLASS.set(rstruct.into());
+            module.const_set("Tag", rstruct)
+        }
+
+        #[allow(refining_impl_trait)]
+        fn class() -> magnus::RClass {
+            let ruby = magnus::Ruby::get().unwrap();
+            CLASS.get().unwrap().get_inner_with(&ruby)
+        }
+    }
+};
+
 pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::Guid::bind(module)?;
     fmod::Vector::bind(module)?;
@@ -78,6 +119,7 @@ pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::CpuUsage::bind(module)?;
     fmod::ReverbProperties::bind(module)?;
     fmod::DspMeteringInfo::bind(module)?;
+    fmod::Tag::bind(module)?;
 
     let class = fmod::ReverbProperties::class();
     let module: magnus::RModule = class.define_module("Presets")?;

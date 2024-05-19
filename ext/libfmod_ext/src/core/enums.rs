@@ -278,6 +278,23 @@ const _: () = {
     }
 };
 
+num_enum! {
+    #[repr(u32)]
+    enum TagType: fmod::TagType {
+        Unknown,
+        ID3V1,
+        ID3V2,
+        VorbisComment,
+        ShoutCast,
+        IceCast,
+        ASF,
+        MIDI,
+        Playlist,
+        Fmod,
+        User,
+    }
+}
+
 pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::SpeakerMode::bind(module)?;
     fmod::OutputType::bind(module)?;
@@ -292,6 +309,7 @@ pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::ChannelOrder::bind(module)?;
     fmod::SoundType::bind(module)?;
     fmod::OpenState::bind(module)?;
+    fmod::TagType::bind(module)?;
 
     Ok(())
 }
