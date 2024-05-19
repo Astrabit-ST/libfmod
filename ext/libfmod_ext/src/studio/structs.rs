@@ -1,3 +1,4 @@
+use crate::core::sound_builder::SoundBuilder;
 // Copyright (c) 2024 Lily Lyons
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
@@ -86,6 +87,13 @@ ruby_struct! {
   }
 }
 
+ruby_struct! {
+  struct SoundInfo: fmod::studio::SoundInfo<'static> {
+    builder: &SoundBuilder,
+    subsound_index: i32,
+  }
+}
+
 pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::studio::AdvancedSettings::bind(module)?;
     fmod::studio::MemoryUsage::bind(module)?;
@@ -95,6 +103,7 @@ pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::studio::BufferUsage::bind(module)?;
     fmod::studio::CpuUsage::bind(module)?;
     fmod::studio::CommandInfo::bind(module)?;
+    fmod::studio::SoundInfo::bind(module)?;
 
     Ok(())
 }

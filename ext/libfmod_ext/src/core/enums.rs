@@ -165,6 +165,62 @@ num_enum! {
     }
 }
 
+num_enum! {
+    #[repr(u32)]
+    enum SoundFormat: fmod::SoundFormat {
+        None,
+        PCM8,
+        PCM16,
+        PCM24,
+        PCM32,
+        PCMFloat,
+        BitStream
+    }
+}
+
+num_enum! {
+    #[repr(u32)]
+    enum ChannelOrder: fmod::ChannelOrder {
+        Default,
+        WaveFormat,
+        ProTools,
+        AllMono,
+        AllStereo,
+        Alsa
+    }
+}
+
+num_enum! {
+    #[repr(u32)]
+    enum SoundType: fmod::SoundType {
+        Unknown,
+        AIFF,
+        ASF,
+        DLS,
+        FLAC,
+        FSB,
+        IT,
+        MIDI,
+        MOD,
+        MPEG,
+        OGGVORBIS,
+        Playlist,
+        RAW,
+        S3M,
+        User,
+        WAV,
+        XM,
+        XMA,
+        AudioQueue,
+        AT9,
+        Vorbis,
+        MediaFoundation,
+        MediaCodec,
+        FADPCM,
+        OPUS,
+    }
+}
+
 pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::SpeakerMode::bind(module)?;
     fmod::OutputType::bind(module)?;
@@ -175,6 +231,9 @@ pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::Speaker::bind(module)?;
     fmod::SoundGroupBehavior::bind(module)?;
     fmod::DspConnectionType::bind(module)?;
+    fmod::SoundFormat::bind(module)?;
+    fmod::ChannelOrder::bind(module)?;
+    fmod::SoundType::bind(module)?;
 
     Ok(())
 }

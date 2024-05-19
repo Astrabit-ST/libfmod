@@ -59,10 +59,46 @@ ruby_bitflags! {
     }
 }
 
+ruby_bitflags! {
+  #[repr(u32)]
+  mod Mode: fmod::Mode {
+    const DEFAULT;
+    const LOOP_OFF;
+    const LOOP_NORMAL;
+    const LOOP_BIDI;
+    const D2;
+    const D3;
+    const CREATE_STREAM;
+    const CREATE_SAMPLE;
+    const CREATE_COMPRESSED_SAMPLE;
+    const OPEN_USER;
+    const OPEN_MEMORY;
+    const OPEN_MEMORY_POINT;
+    const OPEN_RAW;
+    const OPEN_ONLY;
+    const ACCURATE_TIME;
+    const MPEG_SEARCH;
+    const NONBLOCKING;
+    const UNIQUE;
+    const HEADRELATIVE_3D;
+    const WORLDRELATIVE_3D;
+    const INVERSE_ROLLOFF_3D;
+    const LINEAR_ROLLOFF_3D;
+    const LINEAR_SQUARE_ROLLOFF_3D;
+    const INVERSE_TAPERED_ROLLOFF_3D;
+    const CUSTOM_ROLLOFF_3D;
+    const IGNORE_GEOMETRY_3D;
+    const IGNORE_TAGS;
+    const LOWMEM;
+    const VIRTUAL_PLAYFROM_START;
+  }
+}
+
 pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::InitFlags::bind(module)?;
     fmod::DriverState::bind(module)?;
     fmod::ChannelMask::bind(module)?;
+    fmod::Mode::bind(module)?;
 
     Ok(())
 }

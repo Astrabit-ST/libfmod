@@ -12,6 +12,7 @@ mod dsp_connection;
 mod geometry;
 mod reverb_3d;
 mod sound;
+pub mod sound_builder;
 mod sound_group;
 mod sync_point;
 pub mod system;
@@ -34,6 +35,7 @@ pub fn bind(module: magnus::RModule) -> Result<()> {
     geometry::bind(module)?;
     dsp_connection::bind(module)?;
     sync_point::bind(module)?;
+    sound_builder::bind(module)?;
 
     Ok(())
 }

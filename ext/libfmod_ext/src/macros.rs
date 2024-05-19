@@ -102,7 +102,7 @@ macro_rules! num_enum {
           fn from_ruby(self) -> $crate::Result<_Wrapped> {
             let _wrapped: _Wrapped = _Wrapped::try_from(self)
               .map_err(|e|
-                magnus::Error::new(magnus::exception::runtime_error(), e.to_string())
+                magnus::Error::new($crate::error::class(), e.to_string())
               )?;
             Ok(_wrapped)
           }
@@ -164,7 +164,6 @@ macro_rules! ruby_struct {
         impl $crate::IntoRuby<$name> for _Wrapped {
           fn into_ruby(self) -> $crate::Result<$name> {
             use magnus::{Class, value::InnerValue, TryConvert};
-            // FIXME put this in a Lazy somehow
             let ruby = magnus::Ruby::get().unwrap();
             let rstruct = CLASS.get().unwrap().get_inner_with(&ruby);
             let rstruct = rstruct.new_instance((
@@ -248,6 +247,7 @@ pub trait IntoRuby<T> {
     fn into_ruby(self) -> Result<T>;
 }
 
+// FIXME change the trait definition to be like From this has confusing semantics
 pub trait FromRuby<T>: Sized {
     #[allow(clippy::wrong_self_convention)]
     fn from_ruby(self) -> Result<T>;

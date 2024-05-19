@@ -19,7 +19,7 @@ use super::{
     flags::{CommandCaptureFlags, CommandReplayFlags, LoadBankFlags},
     structs::{
         AdvancedSettings, BufferUsage, CPUUsage as StudioCPUUsage, MemoryUsage,
-        ParameterDescription, ParameterID,
+        ParameterDescription, ParameterID, SoundInfo,
     },
     vca::VCA,
 };
@@ -60,7 +60,6 @@ extern_struct_fns! {
     fn get_vca(path_or_id: magnus::RString) -> VCA;
     fn get_vca_by_id(id: Guid) -> VCA;
     fn get_advanced_settings() -> AdvancedSettings;
-    // TODO sound info
     fn get_parameter_by_id(id: ParameterID) -> (f32, f32);
     fn set_parameter_by_id(id: ParameterID, value: f32, ignore_seek_speed: bool) -> ();
     fn set_parameter_by_id_with_label(id: ParameterID, label: magnus::RString, ignore_seek_speed: bool) -> ();
@@ -112,6 +111,16 @@ impl System {
 
         Ok(())
     }
+
+    fn get_sound_info(&self, key: magnus::RString) -> Result<SoundInfo> {
+        let key = key.from_ruby()?;
+        let info = self
+            .0
+            .get_sound_info(key)
+            .map_err(|e| magnus::Error::new(crate::error::class(), e.to_string()))?;
+        let info: fmod::studio::SoundInfo<'static> = unsafe { std::mem::transmute(info) }; // FIXME BAD BAD DANGER
+        info.into_ruby()
+    }
 }
 
 extern_struct_bind! {
@@ -145,6 +154,7 @@ extern_struct_bind! {
     fn get_vca -> 1;
     fn get_vca_by_id -> 1;
     fn get_advanced_settings -> 0;
+    fn get_sound_info -> 1;
     fn get_parameter_by_id -> 1;
     fn set_parameter_by_id -> 3;
     fn set_parameter_by_id_with_label -> 3;

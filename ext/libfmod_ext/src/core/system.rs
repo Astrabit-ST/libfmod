@@ -17,6 +17,7 @@ use super::{
     geometry::Geometry,
     reverb_3d::Reverb3D,
     sound::Sound,
+    sound_builder::SoundBuilder,
     sound_group::SoundGroup,
     structs::{CPUUsage, Guid, ReverbProperties, Vector},
     system_builder::SystemBuilder,
@@ -34,11 +35,26 @@ impl System {
     fn release(&self) -> Result<()> {
         unsafe { self.0.release() }.into_ruby()
     }
+
+    fn create_sound(&self, builder: &SoundBuilder) -> Result<Sound> {
+        let borrow = builder.0.borrow();
+        let builder = borrow
+            .as_ref()
+            .ok_or_else(SoundBuilder::invalid_state_error)?;
+        self.0.create_sound(builder).into_ruby()
+    }
+
+    fn create_stream(&self, builder: &SoundBuilder) -> Result<Sound> {
+        let borrow = builder.0.borrow();
+        let builder = borrow
+            .as_ref()
+            .ok_or_else(SoundBuilder::invalid_state_error)?;
+        self.0.create_stream(builder).into_ruby()
+    }
 }
 
 extern_struct_fns! {
   impl System: fmod::System {
-    // TODO create_sound, stream, dsp
     fn create_dsp_by_type(dsp_type: DspType) -> DSP;
     fn create_channel_group(name: magnus::RString) -> ChannelGroup;
     fn create_sound_group(name: magnus::RString) -> SoundGroup;
@@ -116,6 +132,8 @@ extern_struct_fns! {
 
 extern_struct_bind! {
   impl Bindable for System: fmod::System {
+    fn create_sound -> 1;
+    fn create_stream -> 1;
     fn create_dsp_by_type -> 1;
     fn create_channel_group -> 1;
     fn create_sound_group -> 1;
