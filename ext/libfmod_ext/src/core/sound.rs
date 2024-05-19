@@ -8,7 +8,7 @@ use crate::{Bindable, Result};
 
 use crate::{extern_struct, extern_struct_bind, extern_struct_fns};
 
-use super::enums::TimeUnit;
+use super::enums::{OpenState, TimeUnit};
 use super::sound_group::SoundGroup;
 use super::structs::Vector;
 use super::sync_point::SyncPoint;
@@ -20,7 +20,7 @@ extern_struct! {
 
 extern_struct_fns! {
   impl Sound: fmod::Sound {
-    // TODO openstate
+    fn get_open_state() -> (OpenState, u32, bool, bool);
     fn set_3d_cone_settings(inside: f32, outside: f32, volume: f32) -> ();
     fn get_3d_cone_settings() -> (f32, f32, f32);
     // TODO 3d custom rolloff
@@ -60,6 +60,7 @@ extern_struct_fns! {
 
 extern_struct_bind! {
   impl Bindable for Sound: fmod::Sound {
+    fn get_open_state -> 0;
     fn set_3d_cone_settings -> 3;
     fn get_3d_cone_settings -> 0;
     fn get_3d_custom_rolloff -> 0;

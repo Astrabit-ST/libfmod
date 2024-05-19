@@ -3,7 +3,8 @@
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
-use crate::{Bindable, Result};
+use crate::{Bindable, IntoRuby, Result};
+use magnus::{prelude::*, value::InnerValue};
 
 use crate::num_enum;
 
@@ -221,6 +222,62 @@ num_enum! {
     }
 }
 
+pub type OpenState = (u32, Option<magnus::Exception>);
+
+const _: () = {
+    static MODULE: once_cell::sync::OnceCell<magnus::value::Opaque<magnus::RModule>> =
+        once_cell::sync::OnceCell::new();
+
+    const READY: u32 = fmod::ffi::FMOD_OPENSTATE_READY;
+    const LOADING: u32 = fmod::ffi::FMOD_OPENSTATE_LOADING;
+    const ERROR: u32 = fmod::ffi::FMOD_OPENSTATE_ERROR;
+    const CONNECTING: u32 = fmod::ffi::FMOD_OPENSTATE_CONNECTING;
+    const BUFFERING: u32 = fmod::ffi::FMOD_OPENSTATE_BUFFERING;
+    const SEEKING: u32 = fmod::ffi::FMOD_OPENSTATE_SEEKING;
+    const PLAYING: u32 = fmod::ffi::FMOD_OPENSTATE_PLAYING;
+    const SETPOSITION: u32 = fmod::ffi::FMOD_OPENSTATE_SETPOSITION;
+
+    impl IntoRuby<OpenState> for fmod::OpenState {
+        fn into_ruby(self) -> Result<OpenState> {
+            let tuple: (u32, Option<fmod::Error>) = match self {
+                fmod::OpenState::Ready => (READY, None),
+                fmod::OpenState::Loading => (LOADING, None),
+                fmod::OpenState::Error(error) => (ERROR, Some(error)),
+                fmod::OpenState::Connecting => (CONNECTING, None),
+                fmod::OpenState::Buffering => (BUFFERING, None),
+                fmod::OpenState::Seeking => (SEEKING, None),
+                fmod::OpenState::Playing => (PLAYING, None),
+                fmod::OpenState::SetPosition => (SETPOSITION, None),
+            };
+            tuple.into_ruby()
+        }
+    }
+
+    impl Bindable for fmod::OpenState {
+        fn bind(module: impl magnus::Module) -> Result<()> {
+            let module = module.define_module("OpenState")?;
+            module.const_set("Ready", READY)?;
+            module.const_set("Loading", LOADING)?;
+            module.const_set("Error", ERROR)?;
+            module.const_set("Connecting", CONNECTING)?;
+            module.const_set("Buffering", BUFFERING)?;
+            module.const_set("Seeking", SEEKING)?;
+            module.const_set("Playing", PLAYING)?;
+            module.const_set("SetPosition", SETPOSITION)?;
+
+            let _ = MODULE.set(module.into());
+
+            Ok(())
+        }
+
+        #[allow(refining_impl_trait)]
+        fn class() -> magnus::RModule {
+            let ruby = magnus::Ruby::get().unwrap();
+            MODULE.get().unwrap().get_inner_with(&ruby)
+        }
+    }
+};
+
 pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::SpeakerMode::bind(module)?;
     fmod::OutputType::bind(module)?;
@@ -234,6 +291,7 @@ pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::SoundFormat::bind(module)?;
     fmod::ChannelOrder::bind(module)?;
     fmod::SoundType::bind(module)?;
+    fmod::OpenState::bind(module)?;
 
     Ok(())
 }
