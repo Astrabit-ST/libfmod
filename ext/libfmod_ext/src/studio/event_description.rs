@@ -9,6 +9,7 @@ use crate::{Bindable, Result};
 
 use crate::{extern_struct, extern_struct_bind, extern_struct_fns};
 
+use super::enums::LoadingState;
 use super::event_instance::EventInstance;
 use super::structs::{ParameterDescription, ParameterID};
 
@@ -44,7 +45,7 @@ extern_struct_fns! {
         fn get_parameter_label_by_index(index: i32, label_index: i32) -> magnus::RString;
         fn load_sample_data() -> ();
         fn unload_sample_data() -> ();
-        // TODO loading state
+        fn get_sample_loading_state() -> LoadingState;
         // TODO user properties
     }
 }
@@ -75,7 +76,8 @@ extern_struct_bind! {
         fn get_parameter_label_by_id -> 2;
         fn get_parameter_label_by_index -> 2;
         fn load_sample_data -> 0;
-        fn unload_sample_data -> 0
+        fn unload_sample_data -> 0;
+        fn get_sample_loading_state -> 0;
     }
 }
 

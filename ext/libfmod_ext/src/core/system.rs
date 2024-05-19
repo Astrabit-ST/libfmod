@@ -107,7 +107,7 @@ extern_struct_fns! {
     fn set_speaker_position(speaker: Speaker, x: f32, y: f32, active: bool) -> ();
     fn get_speaker_position(speaker: Speaker) -> (f32, f32, bool);
     fn set_3d_settings(doppler_scale: f32, distance_factor: f32, rolloff_scale: f32) -> ();
-    // FIXME get 3d settings is named wrong
+    fn get_3d_settings() -> (f32, f32, f32);
     fn set_3d_listener_count(count: i32) -> ();
     fn get_3d_listener_count() -> i32;
     // TODO rolloff callback
@@ -179,6 +179,7 @@ extern_struct_bind! {
     fn set_speaker_position -> 4;
     fn get_speaker_position -> 1;
     fn set_3d_settings -> 3;
+    fn get_3d_settings -> 0;
     fn set_3d_listener_count -> 1;
     fn get_3d_listener_count -> 0;
 

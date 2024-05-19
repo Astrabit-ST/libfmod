@@ -41,7 +41,7 @@ extern_struct_fns! {
     fn start_command_capture(filename: magnus::RString, flags: CommandCaptureFlags) -> ();
     fn stop_command_capture() -> ();
     fn load_command_replay(filename: magnus::RString, flags: CommandReplayFlags) -> CommandReplay;
-    // TODO core system
+    fn get_core_system() -> crate::core::system::System;
     fn lookup_id(path: magnus::RString) -> Guid;
     fn lookup_path(id: Guid) -> magnus::RString;
     fn is_valid() -> bool;
@@ -126,6 +126,7 @@ extern_struct_bind! {
     fn start_command_capture -> 2;
     fn stop_command_capture -> 0;
     fn load_command_replay -> 2;
+    fn get_core_system -> 0;
     fn lookup_id -> 1;
     fn lookup_path -> 1;
     fn is_valid -> 0;

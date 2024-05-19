@@ -11,6 +11,7 @@ use crate::{core::structs::Guid, Bindable, Result};
 use crate::{extern_struct, extern_struct_bind, extern_struct_fns};
 
 use super::bus::Bus;
+use super::enums::LoadingState;
 use super::event_description::EventDescription;
 use super::vca::VCA;
 
@@ -24,10 +25,10 @@ extern_struct_fns! {
         fn get_path() -> magnus::RString;
         fn is_valid() -> bool;
         // TODO userdata
-        // TODO loading state
+        fn get_loading_state() -> LoadingState;
         fn load_sample_data() -> ();
         fn unload_sample_data() -> ();
-        // sample loading state
+        fn get_sample_loading_state() -> LoadingState;
         fn unload() -> ();
         fn bus_count() -> i32;
         fn get_bus_list() -> TypedArray<Bus>;
@@ -45,8 +46,10 @@ extern_struct_bind! {
         fn get_id -> 0;
         fn get_path -> 0;
         fn is_valid -> 0;
+        fn get_loading_state -> 0;
         fn load_sample_data -> 0;
         fn unload_sample_data -> 0;
+        fn get_sample_loading_state -> 0;
         fn unload -> 0;
         fn bus_count -> 0;
         fn get_bus_list -> 0;

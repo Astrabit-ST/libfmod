@@ -14,7 +14,7 @@ mod reverb_3d;
 mod sound;
 mod sound_group;
 mod sync_point;
-mod system;
+pub mod system;
 mod system_builder;
 
 pub fn bind(module: magnus::RModule) -> Result<()> {

@@ -5,6 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 use fmod::{Utf8CStr, Utf8CString};
+use magnus::Class;
 
 use crate::Result;
 
@@ -496,7 +497,7 @@ where
     T: IntoRuby<TWrap>,
 {
     fn into_ruby(self) -> Result<TWrap> {
-        self.map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?
+        self.map_err(|e| magnus::Error::new(crate::error::class(), e.to_string()))?
             .into_ruby()
     }
 }
@@ -506,8 +507,14 @@ where
     T: FromRuby<TWrap>,
 {
     fn from_ruby(self) -> Result<TWrap> {
-        self.map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?
+        self.map_err(|e| magnus::Error::new(crate::error::class(), e.to_string()))?
             .from_ruby()
+    }
+}
+
+impl IntoRuby<magnus::Exception> for fmod::Error {
+    fn into_ruby(self) -> Result<magnus::Exception> {
+        crate::error::class().new_instance((self.to_string(),))
     }
 }
 
