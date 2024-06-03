@@ -6,9 +6,9 @@ type Result<T> = std::result::Result<T, magnus::Error>;
 mod callback;
 mod core;
 mod error;
+mod extern_struct_storage;
 mod studio;
 mod thread;
-mod userdata;
 
 mod macros;
 pub use macros::*;
@@ -25,7 +25,7 @@ fn init(ruby: &magnus::Ruby) -> Result<()> {
     error::bind(module)?;
     core::bind(module)?;
     studio::bind(module)?;
-    userdata::bind(module)?;
+    extern_struct_storage::bind(module)?;
     callback::bind();
 
     Ok(())

@@ -13,8 +13,8 @@ use fmod::{
 use once_cell::sync::Lazy;
 use std::{collections::HashMap, os::raw::c_void, sync::Mutex};
 
-use magnus::error::Result;
 use magnus::prelude::*;
+use magnus::{error::Result, typed_data::Obj};
 
 #[derive(Debug, Default)]
 struct ExternStructStorage {
@@ -73,16 +73,17 @@ pub fn bind(module: magnus::RModule) -> Result<()> {
     Ok(())
 }
 
-pub(crate) fn get_or_insert<T, R>(value: T, ruby_val: R) -> magnus::RTypedData
+pub(crate) fn get_or_insert<T, R>(value: T, ruby_val: R) -> Result<Obj<R>>
 where
     T: Into<ExternStruct>,
     R: magnus::TypedData,
 {
     let mut storage = STORAGE.map.lock().unwrap();
     let key = value.into();
-    *storage
+    let &mut value = storage
         .entry(key)
-        .or_insert_with(|| magnus::RTypedData::wrap(ruby_val))
+        .or_insert_with(|| Obj::wrap(ruby_val).into());
+    Obj::try_convert(value.as_value())
 }
 
 pub fn remove_value(value: impl Into<ExternStruct>) {

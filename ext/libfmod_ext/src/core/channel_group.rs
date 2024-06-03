@@ -11,7 +11,7 @@ use crate::{extern_struct_bind, extern_struct_fns};
 
 use super::channel::Channel;
 use super::channel_control::{ChannelControl, ChannelControlType};
-use super::dsp_connection::DSPConnection;
+use super::dsp_connection::RbDSPConnection;
 
 // public api
 pub type ChannelGroup = magnus::typed_data::Obj<ChannelControl>;
@@ -44,7 +44,7 @@ extern_struct_fns! {
     fn get_channel(index: i32) -> Channel;
     fn get_name() -> magnus::RString;
     fn release() -> ();
-    fn add_group(group: ChannelGroup, propgate_dsp_clock: bool) -> DSPConnection;
+    fn add_group(group: ChannelGroup, propgate_dsp_clock: bool) -> RbDSPConnection;
     fn get_group_count() -> i32;
     fn get_group(index: i32) -> ChannelGroup;
     fn get_parent_group() -> ChannelGroup;

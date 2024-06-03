@@ -10,7 +10,7 @@ use crate::{Bindable, FromRuby, IntoRuby, Result};
 use crate::{extern_struct, extern_struct_bind, extern_struct_fns};
 
 use super::enums::{EventProperty, PlaybackState, StopMode};
-use super::event_description::EventDescription;
+use super::event_description::RbEventDescription;
 use super::structs::ParameterID;
 
 extern_struct! {
@@ -25,7 +25,7 @@ extern_struct_fns! {
       fn get_listener_mask() -> u32;
       fn get_min_max_distance() -> (f32, f32);
       // TODO userdata & callbacks
-      fn get_description() -> EventDescription;
+      fn get_description() -> RbEventDescription;
       fn release() -> ();
       fn is_valid() -> bool;
       // FIXME: default parameters

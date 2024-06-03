@@ -12,7 +12,7 @@ use crate::extern_struct_bind;
 use super::{
     enums::{OutputType, SpeakerMode},
     flags::InitFlags,
-    system::System,
+    system::RbSystem,
 };
 
 #[magnus::wrap(class = "FMOD::SystemBuilder", free_immediately, size)]
@@ -112,7 +112,7 @@ impl SystemBuilder {
         builder.output_by_plugin(handle).map(|_| ()).into_ruby()
     }
 
-    fn build(&self, max_channels: i32, flags: InitFlags) -> Result<System> {
+    fn build(&self, max_channels: i32, flags: InitFlags) -> Result<RbSystem> {
         let mut builder = self.0.borrow_mut();
 
         let Some(builder) = builder.take() else {

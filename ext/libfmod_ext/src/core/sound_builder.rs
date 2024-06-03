@@ -16,7 +16,7 @@ use crate::extern_struct_bind;
 
 use super::enums::{ChannelOrder, SoundFormat, TimeUnit};
 use super::flags::Mode;
-use super::sound_group::SoundGroup;
+use super::sound_group::RbSoundGroup;
 
 #[magnus::wrap(class = "FMOD::SoundBuilder", free_immediately, size)]
 pub struct SoundBuilder(pub(super) RefCell<Option<fmod::SoundBuilder<'static>>>);
@@ -186,7 +186,7 @@ impl SoundBuilder {
         Ok(this)
     }
 
-    fn with_initial_sound_group(this: _SoundBuilder, group: &SoundGroup) -> Result<_SoundBuilder> {
+    fn with_initial_sound_group(this: _SoundBuilder, group: RbSoundGroup) -> Result<_SoundBuilder> {
         let group = group.from_ruby()?; // do this before so on error the builder is still valid
 
         let mut borrow = this.0.borrow_mut();
@@ -334,7 +334,7 @@ impl SoundBuilder {
         builder.channel_order().into_ruby()
     }
 
-    pub fn initial_sound_group(&self) -> Result<SoundGroup> {
+    pub fn initial_sound_group(&self) -> Result<RbSoundGroup> {
         let borrow = self.0.borrow();
         let builder = borrow.as_ref().ok_or_else(Self::invalid_state_error)?;
         builder.initial_sound_group().into_ruby()

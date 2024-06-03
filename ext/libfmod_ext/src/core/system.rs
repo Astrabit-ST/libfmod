@@ -11,14 +11,14 @@ use crate::{extern_struct, extern_struct_bind, extern_struct_fns};
 use super::{
     channel::Channel,
     channel_group::ChannelGroup,
-    dsp::DSP,
+    dsp::RbDSP,
     enums::{DspType, OutputType, PluginType, PortType, Speaker, SpeakerMode, TimeUnit},
     flags::DriverState,
-    geometry::Geometry,
-    reverb_3d::Reverb3D,
-    sound::Sound,
+    geometry::RbGeometry,
+    reverb_3d::RbReverb3D,
+    sound::RbSound,
     sound_builder::SoundBuilder,
-    sound_group::SoundGroup,
+    sound_group::RbSoundGroup,
     structs::{CPUUsage, Guid, ReverbProperties, Vector},
     system_builder::SystemBuilder,
 };
@@ -28,7 +28,7 @@ extern_struct! {
 }
 
 impl System {
-    fn new() -> Result<Self> {
+    fn new() -> Result<RbSystem> {
         unsafe { fmod::System::new() }.into_ruby()
     }
 
@@ -36,7 +36,7 @@ impl System {
         unsafe { self.0.release() }.into_ruby()
     }
 
-    fn create_sound(&self, builder: &SoundBuilder) -> Result<Sound> {
+    fn create_sound(&self, builder: &SoundBuilder) -> Result<RbSound> {
         let borrow = builder.0.borrow();
         let builder = borrow
             .as_ref()
@@ -44,7 +44,7 @@ impl System {
         self.0.create_sound(builder).into_ruby()
     }
 
-    fn create_stream(&self, builder: &SoundBuilder) -> Result<Sound> {
+    fn create_stream(&self, builder: &SoundBuilder) -> Result<RbSound> {
         let borrow = builder.0.borrow();
         let builder = borrow
             .as_ref()
@@ -55,16 +55,16 @@ impl System {
 
 extern_struct_fns! {
   impl System: fmod::System {
-    fn create_dsp_by_type(dsp_type: DspType) -> DSP;
+    fn create_dsp_by_type(dsp_type: DspType) -> RbDSP;
     fn create_channel_group(name: magnus::RString) -> ChannelGroup;
-    fn create_sound_group(name: magnus::RString) -> SoundGroup;
-    fn create_reverb_3d() -> Reverb3D;
-    fn play_sound(sound: &Sound, channel_group: Option<ChannelGroup>, paused: bool) -> Channel;
-    fn play_dsp(dsp: &DSP, channel_group: Option<ChannelGroup>, paused: bool) -> Channel;
+    fn create_sound_group(name: magnus::RString) -> RbSoundGroup;
+    fn create_reverb_3d() -> RbReverb3D;
+    fn play_sound(sound: RbSound, channel_group: Option<ChannelGroup>, paused: bool) -> Channel;
+    fn play_dsp(dsp: RbDSP, channel_group: Option<ChannelGroup>, paused: bool) -> Channel;
     fn get_channel(channel_id: i32) -> Channel;
     // TODO get dsp info
     fn get_master_channel_group() -> ChannelGroup;
-    fn get_master_sound_group() -> SoundGroup;
+    fn get_master_sound_group() -> RbSoundGroup;
     fn set_output(output_type: OutputType) -> ();
     fn get_output_type() -> OutputType;
     fn get_driver_count() -> i32;
@@ -74,10 +74,10 @@ extern_struct_fns! {
     fn lock_dsp() -> (); // FIXME release gvl
     fn unlock_dsp() -> ();
     // TODO userdata
-    fn create_geometry(max_polygons: i32, max_vertices: i32) -> Geometry;
+    fn create_geometry(max_polygons: i32, max_vertices: i32) -> RbGeometry;
     fn set_geometry_settings(max_world_size: f32) -> ();
     fn get_geometry_settings() -> f32;
-    fn load_geometry(data: magnus::RString) -> Geometry;
+    fn load_geometry(data: magnus::RString) -> RbGeometry;
     fn get_version() -> u32;
     // TODO get ouput handle
     fn get_playing_channels() -> (i32, i32);
@@ -101,12 +101,12 @@ extern_struct_fns! {
     fn get_plugin_info(handle: u32) -> (PluginType, magnus::RString, u32);
     fn set_output_by_plugin(handle: u32) -> ();
     fn get_output_by_plugin() -> u32;
-    fn create_dsp_by_plugin(handle: u32) -> DSP;
+    fn create_dsp_by_plugin(handle: u32) -> RbDSP;
     // TODO dsp info by plugin
     fn get_recording_driver_count() -> (i32, i32);
     fn get_record_driver_info(driver_id: i32) -> (magnus::RString, Guid, i32, SpeakerMode, i32, DriverState);
     fn get_record_position(driver_id: i32) -> u32;
-    fn record_start(driver_id: i32, sound: &Sound, do_loop: bool) -> ();
+    fn record_start(driver_id: i32, sound: RbSound, do_loop: bool) -> ();
     fn record_stop(driver_id: i32) -> ();
     fn is_recording(driver_id: i32) -> bool;
     fn set_3d_listener_attributes(listener: i32, pos: Option<Vector>, velocity: Option<Vector>, forward: Option<Vector>, up: Option<Vector>) -> ();

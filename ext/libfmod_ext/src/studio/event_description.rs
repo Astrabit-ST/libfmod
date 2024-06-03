@@ -10,7 +10,7 @@ use crate::{Bindable, Result};
 use crate::{extern_struct, extern_struct_bind, extern_struct_fns};
 
 use super::enums::LoadingState;
-use super::event_instance::EventInstance;
+use super::event_instance::RbEventInstance;
 use super::structs::{ParameterDescription, ParameterID};
 
 extern_struct! {
@@ -32,9 +32,9 @@ extern_struct_fns! {
         fn get_length() -> i32;
         fn get_path() -> magnus::RString;
         fn is_valid() -> bool;
-        fn create_instance() -> EventInstance;
+        fn create_instance() -> RbEventInstance;
         fn instance_count() -> i32;
-        fn get_instance_list() -> magnus::r_array::TypedArray<EventInstance>;
+        fn get_instance_list() -> magnus::r_array::TypedArray<RbEventInstance>;
         fn release_all_instances() -> ();
         fn get_parameter_description_by_name(name: magnus::RString) -> ParameterDescription;
         fn get_parameter_description_by_id(id: ParameterID) -> ParameterDescription;

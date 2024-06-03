@@ -7,7 +7,7 @@ use crate::{core::flags::InitFlags, Bindable, FromRuby, IntoRuby, Result};
 use magnus::prelude::*;
 use std::cell::RefCell;
 
-use super::{flags::InitFlags as StudioInitFlags, system::System};
+use super::{flags::InitFlags as StudioInitFlags, system::RbSystem};
 
 use crate::extern_struct_bind;
 
@@ -43,7 +43,7 @@ impl SystemBuilder {
         max_channels: i32,
         studio_flags: StudioInitFlags,
         flags: InitFlags,
-    ) -> Result<System> {
+    ) -> Result<RbSystem> {
         let mut builder = self.0.borrow_mut();
 
         let Some(builder) = builder.take() else {

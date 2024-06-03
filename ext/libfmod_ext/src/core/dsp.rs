@@ -8,11 +8,11 @@ use crate::{Bindable, Result};
 
 use crate::{extern_struct, extern_struct_bind, extern_struct_fns};
 
-use super::dsp_connection::DSPConnection;
+use super::dsp_connection::RbDSPConnection;
 use super::enums::{DspConnectionType, DspType, SpeakerMode};
 use super::flags::ChannelMask;
 use super::structs::DspMeteringInfo;
-use super::system::System;
+use super::system::RbSystem;
 
 extern_struct! {
   struct DSP: fmod::Dsp => "FMOD::DSP"
@@ -23,19 +23,19 @@ extern_struct_fns! {
     fn set_channel_format(mask: ChannelMask, channel_count: i32, speaker_mode: SpeakerMode) -> ();
     fn get_channel_format() -> (ChannelMask, i32, SpeakerMode);
     fn get_output_channel_format(mask: ChannelMask, channel_count: i32, speaker_mode: SpeakerMode) -> (ChannelMask, i32, SpeakerMode);
-    fn add_input(input: &DSP, kind: DspConnectionType) -> DSPConnection;
-    fn get_input(index: i32) -> (DSP, DSPConnection);
-    fn get_output(index: i32) -> (DSP, DSPConnection);
+    fn add_input(input: RbDSP, kind: DspConnectionType) -> RbDSPConnection;
+    fn get_input(index: i32) -> (RbDSP, RbDSPConnection);
+    fn get_output(index: i32) -> (RbDSP, RbDSPConnection);
     fn get_input_count() -> i32;
     fn get_output_count() -> i32;
     fn disconnect_all(inputs: bool, outputs: bool) -> ();
-    fn disconnect_from(target: Option<&DSP>, connection: Option<&DSPConnection>) -> ();
+    fn disconnect_from(target: Option<RbDSP>, connection: Option<RbDSPConnection>) -> ();
     fn reset() -> ();
     fn release() -> ();
     fn get_type() -> DspType;
     fn get_cpu_usage() -> (u32, u32);
     // TODO userdata
-    fn get_system() -> System;
+    fn get_system() -> RbSystem;
     fn get_metering_info() -> (DspMeteringInfo, DspMeteringInfo);
     fn set_metering_enabled(input_enabled: bool, output_enabled: bool) -> ();
     fn get_metering_enabled() -> (bool, bool);

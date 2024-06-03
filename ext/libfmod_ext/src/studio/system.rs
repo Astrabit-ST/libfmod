@@ -13,15 +13,15 @@ use magnus::prelude::*;
 use crate::{extern_struct, extern_struct_bind, extern_struct_fns};
 
 use super::{
-    bank::Bank,
-    bus::Bus,
-    command_replay::CommandReplay,
+    bank::RbBank,
+    bus::RbBus,
+    command_replay::RbCommandReplay,
     flags::{CommandCaptureFlags, CommandReplayFlags, LoadBankFlags},
     structs::{
         AdvancedSettings, BufferUsage, CPUUsage as StudioCPUUsage, MemoryUsage,
         ParameterDescription, ParameterID, SoundInfo,
     },
-    vca::VCA,
+    vca::RbVCA,
 };
 
 extern_struct! {
@@ -30,18 +30,18 @@ extern_struct! {
 
 extern_struct_fns! {
   impl System: fmod::studio::System {
-    fn load_bank_file(filename: magnus::RString, flags: LoadBankFlags) -> Bank;
-    fn load_bank_memory(buffer: magnus::RString, flags: LoadBankFlags) -> Bank;
+    fn load_bank_file(filename: magnus::RString, flags: LoadBankFlags) -> RbBank;
+    fn load_bank_memory(buffer: magnus::RString, flags: LoadBankFlags) -> RbBank;
     fn unload_all_banks() -> ();
-    fn get_bank(path_or_id: magnus::RString) -> Bank;
-    fn get_bank_by_id(id: Guid) -> Bank;
+    fn get_bank(path_or_id: magnus::RString) -> RbBank;
+    fn get_bank_by_id(id: Guid) -> RbBank;
     fn bank_count() -> i32;
-    fn get_bank_list() -> magnus::r_array::TypedArray<Bank>;
+    fn get_bank_list() -> magnus::r_array::TypedArray<RbBank>;
     // TODO userdata & callback
     fn start_command_capture(filename: magnus::RString, flags: CommandCaptureFlags) -> ();
     fn stop_command_capture() -> ();
-    fn load_command_replay(filename: magnus::RString, flags: CommandReplayFlags) -> CommandReplay;
-    fn get_core_system() -> crate::core::system::System;
+    fn load_command_replay(filename: magnus::RString, flags: CommandReplayFlags) -> RbCommandReplay;
+    fn get_core_system() -> crate::core::system::RbSystem;
     fn lookup_id(path: magnus::RString) -> Guid;
     fn lookup_path(id: Guid) -> magnus::RString;
     fn is_valid() -> bool;
@@ -55,10 +55,10 @@ extern_struct_fns! {
     fn get_listener_weight(listener: i32) -> f32;
     fn set_listener_count(count: i32) -> ();
     fn get_listener_count() -> i32;
-    fn get_bus(path_or_id: magnus::RString) -> Bus;
-    fn get_bus_by_id(id: Guid) -> Bus;
-    fn get_vca(path_or_id: magnus::RString) -> VCA;
-    fn get_vca_by_id(id: Guid) -> VCA;
+    fn get_bus(path_or_id: magnus::RString) -> RbBus;
+    fn get_bus_by_id(id: Guid) -> RbBus;
+    fn get_vca(path_or_id: magnus::RString) -> RbVCA;
+    fn get_vca_by_id(id: Guid) -> RbVCA;
     fn get_advanced_settings() -> AdvancedSettings;
     fn get_parameter_by_id(id: ParameterID) -> (f32, f32);
     fn set_parameter_by_id(id: ParameterID, value: f32, ignore_seek_speed: bool) -> ();
@@ -81,7 +81,7 @@ extern_struct_fns! {
 }
 
 impl System {
-    fn new() -> Result<Self> {
+    fn new() -> Result<RbSystem> {
         unsafe { fmod::studio::System::new() }.into_ruby()
     }
 

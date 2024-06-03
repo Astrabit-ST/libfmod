@@ -10,10 +10,10 @@ use crate::{extern_struct, extern_struct_bind, extern_struct_fns};
 
 use super::enums::{OpenState, TimeUnit};
 use super::flags::Mode;
-use super::sound_group::SoundGroup;
+use super::sound_group::RbSoundGroup;
 use super::structs::{Tag, Vector};
-use super::sync_point::SyncPoint;
-use super::system::System;
+use super::sync_point::RbSyncPoint;
+use super::system::RbSystem;
 
 extern_struct! {
   struct Sound: fmod::Sound => "FMOD::Sound"
@@ -37,7 +37,7 @@ extern_struct_fns! {
     fn get_loop_points(start: TimeUnit, end: TimeUnit) -> (u32, u32);
     fn release() -> ();
     // TODO userdata
-    fn get_system() -> System;
+    fn get_system() -> RbSystem;
     fn get_name() -> magnus::RString;
     fn get_length(time_unit: TimeUnit) -> u32;
     fn get_tag_count() -> (i32, i32);
@@ -47,15 +47,15 @@ extern_struct_fns! {
     fn get_music_channel_volume(channel: i32) -> f32;
     fn set_music_speed(speed: f32) -> ();
     fn get_music_speed() -> f32;
-    fn set_sound_group(group: &SoundGroup) -> ();
-    fn sound_group() -> SoundGroup;
+    fn set_sound_group(group: RbSoundGroup) -> ();
+    fn sound_group() -> RbSoundGroup;
     fn get_sub_sound_count() -> i32;
-    fn get_sub_sound(index: i32) -> Sound;
-    fn get_sub_sound_parent() -> Option<Sound>;
-    fn get_sync_point(index: i32) -> SyncPoint;
-    fn get_sync_point_info(point: &SyncPoint, unit: TimeUnit) -> (magnus::RString, u32);
-    fn add_sync_point(offset: u32, unit: TimeUnit, name: magnus::RString) -> SyncPoint;
-    fn delete_sync_point(point: &SyncPoint) -> ();
+    fn get_sub_sound(index: i32) -> RbSound;
+    fn get_sub_sound_parent() -> Option<RbSound>;
+    fn get_sync_point(index: i32) -> RbSyncPoint;
+    fn get_sync_point_info(point: RbSyncPoint, unit: TimeUnit) -> (magnus::RString, u32);
+    fn add_sync_point(offset: u32, unit: TimeUnit, name: magnus::RString) -> RbSyncPoint;
+    fn delete_sync_point(point: RbSyncPoint) -> ();
   }
 }
 

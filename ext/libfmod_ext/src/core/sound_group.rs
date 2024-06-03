@@ -9,8 +9,8 @@ use crate::{Bindable, Result};
 use crate::{extern_struct, extern_struct_bind, extern_struct_fns};
 
 use super::enums::SoundGroupBehavior;
-use super::sound::Sound;
-use super::system::System;
+use super::sound::RbSound;
+use super::system::RbSystem;
 
 extern_struct! {
   struct SoundGroup: fmod::SoundGroup => "FMOD::SoundGroup"
@@ -21,7 +21,7 @@ extern_struct_fns! {
     fn get_name() -> magnus::RString;
     fn release() -> ();
     // TODO userdata
-    fn get_system() -> System;
+    fn get_system() -> RbSystem;
     fn set_max_audible(max_audible: i32) -> ();
     fn get_max_audible() -> i32;
     fn set_max_audible_behavior(behavior: SoundGroupBehavior) -> ();
@@ -31,7 +31,7 @@ extern_struct_fns! {
     fn set_volume(volume: f32) -> ();
     fn get_volume() -> f32;
     fn get_sound_count() -> i32;
-    fn get_sound(index: i32) -> Sound;
+    fn get_sound(index: i32) -> RbSound;
     fn get_playing_count() -> i32;
     fn stop() -> ();
   }

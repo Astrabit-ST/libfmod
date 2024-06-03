@@ -10,7 +10,7 @@ use crate::{extern_struct, extern_struct_bind, extern_struct_fns};
 
 use super::enums::PlaybackState;
 use super::structs::CommandInfo;
-use super::system::System;
+use super::system::RbSystem;
 
 extern_struct! {
     struct CommandReplay: fmod::studio::CommandReplay => "FMOD::Studio::CommandReplay"
@@ -34,7 +34,7 @@ extern_struct_fns! {
         fn get_command_info(index: i32) -> CommandInfo;
         fn get_command_string(index: i32) -> magnus::RString;
         fn get_length() -> f32;
-        fn get_system() -> System;
+        fn get_system() -> RbSystem;
         fn is_valid() -> bool;
     }
 }

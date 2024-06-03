@@ -8,7 +8,7 @@ use crate::{Bindable, Result};
 
 use crate::{extern_struct, extern_struct_bind, extern_struct_fns};
 
-use super::dsp::DSP;
+use super::dsp::RbDSP;
 use super::enums::DspConnectionType;
 
 extern_struct! {
@@ -17,8 +17,8 @@ extern_struct! {
 
 extern_struct_fns! {
   impl DSPConnection: fmod::DspConnection {
-    fn get_input() -> DSP;
-    fn get_output() -> DSP;
+    fn get_input() -> RbDSP;
+    fn get_output() -> RbDSP;
     fn get_type() -> DspConnectionType;
     // TODO userdata
     fn set_mix(mix: f32) -> ();

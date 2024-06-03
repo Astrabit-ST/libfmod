@@ -10,10 +10,10 @@ use crate::{core::structs::Guid, Bindable, Result};
 
 use crate::{extern_struct, extern_struct_bind, extern_struct_fns};
 
-use super::bus::Bus;
+use super::bus::RbBus;
 use super::enums::LoadingState;
-use super::event_description::EventDescription;
-use super::vca::VCA;
+use super::event_description::RbEventDescription;
+use super::vca::RbVCA;
 
 extern_struct! {
     struct Bank: fmod::studio::Bank => "FMOD::Studio::Bank"
@@ -31,13 +31,13 @@ extern_struct_fns! {
         fn get_sample_loading_state() -> LoadingState;
         fn unload() -> ();
         fn bus_count() -> i32;
-        fn get_bus_list() -> TypedArray<Bus>;
+        fn get_bus_list() -> TypedArray<RbBus>;
         fn event_count() -> i32;
-        fn get_event_list() -> TypedArray<EventDescription>;
+        fn get_event_list() -> TypedArray<RbEventDescription>;
         fn string_count() -> i32;
         fn get_string_info(index: i32) -> (Guid, magnus::RString);
         fn vca_count() -> i32;
-        fn get_vca_list() -> TypedArray<VCA>;
+        fn get_vca_list() -> TypedArray<RbVCA>;
     }
 }
 

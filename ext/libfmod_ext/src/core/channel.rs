@@ -13,7 +13,7 @@ use crate::{extern_struct_bind, extern_struct_fns};
 use super::channel_control::{ChannelControl, ChannelControlType};
 use super::channel_group::ChannelGroup;
 use super::enums::TimeUnit;
-use super::sound::Sound;
+use super::sound::RbSound;
 
 // public api
 pub type Channel = magnus::typed_data::Obj<ChannelControl>;
@@ -43,7 +43,7 @@ impl FromRuby<fmod::Channel> for ChannelImpl {
 extern_struct_fns! {
   impl ChannelImpl: fmod::Channel {
     fn is_virtual() -> bool;
-    fn get_current_sound() -> Option<Sound>;
+    fn get_current_sound() -> Option<RbSound>;
     fn get_index() -> i32;
     fn set_frequency(frequency: f32) -> ();
     fn get_frequency() -> f32;

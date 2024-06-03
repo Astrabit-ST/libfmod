@@ -9,7 +9,7 @@ use magnus::prelude::*;
 
 use crate::{extern_struct_bind, extern_struct_fns};
 
-use super::{dsp::DSP, structs::Vector, system::System};
+use super::{dsp::RbDSP, structs::Vector, system::RbSystem};
 
 #[derive(Clone, Copy)]
 #[magnus::wrap(class = "FMOD::ChannelControl", size, free_immediately)]
@@ -60,18 +60,18 @@ impl ChannelControl {
 
 extern_struct_fns! {
   impl ChannelControl: fmod::ChannelControl {
-    fn add_dsp(index: i32, dsp: &DSP) -> ();
-    fn remove_dsp(dsp: &DSP) -> ();
+    fn add_dsp(index: i32, dsp: RbDSP) -> ();
+    fn remove_dsp(dsp: RbDSP) -> ();
     fn get_dsp_count() -> i32;
-    fn get_dsp(index: i32) -> DSP;
-    fn set_dsp_index(dsp: &DSP, index: i32) -> ();
-    fn get_dsp_index(dsp: &DSP) -> i32;
+    fn get_dsp(index: i32) -> RbDSP;
+    fn set_dsp_index(dsp: RbDSP, index: i32) -> ();
+    fn get_dsp_index(dsp: RbDSP) -> i32;
     fn set_reverb_properties(instance: i32, wet: f32) -> ();
     fn get_reverb_properties(instance: i32) -> f32;
     fn set_low_pass_gain(gain: f32) -> ();
     fn get_low_pass_gain() -> f32;
     // TODO userdata
-    fn get_system() -> System;
+    fn get_system() -> RbSystem;
     fn set_pan(pan: f32) -> ();
     // TODO mix matrix
     fn is_playing() -> bool;

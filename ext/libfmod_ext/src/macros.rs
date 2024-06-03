@@ -15,17 +15,26 @@ macro_rules! extern_struct {
         #[magnus::wrap(class = $ruby_path, free_immediately, size)]
         #[derive(Clone, Copy, Debug, PartialEq, Eq)]
         pub struct $name(pub $fmod_ty);
+        paste::paste! {
+          pub type [<Rb $name>] = magnus::typed_data::Obj<$name>;
+          impl $crate::FromRuby<$fmod_ty> for [<Rb $name>] {
+              fn from_ruby(self) -> $crate::Result<$fmod_ty> {
+                  Ok(self.0)
+              }
+          }
 
-        impl $crate::FromRuby<$fmod_ty> for $name {
+          impl $crate::FromRuby<$fmod_ty> for $name{
             fn from_ruby(self) -> $crate::Result<$fmod_ty> {
                 Ok(self.0)
             }
-        }
+          }
 
-        impl $crate::IntoRuby<$name> for $fmod_ty {
-            fn into_ruby(self) -> $crate::Result<$name> {
-                Ok($name(self))
-            }
+          impl $crate::IntoRuby<[<Rb $name>]> for $fmod_ty {
+              fn into_ruby(self) -> $crate::Result<[<Rb $name>]> {
+                  let rb_self = $name(self);
+                  $crate::extern_struct_storage::get_or_insert(self, rb_self)
+              }
+          }
         }
     };
 }
