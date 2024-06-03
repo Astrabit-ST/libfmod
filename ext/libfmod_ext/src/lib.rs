@@ -1,10 +1,14 @@
+#![warn(rust_2018_idioms)]
 use magnus::prelude::*;
 
 type Result<T> = std::result::Result<T, magnus::Error>;
 
+mod callback;
 mod core;
 mod error;
 mod studio;
+mod thread;
+mod userdata;
 
 mod macros;
 pub use macros::*;
@@ -21,6 +25,8 @@ fn init(ruby: &magnus::Ruby) -> Result<()> {
     error::bind(module)?;
     core::bind(module)?;
     studio::bind(module)?;
+    userdata::bind(module)?;
+    callback::bind();
 
     Ok(())
 }
