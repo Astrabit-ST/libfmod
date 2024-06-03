@@ -54,6 +54,7 @@ extern_struct_bind! {
     fn get_sound -> 1;
     fn get_playing_count -> 0;
     fn stop -> 0;
+    ruby_compat_methods: true
   }
 }
 

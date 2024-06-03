@@ -33,6 +33,7 @@ extern_struct_bind! {
     fn get_type -> 0;
     fn set_mix -> 1;
     fn get_mix -> 0;
+    ruby_compat_methods: true
   }
 }
 

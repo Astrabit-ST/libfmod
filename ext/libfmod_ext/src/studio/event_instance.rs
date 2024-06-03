@@ -112,6 +112,7 @@ extern_struct_bind! {
       fn set_volume -> 1;
       fn get_volume -> 0;
       fn is_virtual -> 0;
+      ruby_compat_methods: true
     }
 }
 

@@ -81,6 +81,7 @@ extern_struct_bind! {
     fn get_rotation -> 0;
     fn set_scale -> 1;
     fn get_scale -> 0;
+    ruby_compat_methods: true
   }
 }
 

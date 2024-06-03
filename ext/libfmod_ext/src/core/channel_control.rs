@@ -11,14 +11,14 @@ use crate::{extern_struct_bind, extern_struct_fns};
 
 use super::{dsp::RbDSP, structs::Vector, system::RbSystem};
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 #[magnus::wrap(class = "FMOD::ChannelControl", size, free_immediately)]
 pub struct ChannelControl(
     pub(super) fmod::ChannelControl,
     pub(super) ChannelControlType,
 );
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum ChannelControlType {
     Channel,
     ChannelGroup,
@@ -169,6 +169,7 @@ extern_struct_bind! {
     fn get_volume_ramp -> 0;
     fn set_mute -> 1;
     fn get_mute -> 0;
+    ruby_compat_methods: true
   }
 }
 

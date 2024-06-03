@@ -59,6 +59,7 @@ extern_struct_bind! {
         fn get_string_info -> 1;
         fn vca_count -> 0;
         fn get_vca_list -> 0;
+        ruby_compat_methods: true
     }
 }
 

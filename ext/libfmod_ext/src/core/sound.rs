@@ -94,6 +94,7 @@ extern_struct_bind! {
     fn get_sync_point_info -> 2;
     fn add_sync_point -> 3;
     fn delete_sync_point -> 1;
+    ruby_compat_methods: true
   }
 }
 

@@ -58,6 +58,7 @@ extern_struct_bind! {
         fn get_length -> 0;
         fn get_system -> 0;
         fn is_valid -> 0;
+        ruby_compat_methods: true
     }
 }
 

@@ -36,6 +36,7 @@ extern_struct_bind! {
     fn set_active -> 1;
     fn get_active -> 0;
     fn release -> 0;
+    ruby_compat_methods: true
   }
 }
 

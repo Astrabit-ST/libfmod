@@ -94,6 +94,7 @@ extern_struct_bind! {
     fn set_wet_dry_mix -> 3;
     fn get_wet_dry_mix -> 0;
     fn get_idle -> 0;
+    ruby_compat_methods: true
   }
 }
 

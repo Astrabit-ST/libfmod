@@ -13,7 +13,7 @@ use crate::Result;
 macro_rules! extern_struct {
     (struct $name:ident: $fmod_ty:path => $ruby_path:literal) => {
         #[magnus::wrap(class = $ruby_path, free_immediately, size)]
-        #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+        #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
         pub struct $name(pub $fmod_ty);
         paste::paste! {
           pub type [<Rb $name>] = magnus::typed_data::Obj<$name>;
@@ -61,6 +61,7 @@ macro_rules! extern_struct_fns {
 macro_rules! extern_struct_bind {
     (impl Bindable for $name:ident: $fmod_ty:path $( , super = $superclass:path )? $( , class_name = $class_name:literal )? {
       $( fn $fn_name:ident -> $arity:literal );* $(;)?
+      $( ruby_compat_methods: $compat_val:literal )?
       $( |$class_ident:ident| $block:block)?
     }) => {
       const _: () ={
@@ -74,6 +75,13 @@ macro_rules! extern_struct_bind {
             let class_name = stringify!($name);
             $( let class_name = $class_name; )?
             let class = module.define_class(class_name, _superclass)?;
+            $(
+              let _ = $compat_val;
+              class.define_method("dup", magnus::method!(<$name as magnus::typed_data::Dup>::dup, 0))?;
+              class.define_method("hash", magnus::method!(<$name as magnus::typed_data::Hash>::hash, 0))?;
+              class.define_method("inspect", magnus::method!(<$name as magnus::typed_data::Inspect>::inspect, 0))?;
+              class.define_method("eql?", magnus::method!(<$name as magnus::typed_data::IsEql>::is_eql, 1))?;
+            )?
             $(
               paste::paste! {
                 class.define_method(stringify!($fn_name), magnus::method!($name::$fn_name, $arity))?;

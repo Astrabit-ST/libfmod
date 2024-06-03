@@ -20,7 +20,7 @@ extern_struct_fns! {
 
 extern_struct_bind! {
   impl Bindable for SyncPoint: fmod::SyncPoint {
-
+    ruby_compat_methods: true
   }
 }
 

@@ -171,6 +171,7 @@ extern_struct_bind! {
     fn reset_buffer_usage -> 0;
     fn get_cpu_usage -> 0;
     fn get_memory_usage -> 0;
+    ruby_compat_methods: true
 
     |class| {
       class.define_singleton_method("new", magnus::function!(System::new, 0))?;

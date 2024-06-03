@@ -200,6 +200,7 @@ extern_struct_bind! {
     fn get_3d_settings -> 0;
     fn set_3d_listener_count -> 1;
     fn get_3d_listener_count -> 0;
+    ruby_compat_methods: true
 
     |class| {
       class.define_singleton_method("new", magnus::function!(System::new, 0))?;

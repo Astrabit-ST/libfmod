@@ -78,6 +78,7 @@ extern_struct_bind! {
         fn load_sample_data -> 0;
         fn unload_sample_data -> 0;
         fn get_sample_loading_state -> 0;
+        ruby_compat_methods: true
     }
 }
 
