@@ -50,10 +50,10 @@ const DEFAULT_USERDATA_PTR: *mut c_void = 0xDEAD_CAFE as *mut c_void;
 static STORAGE: Lazy<ExternStructStorage> = Lazy::new(Default::default);
 
 #[derive(magnus::TypedData)]
-#[magnus(class = "FMOD::__UserdataWrapper")]
-struct __UserdataWrapper;
+#[magnus(class = "FMOD::ExternStructStorage")]
+struct _ExternStructStorage;
 
-impl magnus::DataTypeFunctions for __UserdataWrapper {
+impl magnus::DataTypeFunctions for _ExternStructStorage {
     fn mark(&self, marker: &magnus::gc::Marker) {
         let storage = STORAGE.map.lock().unwrap();
         for &value in storage.values() {
@@ -63,8 +63,8 @@ impl magnus::DataTypeFunctions for __UserdataWrapper {
 }
 
 pub fn bind(module: magnus::RModule) -> Result<()> {
-    let class = module.define_class("__UserdataWrapper", magnus::class::basic_object())?;
-    class.ivar_set("__inst", __UserdataWrapper)?;
+    let class = module.define_class("ExternStructStorage", magnus::class::basic_object())?;
+    class.ivar_set("__inst", _ExternStructStorage)?;
 
     Ok(())
 }
@@ -109,11 +109,6 @@ pub fn contains(value: impl Into<ExternStruct>) -> bool {
 pub fn cleanup() {
     let mut storage = STORAGE.map.lock().unwrap();
     storage.retain(|key, _| key.is_valid());
-}
-
-pub fn clear_storage() {
-    let mut storage = STORAGE.map.lock().unwrap();
-    storage.clear();
 }
 
 impl ExternStruct {

@@ -11,12 +11,12 @@ use std::sync::mpsc::Sender;
 use crate::thread;
 
 type Callback = Box<dyn FnOnce(&magnus::Ruby) + Send>;
-static SENDER: OnceCell<Sender<Callback>> = OnceCell::new();
+static SENDER: OnceCell<Sender<Option<Callback>>> = OnceCell::new();
 
 pub fn send(callback: impl FnOnce(&magnus::Ruby) + Send + 'static) {
     let sender = SENDER.get().expect("callback sender not initialized");
     sender
-        .send(Box::new(callback))
+        .send(Some(Box::new(callback)))
         .expect("calling thread is dead. please report this");
 }
 
@@ -26,16 +26,30 @@ pub fn bind() {
 
     unsafe {
         thread::spawn_ruby_thread(move |ruby| {
-            thread::without_gvl(|| {
-                while let Ok(callback) = reciever.recv() {
-                    thread::with_gvl(|ruby| {
-                        callback(ruby);
-                        while let Ok(callback) = reciever.try_recv() {
+            thread::without_gvl(
+                || {
+                    let mut running = true;
+                    while running {
+                        let Ok(Some(callback)) = reciever.recv() else {
+                            return;
+                        };
+                        thread::with_gvl(|ruby| {
                             callback(ruby);
-                        }
-                    })
-                }
-            });
+                            for callback in reciever.try_iter() {
+                                let Some(callback) = callback else {
+                                    running = false;
+                                    break;
+                                };
+                                callback(ruby);
+                            }
+                        });
+                    }
+                },
+                || {
+                    // we send None to signal that the thread is done
+                    let _ = SENDER.get().unwrap().send(None);
+                },
+            );
 
             ruby.qnil().as_value()
         });

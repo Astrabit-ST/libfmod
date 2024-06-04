@@ -17,6 +17,7 @@ pub struct ChannelControl(
     pub(super) fmod::ChannelControl,
     pub(super) ChannelControlType,
 );
+type RbChannelControl = Obj<ChannelControl>;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum ChannelControlType {
@@ -24,7 +25,7 @@ pub enum ChannelControlType {
     ChannelGroup,
 }
 
-impl FromRuby<fmod::ChannelControl> for ChannelControl {
+impl FromRuby<fmod::ChannelControl> for RbChannelControl {
     fn from_ruby(self) -> Result<fmod::ChannelControl> {
         Ok(self.0)
     }

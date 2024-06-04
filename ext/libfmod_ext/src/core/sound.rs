@@ -22,10 +22,10 @@ extern_struct! {
 }
 
 impl Sound {
-    fn release(&self) -> Result<()> {
+    fn release(rb_self: RbSound) -> Result<()> {
         use crate::{FromRuby, IntoRuby};
         // we dont need to check if the sound is already removed, because FromRuby will return an error if it is
-        let sound: fmod::Sound = self.from_ruby()?;
+        let sound: fmod::Sound = rb_self.from_ruby()?;
 
         let mut index = 0;
         while let Ok(point) = sound.get_sync_point(index) {
@@ -37,10 +37,10 @@ impl Sound {
         sound.release().into_ruby()
     }
 
-    fn delete_sync_point(&self, point: RbSyncPoint) -> Result<()> {
+    fn delete_sync_point(rb_self: RbSound, point: RbSyncPoint) -> Result<()> {
         use crate::{FromRuby, IntoRuby};
 
-        let sound: fmod::Sound = self.from_ruby()?;
+        let sound: fmod::Sound = rb_self.from_ruby()?;
         let point = point.from_ruby()?;
 
         crate::extern_struct_storage::remove(point);

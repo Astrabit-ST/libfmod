@@ -3,7 +3,7 @@
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
-use crate::{Bindable, IntoRuby, Result};
+use crate::{Bindable, FromRuby, IntoRuby, Result};
 use magnus::prelude::*;
 
 use crate::{extern_struct, extern_struct_bind, extern_struct_fns};
@@ -32,25 +32,37 @@ impl System {
         unsafe { fmod::System::new() }.into_ruby()
     }
 
-    fn release(&self) -> Result<()> {
-        crate::extern_struct_storage::clear_storage();
-        unsafe { self.0.release() }.into_ruby()
+    fn update(rb_self: RbSystem) -> Result<()> {
+        let system: fmod::System = rb_self.from_ruby()?;
+        system.update().into_ruby()?;
+        crate::extern_struct_storage::cleanup();
+        Ok(())
     }
 
-    fn create_sound(&self, builder: &SoundBuilder) -> Result<RbSound> {
+    fn release(rb_self: RbSystem) -> Result<()> {
+        let system: fmod::System = rb_self.from_ruby()?;
+        unsafe { system.release() }.into_ruby()?;
+        crate::extern_struct_storage::remove(system);
+        crate::extern_struct_storage::cleanup();
+        Ok(())
+    }
+
+    fn create_sound(rb_self: RbSystem, builder: &SoundBuilder) -> Result<RbSound> {
+        let system: fmod::System = rb_self.from_ruby()?;
         let borrow = builder.0.borrow();
         let builder = borrow
             .as_ref()
             .ok_or_else(SoundBuilder::invalid_state_error)?;
-        self.0.create_sound(builder).into_ruby()
+        system.create_sound(builder).into_ruby()
     }
 
-    fn create_stream(&self, builder: &SoundBuilder) -> Result<RbSound> {
+    fn create_stream(rb_self: RbSystem, builder: &SoundBuilder) -> Result<RbSound> {
+        let system: fmod::System = rb_self.from_ruby()?;
         let borrow = builder.0.borrow();
         let builder = borrow
             .as_ref()
             .ok_or_else(SoundBuilder::invalid_state_error)?;
-        self.0.create_stream(builder).into_ruby()
+        system.create_stream(builder).into_ruby()
     }
 
     fn get_userdata(rb_self: RbSystem) -> Result<magnus::Value> {
@@ -94,7 +106,6 @@ extern_struct_fns! {
     // TODO mix matrix
     fn get_speaker_mode_channels(speaker_mode: SpeakerMode) -> i32;
     fn close() -> SystemBuilder;
-    fn update() -> ();
     fn suspend_mixer() -> ();
     fn resume_mixer() -> ();
     fn set_network_proxy(proxy: magnus::RString) -> ();

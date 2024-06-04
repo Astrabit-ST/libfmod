@@ -19,6 +19,7 @@ use super::sound::RbSound;
 pub type Channel = magnus::typed_data::Obj<ChannelControl>;
 // implementation details
 type ChannelImpl = ChannelControl;
+type RbChannelImpl = ChannelGroup;
 
 impl IntoRuby<Channel> for fmod::Channel {
     fn into_ruby(self) -> Result<Channel> {

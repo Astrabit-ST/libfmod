@@ -13,7 +13,7 @@ use magnus::rb_sys::{AsRawValue, FromRawValue};
 ///
 /// Must be called on a ruby thread with the gvl acquired.
 /// You must not call ruby code from inside the callback, unless the gvl has been reaquired with [`with_gvl`].
-pub unsafe fn without_gvl<F: FnOnce() -> R, R>(f: F) -> R {
+pub unsafe fn without_gvl<F: FnOnce() -> R, R, Ubf: FnOnce()>(f: F, ubf: Ubf) -> R {
     unsafe extern "C" fn gvl_fun<F: FnOnce() -> R, R>(function: *mut c_void) -> *mut c_void {
         let (f, r) = std::ptr::read::<(F, *mut R)>(function.cast());
 
@@ -22,9 +22,14 @@ pub unsafe fn without_gvl<F: FnOnce() -> R, R>(f: F) -> R {
 
         std::ptr::null_mut()
     }
+    unsafe extern "C" fn ubf_fun<Ubf: FnOnce()>(function: *mut c_void) {
+        let f = std::ptr::read::<Ubf>(function.cast());
+        f();
+    }
 
     // f is initialized before we call rb_thread_call_without_gvl.
     let function = MaybeUninit::new(f);
+    let mut ubf = MaybeUninit::new(ubf);
     let mut result = MaybeUninit::uninit();
 
     let mut param_tuple = (function, &mut result);
@@ -32,8 +37,8 @@ pub unsafe fn without_gvl<F: FnOnce() -> R, R>(f: F) -> R {
     rb_sys::rb_thread_call_without_gvl(
         Some(gvl_fun::<F, R>),
         std::ptr::from_mut(&mut param_tuple).cast(), // we effectively move f into gvl_fun.
-        None,
-        std::ptr::null_mut(),
+        Some(ubf_fun::<Ubf>),
+        ubf.as_mut_ptr().cast(),
     );
     // f is now uninitialized.
 

@@ -13,26 +13,25 @@ use crate::Result;
 macro_rules! extern_struct {
     (struct $name:ident: $fmod_ty:path => $ruby_path:literal) => {
         #[magnus::wrap(class = $ruby_path, free_immediately, size)]
-        #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+        #[derive(Clone, Copy, PartialEq, Eq, Hash)]
         pub struct $name(pub $fmod_ty);
+
+        impl std::fmt::Debug for $name {
+            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                self.0.fmt(f)
+            }
+        }
+
         paste::paste! {
           pub type [<Rb $name>] = magnus::typed_data::Obj<$name>;
           impl $crate::FromRuby<$fmod_ty> for [<Rb $name>] {
               fn from_ruby(self) -> $crate::Result<$fmod_ty> {
+                  println!("from ruby called!");
                   if !$crate::extern_struct_storage::contains(self.0) {
                       return Err($crate::error::use_after_free(self.0));
                   }
                   Ok(self.0)
               }
-          }
-
-          impl $crate::FromRuby<$fmod_ty> for $name {
-            fn from_ruby(self) -> $crate::Result<$fmod_ty> {
-                if !$crate::extern_struct_storage::contains(self.0) {
-                  return Err($crate::error::use_after_free(self.0));
-                }
-                Ok(self.0)
-            }
           }
 
           impl $crate::IntoRuby<[<Rb $name>]> for $fmod_ty {
@@ -52,11 +51,13 @@ macro_rules! extern_struct_fns {
     }) => {
       impl $name {
         $(
-          pub(crate) fn $fn_name(&self, $($arg_name: $arg_type),*) -> $crate::Result<$fn_return> {
-            #[allow(unused_imports)]
-            use $crate::{FromRuby, IntoRuby};
-            let this: $fmod_ty = self.from_ruby()?;
-            this.$fn_name($($arg_name.from_ruby()?),*).into_ruby()
+          paste::paste! {
+            pub(crate) fn $fn_name(rb_self: [<Rb $name>], $($arg_name: $arg_type),*) -> $crate::Result<$fn_return> {
+              #[allow(unused_imports)]
+              use $crate::{FromRuby, IntoRuby};
+              let this: $fmod_ty = rb_self.from_ruby()?;
+              this.$fn_name($($arg_name.from_ruby()?),*).into_ruby()
+            }
           }
         )*
       }

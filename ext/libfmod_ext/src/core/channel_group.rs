@@ -17,6 +17,7 @@ use super::dsp_connection::RbDSPConnection;
 pub type ChannelGroup = magnus::typed_data::Obj<ChannelControl>;
 // implementation details
 type ChannelGroupImpl = ChannelControl;
+type RbChannelGroupImpl = ChannelGroup;
 
 impl IntoRuby<ChannelGroup> for fmod::ChannelGroup {
     fn into_ruby(self) -> Result<ChannelGroup> {
@@ -40,9 +41,9 @@ impl FromRuby<fmod::ChannelGroup> for ChannelGroup {
 }
 
 impl ChannelGroupImpl {
-    fn release(&self) -> Result<()> {
+    fn release(rb_self: RbChannelGroupImpl) -> Result<()> {
         // we dont need to check if the group is already removed, because FromRuby will return an error if it is
-        let group: fmod::ChannelGroup = self.from_ruby()?;
+        let group: fmod::ChannelGroup = rb_self.from_ruby()?;
         crate::extern_struct_storage::remove(*group);
         group.release().into_ruby()
     }

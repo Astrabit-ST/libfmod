@@ -84,13 +84,17 @@ impl System {
         unsafe { fmod::studio::System::new() }.into_ruby()
     }
 
-    fn release(&self) -> Result<()> {
-        crate::extern_struct_storage::clear_storage();
-        unsafe { self.0.release() }.into_ruby()
+    fn release(rb_self: RbSystem) -> Result<()> {
+        let system: fmod::studio::System = rb_self.from_ruby()?;
+        unsafe { system.release() }.into_ruby()?;
+        crate::extern_struct_storage::remove(system);
+        crate::extern_struct_storage::cleanup();
+        Ok(())
     }
 
-    fn update(&self) -> Result<()> {
-        self.0.update().into_ruby()?;
+    fn update(rb_self: RbSystem) -> Result<()> {
+        let system: fmod::studio::System = rb_self.from_ruby()?;
+        system.update().into_ruby()?;
         crate::extern_struct_storage::cleanup();
         Ok(())
     }
@@ -107,11 +111,12 @@ impl System {
     // if set_parameters_by_ids took an AsRef<T> though...
     // FIXME do the above
     fn set_parameter_by_ids(
-        &self,
+        rb_self: RbSystem,
         ids: magnus::RArray,
         values: magnus::RArray,
         ignore_seek_speed: bool,
     ) -> Result<()> {
+        let system: fmod::studio::System = rb_self.from_ruby()?;
         let ids = ids.typecheck::<ParameterID>()?;
         let ids: Vec<fmod::studio::ParameterID> = ids
             .into_iter()
@@ -119,17 +124,18 @@ impl System {
             .collect::<Result<_>>()?;
         let mut values = values.to_vec()?;
 
-        self.0
+        system
             .set_parameters_by_ids(&ids, &mut values, ignore_seek_speed)
             .into_ruby()?;
 
         Ok(())
     }
 
-    fn get_sound_info(&self, key: magnus::RString) -> Result<SoundInfo> {
+    fn get_sound_info(rb_self: RbSystem, key: magnus::RString) -> Result<SoundInfo> {
+        let system: fmod::studio::System = rb_self.from_ruby()?;
         let key = key.from_ruby()?;
         // FIXME BAD BAD DANGER
-        let info = unsafe { self.0.get_sound_info(key) }
+        let info = unsafe { system.get_sound_info(key) }
             .map_err(|e| magnus::Error::new(crate::error::class(), e.to_string()))?;
 
         info.into_ruby()

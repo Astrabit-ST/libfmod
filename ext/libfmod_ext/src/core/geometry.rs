@@ -17,10 +17,10 @@ extern_struct! {
 }
 
 impl Geometry {
-    fn release(&self) -> Result<()> {
+    fn release(rb_self: RbGeometry) -> Result<()> {
         use crate::{FromRuby, IntoRuby};
         // we dont need to check if the geometry is already removed, because FromRuby will return an error if it is
-        let geometry: fmod::Geometry = self.from_ruby()?;
+        let geometry: fmod::Geometry = rb_self.from_ruby()?;
         crate::extern_struct_storage::remove(geometry);
         geometry.release().into_ruby()
     }
@@ -56,25 +56,27 @@ extern_struct_fns! {
 
 impl Geometry {
     fn add_polygon(
-        &self,
+        rb_self: RbGeometry,
         direct_occlusion: f32,
         reverb_occlusion: f32,
         double_sided: bool,
         vertices: magnus::RArray,
     ) -> Result<i32> {
+        let geometry: fmod::Geometry = rb_self.from_ruby()?;
         let vertices = vertices.typecheck::<Vector>()?;
         let vertices: Vec<fmod::Vector> = vertices
             .into_iter()
             .map(FromRuby::from_ruby)
             .collect::<Result<_>>()?;
 
-        self.0
+        geometry
             .add_polygon(direct_occlusion, reverb_occlusion, double_sided, &vertices)
             .into_ruby()
     }
 
-    fn save(&self) -> Result<magnus::RString> {
-        let bytes: Vec<u8> = self.0.save().into_ruby()?;
+    fn save(rb_self: RbGeometry) -> Result<magnus::RString> {
+        let geometry: fmod::Geometry = rb_self.from_ruby()?;
+        let bytes: Vec<u8> = geometry.save().into_ruby()?;
         Ok(magnus::RString::from_slice(&bytes))
     }
 }

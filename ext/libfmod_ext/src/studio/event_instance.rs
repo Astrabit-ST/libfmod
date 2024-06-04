@@ -76,11 +76,12 @@ impl EventInstance {
     // if set_parameters_by_ids took an AsRef<T> though...
     // FIXME do the above
     fn set_parameter_by_ids(
-        &self,
+        rb_self: RbEventInstance,
         ids: magnus::RArray,
         values: magnus::RArray,
         ignore_seek_speed: bool,
     ) -> Result<()> {
+        let instance: fmod::studio::EventInstance = rb_self.from_ruby()?;
         let ids = ids.typecheck::<ParameterID>()?;
         let ids: Vec<fmod::studio::ParameterID> = ids
             .into_iter()
@@ -88,7 +89,7 @@ impl EventInstance {
             .collect::<Result<_>>()?;
         let mut values = values.to_vec()?;
 
-        self.0
+        instance
             .set_parameters_by_ids(&ids, &mut values, ignore_seek_speed)
             .into_ruby()?;
 

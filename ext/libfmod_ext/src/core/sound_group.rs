@@ -19,10 +19,10 @@ extern_struct! {
 }
 
 impl SoundGroup {
-    fn release(&self) -> Result<()> {
+    fn release(rb_self: RbSoundGroup) -> Result<()> {
         use crate::{FromRuby, IntoRuby};
         // we dont need to check if the group is already removed, because FromRuby will return an error if it is
-        let group: fmod::SoundGroup = self.from_ruby()?;
+        let group: fmod::SoundGroup = rb_self.from_ruby()?;
         crate::extern_struct_storage::remove(group);
         group.release().into_ruby()
     }

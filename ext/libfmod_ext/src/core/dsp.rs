@@ -21,10 +21,10 @@ extern_struct! {
 }
 
 impl DSP {
-    fn release(&self) -> Result<()> {
+    fn release(rb_self: RbDSP) -> Result<()> {
         use crate::{FromRuby, IntoRuby};
         // we dont need to check if the dsp is already removed, because FromRuby will return an error if it is
-        let dsp: fmod::Dsp = self.from_ruby()?;
+        let dsp: fmod::Dsp = rb_self.from_ruby()?;
         crate::extern_struct_storage::remove(dsp);
         dsp.release().into_ruby()
     }

@@ -17,10 +17,10 @@ extern_struct! {
 }
 
 impl Reverb3D {
-    fn release(&self) -> Result<()> {
+    fn release(rb_self: RbReverb3D) -> Result<()> {
         use crate::{FromRuby, IntoRuby};
         // we dont need to check if the reverb is already removed, because FromRuby will return an error if it is
-        let reverb: fmod::Reverb3D = self.from_ruby()?;
+        let reverb: fmod::Reverb3D = rb_self.from_ruby()?;
         crate::extern_struct_storage::remove(reverb);
         reverb.release().into_ruby()
     }
