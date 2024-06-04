@@ -164,7 +164,7 @@ macro_rules! num_enum {
 
 #[macro_export]
 macro_rules! ruby_struct {
-    (struct $name:ident: $fmod_ty:path {
+    (struct $name:ident: $fmod_ty:path $( => $class_name:literal )? {
       $( $member:ident: $member_ty:ty),* $(,)?
     }) => {
       pub type $name = magnus::RStruct;
@@ -201,8 +201,11 @@ macro_rules! ruby_struct {
 
         impl $crate::Bindable for _Wrapped {
           fn bind(module: impl magnus::Module) -> $crate::Result<()> {
+            #[allow(unused_variables)]
+            let class_name = stringify!($name);
+            $( let class_name = $class_name; )?
             let class: magnus::RClass = magnus::r_struct::define_struct(
-              Some(stringify!($name)),
+              Some(class_name),
               (
                 $( stringify!($member), )*
               )

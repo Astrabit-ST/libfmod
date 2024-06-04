@@ -69,7 +69,7 @@ ruby_struct! {
 }
 
 ruby_struct! {
-  struct CPUUsage: fmod::studio::CpuUsage {
+  struct CPUUsage: fmod::studio::CpuUsage => "StudioCPUUsage" {
     update: f32
   }
 }
