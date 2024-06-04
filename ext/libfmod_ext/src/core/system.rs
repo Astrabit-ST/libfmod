@@ -52,6 +52,14 @@ impl System {
             .ok_or_else(SoundBuilder::invalid_state_error)?;
         self.0.create_stream(builder).into_ruby()
     }
+
+    fn get_userdata(rb_self: RbSystem) -> Result<magnus::Value> {
+        rb_self.ivar_get("__userdata")
+    }
+
+    fn set_userdata(rb_self: RbSystem, data: magnus::Value) -> Result<()> {
+        rb_self.ivar_set("__userdata", data)
+    }
 }
 
 extern_struct_fns! {
@@ -74,7 +82,6 @@ extern_struct_fns! {
     fn get_driver() -> i32;
     fn lock_dsp() -> (); // FIXME release gvl
     fn unlock_dsp() -> ();
-    // TODO userdata
     fn create_geometry(max_polygons: i32, max_vertices: i32) -> RbGeometry;
     fn set_geometry_settings(max_world_size: f32) -> ();
     fn get_geometry_settings() -> f32;
@@ -152,6 +159,8 @@ extern_struct_bind! {
     fn get_driver -> 0;
     fn lock_dsp -> 0;
     fn unlock_dsp -> 0;
+    fn get_userdata -> 0;
+    fn set_userdata -> 1;
     fn create_geometry -> 2;
     fn set_geometry_settings -> 1;
     fn get_geometry_settings -> 0;

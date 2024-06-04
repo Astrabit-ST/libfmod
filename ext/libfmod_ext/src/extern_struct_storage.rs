@@ -55,14 +55,10 @@ struct __UserdataWrapper;
 
 impl magnus::DataTypeFunctions for __UserdataWrapper {
     fn mark(&self, marker: &magnus::gc::Marker) {
-        let mut storage = STORAGE.map.lock().unwrap();
-        storage.retain(|key, &mut value| {
-            key.is_valid()
-                .then(|| {
-                    marker.mark(value);
-                })
-                .is_some()
-        });
+        let storage = STORAGE.map.lock().unwrap();
+        for &value in storage.values() {
+            marker.mark(value);
+        }
     }
 }
 
@@ -110,28 +106,12 @@ pub fn contains(value: impl Into<ExternStruct>) -> bool {
     storage.contains_key(&key)
 }
 
-pub fn set_userdata(value: impl Into<ExternStruct>, userdata: magnus::Value) -> Result<()> {
+pub fn cleanup() {
     let mut storage = STORAGE.map.lock().unwrap();
-    let key = value.into();
-    let rb_val = storage.get_mut(&key).unwrap(); // we should always have a value here!
-    rb_val.ivar_set("__userdata", userdata)
+    storage.retain(|key, _| key.is_valid());
 }
 
-pub fn get_userdata(value: impl Into<ExternStruct>) -> Result<magnus::Value> {
-    let storage = STORAGE.map.lock().unwrap();
-    let key = value.into();
-    let rb_val = storage.get(&key).unwrap(); // we should always have a value here!
-    rb_val.ivar_get("__userdata")
-}
-
-pub fn set_callback(value: impl Into<ExternStruct>, rb_val: magnus::Value) -> Result<()> {
-    let mut storage = STORAGE.map.lock().unwrap();
-    let key = value.into();
-    let userdata = storage.get_mut(&key).unwrap(); // we should always have a value here!
-    userdata.ivar_set("__callback", rb_val)
-}
-
-pub(crate) fn clear_storage() {
+pub fn clear_storage() {
     let mut storage = STORAGE.map.lock().unwrap();
     storage.clear();
 }

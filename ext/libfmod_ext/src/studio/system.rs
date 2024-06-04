@@ -37,7 +37,7 @@ extern_struct_fns! {
     fn get_bank_by_id(id: Guid) -> RbBank;
     fn bank_count() -> i32;
     fn get_bank_list() -> magnus::r_array::TypedArray<RbBank>;
-    // TODO userdata & callback
+    // TODO callback
     fn start_command_capture(filename: magnus::RString, flags: CommandCaptureFlags) -> ();
     fn stop_command_capture() -> ();
     fn load_command_replay(filename: magnus::RString, flags: CommandReplayFlags) -> RbCommandReplay;
@@ -45,7 +45,6 @@ extern_struct_fns! {
     fn lookup_id(path: magnus::RString) -> Guid;
     fn lookup_path(id: Guid) -> magnus::RString;
     fn is_valid() -> bool;
-    fn update() -> ();
     fn flush_commands() -> ();
     fn flush_sample_loading() -> ();
     // FIXME optional params
@@ -86,7 +85,22 @@ impl System {
     }
 
     fn release(&self) -> Result<()> {
+        crate::extern_struct_storage::clear_storage();
         unsafe { self.0.release() }.into_ruby()
+    }
+
+    fn update(&self) -> Result<()> {
+        self.0.update().into_ruby()?;
+        crate::extern_struct_storage::cleanup();
+        Ok(())
+    }
+
+    fn get_userdata(rb_self: RbSystem) -> Result<magnus::Value> {
+        rb_self.ivar_get("__userdata")
+    }
+
+    fn set_userdata(rb_self: RbSystem, data: magnus::Value) -> Result<()> {
+        rb_self.ivar_set("__userdata", data)
     }
 
     // have to handwrite this one unfortunately, slice conversion is a bit tricky
@@ -131,6 +145,8 @@ extern_struct_bind! {
     fn get_bank_by_id -> 1;
     fn bank_count -> 0;
     fn get_bank_list -> 0;
+    fn get_userdata -> 0;
+    fn set_userdata -> 1;
     fn start_command_capture -> 2;
     fn stop_command_capture -> 0;
     fn load_command_replay -> 2;

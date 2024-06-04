@@ -4,6 +4,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 #![allow(clippy::upper_case_acronyms)]
+use magnus::prelude::*;
+
 use crate::{Bindable, Result};
 
 use crate::{extern_struct, extern_struct_bind, extern_struct_fns};
@@ -43,6 +45,14 @@ impl Sound {
         crate::extern_struct_storage::remove(point);
         sound.delete_sync_point(point).into_ruby()
     }
+
+    fn get_userdata(rb_self: RbSound) -> Result<magnus::Value> {
+        rb_self.ivar_get("__userdata")
+    }
+
+    fn set_userdata(rb_self: RbSound, data: magnus::Value) -> Result<()> {
+        rb_self.ivar_set("__userdata", data)
+    }
 }
 
 extern_struct_fns! {
@@ -61,7 +71,6 @@ extern_struct_fns! {
     fn get_loop_count() -> i32;
     fn set_loop_points(start: u32, start_type: TimeUnit, end: u32, end_type: TimeUnit) -> ();
     fn get_loop_points(start: TimeUnit, end: TimeUnit) -> (u32, u32);
-    // TODO userdata
     fn get_system() -> RbSystem;
     fn get_name() -> magnus::RString;
     fn get_length(time_unit: TimeUnit) -> u32;
@@ -98,6 +107,8 @@ extern_struct_bind! {
     fn get_loop_count -> 0;
     fn set_loop_points -> 4;
     fn get_loop_points -> 2;
+    fn get_userdata -> 0;
+    fn set_userdata -> 1;
     fn release -> 0;
     fn get_system -> 0;
     fn get_name -> 0;

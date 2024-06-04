@@ -4,6 +4,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 #![allow(clippy::upper_case_acronyms)]
+use magnus::prelude::*;
+
 use crate::{Bindable, FromRuby, IntoRuby, Result};
 
 use crate::{extern_struct, extern_struct_bind, extern_struct_fns};
@@ -21,6 +23,14 @@ impl Geometry {
         crate::extern_struct_storage::remove(geometry);
         geometry.release().into_ruby()
     }
+
+    fn get_userdata(rb_self: RbGeometry) -> Result<magnus::Value> {
+        rb_self.ivar_get("__userdata")
+    }
+
+    fn set_userdata(rb_self: RbGeometry, data: magnus::Value) -> Result<()> {
+        rb_self.ivar_set("__userdata", data)
+    }
 }
 
 extern_struct_fns! {
@@ -29,7 +39,6 @@ extern_struct_fns! {
     fn get_active() -> bool;
     fn get_max_polygons() -> (i32, i32);
     fn get_polygon_count() -> i32;
-    // TODO userdata
     fn set_polygon_attributes(index: i32, direct_occlusion: f32, reverb_occlusion: f32, double_sided: bool) -> ();
     fn get_polygon_attributes(index: i32) -> (f32, f32, bool);
     fn get_polygon_vertex_count(index: i32) -> i32;
@@ -76,6 +85,8 @@ extern_struct_bind! {
     fn get_active -> 0;
     fn get_max_polygons -> 0;
     fn get_polygon_count -> 0;
+    fn get_userdata -> 0;
+    fn set_userdata -> 1;
     fn release -> 0;
     fn save -> 0;
     fn set_polygon_attributes -> 4;

@@ -4,6 +4,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+use magnus::prelude::*;
+
 use crate::core::structs::Guid;
 use crate::{Bindable, Result};
 
@@ -27,7 +29,7 @@ extern_struct_fns! {
         fn has_sustain_point() -> bool;
         fn get_min_max_distance() -> (f32, f32);
         fn get_sound_size() -> f32;
-        // TODO userdata & callbacks
+        // TODO callbacks
         fn get_id() -> Guid;
         fn get_length() -> i32;
         fn get_path() -> magnus::RString;
@@ -50,6 +52,16 @@ extern_struct_fns! {
     }
 }
 
+impl EventDescription {
+    fn get_userdata(rb_self: RbEventDescription) -> Result<magnus::Value> {
+        rb_self.ivar_get("__userdata")
+    }
+
+    fn set_userdata(rb_self: RbEventDescription, data: magnus::Value) -> Result<()> {
+        rb_self.ivar_set("__userdata", data)
+    }
+}
+
 extern_struct_bind! {
     impl Bindable for EventDescription: fmod::studio::EventDescription {
         fn is_3d -> 0;
@@ -60,6 +72,8 @@ extern_struct_bind! {
         fn has_sustain_point -> 0;
         fn get_min_max_distance -> 0;
         fn get_sound_size -> 0;
+        fn get_userdata -> 0;
+        fn set_userdata -> 1;
         fn get_id -> 0;
         fn get_length -> 0;
         fn get_path -> 0;

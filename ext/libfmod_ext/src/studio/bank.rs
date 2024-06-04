@@ -4,6 +4,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+use magnus::prelude::*;
 use magnus::r_array::TypedArray;
 
 use crate::{core::structs::Guid, Bindable, Result};
@@ -24,7 +25,6 @@ extern_struct_fns! {
         fn get_id() -> Guid;
         fn get_path() -> magnus::RString;
         fn is_valid() -> bool;
-        // TODO userdata
         fn get_loading_state() -> LoadingState;
         fn load_sample_data() -> ();
         fn unload_sample_data() -> ();
@@ -41,11 +41,23 @@ extern_struct_fns! {
     }
 }
 
+impl Bank {
+    fn get_userdata(rb_self: RbBank) -> Result<magnus::Value> {
+        rb_self.ivar_get("__userdata")
+    }
+
+    fn set_userdata(rb_self: RbBank, data: magnus::Value) -> Result<()> {
+        rb_self.ivar_set("__userdata", data)
+    }
+}
+
 extern_struct_bind! {
     impl Bindable for Bank: fmod::studio::Bank {
         fn get_id -> 0;
         fn get_path -> 0;
         fn is_valid -> 0;
+        fn get_userdata -> 0;
+        fn set_userdata -> 1;
         fn get_loading_state -> 0;
         fn load_sample_data -> 0;
         fn unload_sample_data -> 0;

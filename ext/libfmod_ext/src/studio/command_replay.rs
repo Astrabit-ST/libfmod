@@ -4,6 +4,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+use magnus::prelude::*;
+
 use crate::{Bindable, Result};
 
 use crate::{extern_struct, extern_struct_bind, extern_struct_fns};
@@ -18,7 +20,7 @@ extern_struct! {
 
 extern_struct_fns! {
     impl CommandReplay: fmod::studio::CommandReplay {
-        // TODO userdata & callbacks
+        // TODO callbacks
         fn release() -> ();
         fn start() -> ();
         fn stop() -> ();
@@ -39,8 +41,20 @@ extern_struct_fns! {
     }
 }
 
+impl CommandReplay {
+    fn get_userdata(rb_self: RbCommandReplay) -> Result<magnus::Value> {
+        rb_self.ivar_get("__userdata")
+    }
+
+    fn set_userdata(rb_self: RbCommandReplay, data: magnus::Value) -> Result<()> {
+        rb_self.ivar_set("__userdata", data)
+    }
+}
+
 extern_struct_bind! {
     impl Bindable for CommandReplay: fmod::studio::CommandReplay {
+        fn get_userdata -> 0;
+        fn set_userdata -> 1;
         fn release -> 0;
         fn start -> 0;
         fn stop -> 0;

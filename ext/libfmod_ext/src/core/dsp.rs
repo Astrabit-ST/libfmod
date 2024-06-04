@@ -4,6 +4,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 #![allow(clippy::upper_case_acronyms)]
+use magnus::prelude::*;
+
 use crate::{Bindable, Result};
 
 use crate::{extern_struct, extern_struct_bind, extern_struct_fns};
@@ -25,6 +27,14 @@ impl DSP {
         crate::extern_struct_storage::remove(dsp);
         dsp.release().into_ruby()
     }
+
+    fn get_userdata(rb_self: RbDSP) -> Result<magnus::Value> {
+        rb_self.ivar_get("__userdata")
+    }
+
+    fn set_userdata(rb_self: RbDSP, data: magnus::Value) -> Result<()> {
+        rb_self.ivar_set("__userdata", data)
+    }
 }
 
 extern_struct_fns! {
@@ -42,7 +52,6 @@ extern_struct_fns! {
     fn reset() -> ();
     fn get_type() -> DspType;
     fn get_cpu_usage() -> (u32, u32);
-    // TODO userdata
     fn get_system() -> RbSystem;
     fn get_metering_info() -> (DspMeteringInfo, DspMeteringInfo);
     fn set_metering_enabled(input_enabled: bool, output_enabled: bool) -> ();
@@ -84,6 +93,8 @@ extern_struct_bind! {
     fn release -> 0;
     fn get_type -> 0;
     fn get_cpu_usage -> 0;
+    fn get_userdata -> 0;
+    fn set_userdata -> 1;
     fn get_system -> 0;
     fn get_metering_info -> 0;
     fn set_metering_enabled -> 2;

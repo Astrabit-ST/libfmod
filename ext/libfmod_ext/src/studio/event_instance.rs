@@ -4,6 +4,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+use magnus::prelude::*;
+
 use crate::core::structs::Attributes3D;
 use crate::{Bindable, FromRuby, IntoRuby, Result};
 
@@ -24,7 +26,7 @@ extern_struct_fns! {
       fn set_listener_mask(mask: u32) -> ();
       fn get_listener_mask() -> u32;
       fn get_min_max_distance() -> (f32, f32);
-      // TODO userdata & callbacks
+      // TODO callbacks
       fn get_description() -> RbEventDescription;
       fn release() -> ();
       fn is_valid() -> bool;
@@ -56,6 +58,20 @@ extern_struct_fns! {
 // FIXME turn some get/set methods into properties
 
 impl EventInstance {
+    fn get_userdata(rb_self: RbEventInstance) -> Result<magnus::Value> {
+        let userdata: magnus::Value = rb_self.ivar_get("__userdata")?;
+        if userdata.is_nil() {
+            let desc: RbEventDescription = rb_self.funcall("get_description", ())?;
+            desc.ivar_get("__userdata")
+        } else {
+            Ok(userdata)
+        }
+    }
+
+    fn set_userdata(rb_self: RbEventInstance, data: magnus::Value) -> Result<()> {
+        rb_self.ivar_set("__userdata", data)
+    }
+
     // have to handwrite this one unfortunately, slice conversion is a bit tricky
     // if set_parameters_by_ids took an AsRef<T> though...
     // FIXME do the above
@@ -87,6 +103,8 @@ extern_struct_bind! {
       fn set_listener_mask -> 1;
       fn get_listener_mask -> 0;
       fn get_min_max_distance -> 0;
+      fn get_userdata -> 0;
+      fn set_userdata -> 1;
       fn get_description -> 0;
       fn release -> 0;
       fn is_valid -> 0;

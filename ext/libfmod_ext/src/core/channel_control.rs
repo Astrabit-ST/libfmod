@@ -5,7 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 #![allow(clippy::upper_case_acronyms)]
 use crate::{Bindable, FromRuby, Result};
-use magnus::prelude::*;
+use magnus::{prelude::*, typed_data::Obj};
 
 use crate::{extern_struct_bind, extern_struct_fns};
 
@@ -56,6 +56,14 @@ impl ChannelControl {
         let channel_group: *mut fmod::ffi::FMOD_CHANNELGROUP = channel_group.cast();
         Ok(fmod::ChannelGroup::from(channel_group))
     }
+
+    fn get_userdata(rb_self: Obj<Self>) -> Result<magnus::Value> {
+        rb_self.ivar_get("__userdata")
+    }
+
+    fn set_userdata(rb_self: Obj<Self>, data: magnus::Value) -> Result<()> {
+        rb_self.ivar_set("__userdata", data)
+    }
 }
 
 extern_struct_fns! {
@@ -70,7 +78,6 @@ extern_struct_fns! {
     fn get_reverb_properties(instance: i32) -> f32;
     fn set_low_pass_gain(gain: f32) -> ();
     fn get_low_pass_gain() -> f32;
-    // TODO userdata
     fn get_system() -> RbSystem;
     fn set_pan(pan: f32) -> ();
     // TODO mix matrix
@@ -129,6 +136,8 @@ extern_struct_bind! {
     fn get_reverb_properties -> 1;
     fn set_low_pass_gain -> 1;
     fn get_low_pass_gain -> 0;
+    fn get_userdata -> 0;
+    fn set_userdata -> 1;
     fn get_system -> 0;
     fn set_pan -> 1;
     fn is_playing -> 0;
