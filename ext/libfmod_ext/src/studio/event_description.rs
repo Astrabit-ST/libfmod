@@ -7,12 +7,14 @@
 use magnus::prelude::*;
 
 use crate::core::structs::Guid;
-use crate::{Bindable, Result};
+use crate::{Bindable, FromRuby, IntoRuby, Result};
 
 use crate::{extern_struct, extern_struct_bind, extern_struct_fns};
 
 use super::enums::LoadingState;
+use super::event_callback::EventInstanceCallback;
 use super::event_instance::RbEventInstance;
+use super::flags::EventCallbackMask;
 use super::structs::{ParameterDescription, ParameterID};
 
 extern_struct! {
@@ -29,7 +31,6 @@ extern_struct_fns! {
         fn has_sustain_point() -> bool;
         fn get_min_max_distance() -> (f32, f32);
         fn get_sound_size() -> f32;
-        // TODO callbacks
         fn get_id() -> Guid;
         fn get_length() -> i32;
         fn get_path() -> magnus::RString;
@@ -60,6 +61,30 @@ impl EventDescription {
     fn set_userdata(rb_self: RbEventDescription, data: magnus::Value) -> Result<()> {
         rb_self.ivar_set("__userdata", data)
     }
+
+    fn set_callback(
+        rb_self: RbEventDescription,
+        callback: magnus::Value,
+        mask: EventCallbackMask,
+    ) -> Result<()> {
+        let instance: fmod::studio::EventDescription = rb_self.from_ruby()?;
+        let mask = mask.from_ruby()?;
+
+        if !callback
+            .class()
+            .is_inherited(super::event_callback::class())
+        {
+            return Err(magnus::Error::new(
+                magnus::exception::runtime_error(),
+                "callback must be a EventInstanceCallback",
+            ));
+        }
+
+        rb_self.ivar_set("__callback", callback)?;
+        instance
+            .set_callback::<EventInstanceCallback>(mask)
+            .into_ruby()
+    }
 }
 
 extern_struct_bind! {
@@ -74,6 +99,7 @@ extern_struct_bind! {
         fn get_sound_size -> 0;
         fn get_userdata -> 0;
         fn set_userdata -> 1;
+        fn set_callback -> 2;
         fn get_id -> 0;
         fn get_length -> 0;
         fn get_path -> 0;

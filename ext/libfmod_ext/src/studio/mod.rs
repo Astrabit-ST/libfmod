@@ -8,6 +8,7 @@ mod structs;
 mod bank;
 mod bus;
 mod command_replay;
+mod event_callback;
 mod event_description;
 mod event_instance;
 mod system;
@@ -29,6 +30,7 @@ pub fn bind(module: magnus::RModule) -> Result<()> {
     bus::bind(module)?;
     event_description::bind(module)?;
     event_instance::bind(module)?;
+    event_callback::bind(module)?;
     command_replay::bind(module)?;
     vca::bind(module)?;
 

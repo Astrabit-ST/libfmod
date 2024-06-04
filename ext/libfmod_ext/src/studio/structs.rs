@@ -1,9 +1,10 @@
-use crate::core::sound_builder::SoundBuilder;
 // Copyright (c) 2024 Lily Lyons
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
+use crate::core::dsp::RbDSP;
+use crate::core::sound_builder::SoundBuilder;
 use crate::{Bindable, Result};
 
 use super::enums::{InstanceType, ParameterKind};
@@ -94,6 +95,38 @@ ruby_struct! {
   }
 }
 
+ruby_struct! {
+  struct PluginInstanceProperties: fmod::studio::PluginInstanceProperties {
+    name: magnus::RString,
+    dsp: RbDSP,
+  }
+}
+
+ruby_struct! {
+  struct TimelineMarkerProperties: fmod::studio::TimelineMarkerProperties {
+    name: magnus::RString,
+    position: i32,
+  }
+}
+
+ruby_struct! {
+  struct TimelineBeatProperties: fmod::studio::TimelineBeatProperties {
+    bar: i32,
+    beat: i32,
+    position: i32,
+    tempo: f32,
+    time_signature_upper: i32,
+    time_signature_lower: i32,
+  }
+}
+
+ruby_struct! {
+  struct TimelineNestedBeatProperties: fmod::studio::TimelineNestedBeatProperties {
+    event_guid: Guid,
+    properties: TimelineBeatProperties,
+  }
+}
+
 pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::studio::AdvancedSettings::bind(module)?;
     fmod::studio::MemoryUsage::bind(module)?;
@@ -104,6 +137,10 @@ pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::studio::CpuUsage::bind(module)?;
     fmod::studio::CommandInfo::bind(module)?;
     fmod::studio::SoundInfo::bind(module)?;
+    fmod::studio::PluginInstanceProperties::bind(module)?;
+    fmod::studio::TimelineMarkerProperties::bind(module)?;
+    fmod::studio::TimelineBeatProperties::bind(module)?;
+    fmod::studio::TimelineNestedBeatProperties::bind(module)?;
 
     Ok(())
 }

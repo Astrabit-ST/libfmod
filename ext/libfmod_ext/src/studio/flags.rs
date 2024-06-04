@@ -71,6 +71,31 @@ ruby_bitflags! {
   }
 }
 
+ruby_bitflags! {
+  #[repr(u32)]
+  mod EventCallbackMask: fmod::studio::EventCallbackMask {
+    const CREATED;
+    const DESTROYED;
+    const STARTING;
+    const STARTED;
+    const STOPPED;
+    const START_FAILED;
+    const CREATE_PROGRAMMER_SOUND;
+    const DESTROY_PROGRAMMER_SOUND;
+    const PLUGIN_CREATED;
+    const PLUGIN_DESTROYED;
+    const TIMELINE_MARKER;
+    const TIMELINE_BEAT;
+    const SOUND_PLAYED;
+    const SOUND_STOPPED;
+    const REAL_TO_VIRTUAL;
+    const VIRTUAL_TO_REAL;
+    const START_EVENT_COMMAND;
+    const NESTED_TIMELINE_BEAT;
+    const ALL;
+  }
+}
+
 pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::studio::InitFlags::bind(module)?;
     fmod::studio::LoadBankFlags::bind(module)?;
@@ -78,6 +103,7 @@ pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::studio::CommandCaptureFlags::bind(module)?;
     fmod::studio::CommandReplayFlags::bind(module)?;
     fmod::studio::SystemCallbackMask::bind(module)?;
+    fmod::studio::EventCallbackMask::bind(module)?;
 
     Ok(())
 }

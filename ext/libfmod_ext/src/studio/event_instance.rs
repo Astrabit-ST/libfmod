@@ -12,7 +12,9 @@ use crate::{Bindable, FromRuby, IntoRuby, Result};
 use crate::{extern_struct, extern_struct_bind, extern_struct_fns};
 
 use super::enums::{EventProperty, PlaybackState, StopMode};
+use super::event_callback::EventInstanceCallback;
 use super::event_description::RbEventDescription;
+use super::flags::EventCallbackMask;
 use super::structs::ParameterID;
 
 extern_struct! {
@@ -26,7 +28,6 @@ extern_struct_fns! {
       fn set_listener_mask(mask: u32) -> ();
       fn get_listener_mask() -> u32;
       fn get_min_max_distance() -> (f32, f32);
-      // TODO callbacks
       fn get_description() -> RbEventDescription;
       fn release() -> ();
       fn is_valid() -> bool;
@@ -58,6 +59,30 @@ extern_struct_fns! {
 // FIXME turn some get/set methods into properties
 
 impl EventInstance {
+    fn set_callback(
+        rb_self: RbEventInstance,
+        callback: magnus::Value,
+        mask: EventCallbackMask,
+    ) -> Result<()> {
+        let instance: fmod::studio::EventInstance = rb_self.from_ruby()?;
+        let mask = mask.from_ruby()?;
+
+        if !callback
+            .class()
+            .is_inherited(super::event_callback::class())
+        {
+            return Err(magnus::Error::new(
+                magnus::exception::runtime_error(),
+                "callback must be a EventInstanceCallback",
+            ));
+        }
+
+        rb_self.ivar_set("__callback", callback)?;
+        instance
+            .set_callback::<EventInstanceCallback>(mask)
+            .into_ruby()
+    }
+
     fn get_userdata(rb_self: RbEventInstance) -> Result<magnus::Value> {
         let userdata: magnus::Value = rb_self.ivar_get("__userdata")?;
         if userdata.is_nil() {
@@ -106,6 +131,7 @@ extern_struct_bind! {
       fn get_min_max_distance -> 0;
       fn get_userdata -> 0;
       fn set_userdata -> 1;
+      fn set_callback -> 2;
       fn get_description -> 0;
       fn release -> 0;
       fn is_valid -> 0;
