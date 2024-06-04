@@ -528,16 +528,6 @@ where
     }
 }
 
-impl<T, TWrap> FromRuby<TWrap> for fmod::Result<T>
-where
-    T: FromRuby<TWrap>,
-{
-    fn from_ruby(self) -> Result<TWrap> {
-        self.map_err(|e| magnus::Error::new(crate::error::class(), e.to_string()))?
-            .from_ruby()
-    }
-}
-
 impl IntoRuby<magnus::Exception> for fmod::Error {
     fn into_ruby(self) -> Result<magnus::Exception> {
         crate::error::class().new_instance((self.to_string(),))

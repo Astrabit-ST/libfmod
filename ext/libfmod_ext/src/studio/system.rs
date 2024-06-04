@@ -16,11 +16,12 @@ use super::{
     bank::RbBank,
     bus::RbBus,
     command_replay::RbCommandReplay,
-    flags::{CommandCaptureFlags, CommandReplayFlags, LoadBankFlags},
+    flags::{CommandCaptureFlags, CommandReplayFlags, LoadBankFlags, SystemCallbackMask},
     structs::{
         AdvancedSettings, BufferUsage, CPUUsage as StudioCPUUsage, MemoryUsage,
         ParameterDescription, ParameterID, SoundInfo,
     },
+    system_callback::SystemCallback,
     vca::RbVCA,
 };
 
@@ -37,7 +38,6 @@ extern_struct_fns! {
     fn get_bank_by_id(id: Guid) -> RbBank;
     fn bank_count() -> i32;
     fn get_bank_list() -> magnus::r_array::TypedArray<RbBank>;
-    // TODO callback
     fn start_command_capture(filename: magnus::RString, flags: CommandCaptureFlags) -> ();
     fn stop_command_capture() -> ();
     fn load_command_replay(filename: magnus::RString, flags: CommandReplayFlags) -> RbCommandReplay;
@@ -107,6 +107,28 @@ impl System {
         rb_self.ivar_set("__userdata", data)
     }
 
+    fn set_callback(
+        rb_self: RbSystem,
+        mask: SystemCallbackMask,
+        callback: magnus::Value,
+    ) -> Result<()> {
+        let system: fmod::studio::System = rb_self.from_ruby()?;
+        let mask = mask.from_ruby()?;
+
+        if !callback
+            .class()
+            .is_inherited(super::system_callback::class())
+        {
+            return Err(magnus::Error::new(
+                magnus::exception::runtime_error(),
+                "callback must be a SystemCallback",
+            ));
+        }
+
+        rb_self.ivar_set("__callback", callback)?;
+        system.set_callback::<SystemCallback>(mask).into_ruby()
+    }
+
     // have to handwrite this one unfortunately, slice conversion is a bit tricky
     // if set_parameters_by_ids took an AsRef<T> though...
     // FIXME do the above
@@ -153,6 +175,7 @@ extern_struct_bind! {
     fn get_bank_list -> 0;
     fn get_userdata -> 0;
     fn set_userdata -> 1;
+    fn set_callback -> 2;
     fn start_command_capture -> 2;
     fn stop_command_capture -> 0;
     fn load_command_replay -> 2;

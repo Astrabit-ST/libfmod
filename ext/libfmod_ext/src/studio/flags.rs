@@ -60,12 +60,24 @@ ruby_bitflags! {
   }
 }
 
+ruby_bitflags! {
+  #[repr(u32)]
+  mod SystemCallbackMask: fmod::studio::SystemCallbackMask {
+    const PREUPDATE;
+    const POSTUPDATE;
+    const BANK_UNLOAD;
+    const LIVEUPDATE_CONNECTED;
+    const LIVEUPDATE_DISCONNECTED;
+  }
+}
+
 pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::studio::InitFlags::bind(module)?;
     fmod::studio::LoadBankFlags::bind(module)?;
     fmod::studio::ParameterFlags::bind(module)?;
     fmod::studio::CommandCaptureFlags::bind(module)?;
     fmod::studio::CommandReplayFlags::bind(module)?;
+    fmod::studio::SystemCallbackMask::bind(module)?;
 
     Ok(())
 }

@@ -12,6 +12,7 @@ mod event_description;
 mod event_instance;
 mod system;
 mod system_builder;
+mod system_callback;
 mod vca;
 
 pub fn bind(module: magnus::RModule) -> Result<()> {
@@ -23,6 +24,7 @@ pub fn bind(module: magnus::RModule) -> Result<()> {
 
     system_builder::bind(module)?;
     system::bind(module)?;
+    system_callback::bind(module)?;
     bank::bind(module)?;
     bus::bind(module)?;
     event_description::bind(module)?;

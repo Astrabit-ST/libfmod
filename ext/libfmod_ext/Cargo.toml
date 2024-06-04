@@ -13,7 +13,7 @@ magnus = { version = "0.7.0", features = [
   "rb-sys",
 ], git = "https://github.com/matsadler/magnus" }
 rb-sys = { version = "0.9.97", features = ["ruby-macros"] }
-fmod-oxide = { version = "2.2.0", git = "https://github.com/Speak2Erase/fmod-oxide" }
+fmod-oxide = { version = "2.2.0", git = "https://github.com/Speak2Erase/fmod-oxide", default-features = false }
 paste = "1.0.15"
 once_cell = "1.19.0"
 bitflags = "2.5.0"

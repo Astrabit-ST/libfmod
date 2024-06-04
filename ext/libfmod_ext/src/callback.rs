@@ -13,7 +13,7 @@ use crate::thread;
 type Callback = Box<dyn FnOnce(&magnus::Ruby) + Send>;
 static SENDER: OnceCell<Sender<Option<Callback>>> = OnceCell::new();
 
-pub fn send(callback: impl FnOnce(&magnus::Ruby) + Send + 'static) {
+pub fn process(callback: impl FnOnce(&magnus::Ruby) + Send + 'static) {
     let sender = SENDER.get().expect("callback sender not initialized");
     sender
         .send(Some(Box::new(callback)))
