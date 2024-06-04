@@ -41,6 +41,7 @@ impl FromRuby<fmod::ChannelGroup> for ChannelGroup {
 
 impl ChannelGroupImpl {
     fn release(&self) -> Result<()> {
+        // we dont need to check if the group is already removed, because FromRuby will return an error if it is
         let group: fmod::ChannelGroup = self.from_ruby()?;
         crate::extern_struct_storage::remove(*group);
         group.release().into_ruby()

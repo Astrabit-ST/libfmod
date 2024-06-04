@@ -24,6 +24,7 @@ extern_struct! {
 impl Sound {
     fn release(&self) -> Result<()> {
         use crate::{FromRuby, IntoRuby};
+        // we dont need to check if the sound is already removed, because FromRuby will return an error if it is
         let sound: fmod::Sound = self.from_ruby()?;
 
         let mut index = 0;

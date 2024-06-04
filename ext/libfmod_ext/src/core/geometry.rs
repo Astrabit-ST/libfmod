@@ -19,6 +19,7 @@ extern_struct! {
 impl Geometry {
     fn release(&self) -> Result<()> {
         use crate::{FromRuby, IntoRuby};
+        // we dont need to check if the geometry is already removed, because FromRuby will return an error if it is
         let geometry: fmod::Geometry = self.from_ruby()?;
         crate::extern_struct_storage::remove(geometry);
         geometry.release().into_ruby()

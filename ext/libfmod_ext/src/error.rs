@@ -18,6 +18,13 @@ pub fn class() -> magnus::ExceptionClass {
     CLASS.get().expect("class not set").get_inner_with(&ruby)
 }
 
+pub fn use_after_free(v: impl std::fmt::Debug) -> magnus::Error {
+    magnus::Error::new(
+        class(),
+        format!("Use after free: {v:?} has already been released!"),
+    )
+}
+
 pub fn bind(module: impl magnus::Module) -> Result<()> {
     let class = module.define_class("Error", magnus::exception::runtime_error().as_r_class())?;
     let exception_class = magnus::ExceptionClass::from_value(class.as_value()).unwrap();

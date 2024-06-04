@@ -19,12 +19,18 @@ macro_rules! extern_struct {
           pub type [<Rb $name>] = magnus::typed_data::Obj<$name>;
           impl $crate::FromRuby<$fmod_ty> for [<Rb $name>] {
               fn from_ruby(self) -> $crate::Result<$fmod_ty> {
+                  if !$crate::extern_struct_storage::contains(self.0) {
+                      return Err($crate::error::use_after_free(self.0));
+                  }
                   Ok(self.0)
               }
           }
 
           impl $crate::FromRuby<$fmod_ty> for $name {
             fn from_ruby(self) -> $crate::Result<$fmod_ty> {
+                if !$crate::extern_struct_storage::contains(self.0) {
+                  return Err($crate::error::use_after_free(self.0));
+                }
                 Ok(self.0)
             }
           }
