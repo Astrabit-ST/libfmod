@@ -86,6 +86,18 @@ where
     Obj::try_convert(value.as_value())
 }
 
+pub fn get_or_insert_with<T, R, F>(value: T, f: F) -> Result<Obj<R>>
+where
+    T: Into<ExternStruct>,
+    R: magnus::TypedData,
+    F: FnOnce() -> Obj<R>,
+{
+    let mut storage = STORAGE.map.lock().unwrap();
+    let key = value.into();
+    let &mut value = storage.entry(key).or_insert_with(|| f().into());
+    Obj::try_convert(value.as_value())
+}
+
 pub fn remove_value(value: impl Into<ExternStruct>) {
     let mut storage = STORAGE.map.lock().unwrap();
     let key = value.into();

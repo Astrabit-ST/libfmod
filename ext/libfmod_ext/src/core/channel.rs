@@ -23,8 +23,9 @@ type ChannelImpl = ChannelControl;
 impl IntoRuby<Channel> for fmod::Channel {
     fn into_ruby(self) -> Result<Channel> {
         let channel_control = ChannelControl(*self, ChannelControlType::Channel);
-        let obj = magnus::typed_data::Obj::wrap_as(channel_control, fmod::Channel::class());
-        Ok(obj)
+        crate::extern_struct_storage::get_or_insert_with(*self, || {
+            magnus::typed_data::Obj::wrap_as(channel_control, fmod::Channel::class())
+        })
     }
 }
 
