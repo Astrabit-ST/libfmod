@@ -16,10 +16,18 @@ extern_struct! {
   struct SoundGroup: fmod::SoundGroup => "FMOD::SoundGroup"
 }
 
+impl SoundGroup {
+    fn release(&self) -> Result<()> {
+        use crate::{FromRuby, IntoRuby};
+        let group: fmod::SoundGroup = self.from_ruby()?;
+        crate::extern_struct_storage::remove(group);
+        group.release().into_ruby()
+    }
+}
+
 extern_struct_fns! {
   impl SoundGroup: fmod::SoundGroup {
     fn get_name() -> magnus::RString;
-    fn release() -> ();
     // TODO userdata
     fn get_system() -> RbSystem;
     fn set_max_audible(max_audible: i32) -> ();

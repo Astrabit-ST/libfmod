@@ -23,7 +23,7 @@ macro_rules! extern_struct {
               }
           }
 
-          impl $crate::FromRuby<$fmod_ty> for $name{
+          impl $crate::FromRuby<$fmod_ty> for $name {
             fn from_ruby(self) -> $crate::Result<$fmod_ty> {
                 Ok(self.0)
             }

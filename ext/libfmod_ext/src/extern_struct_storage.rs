@@ -98,10 +98,16 @@ where
     Obj::try_convert(value.as_value())
 }
 
-pub fn remove_value(value: impl Into<ExternStruct>) {
+pub fn remove(value: impl Into<ExternStruct>) {
     let mut storage = STORAGE.map.lock().unwrap();
     let key = value.into();
     storage.remove(&key);
+}
+
+pub fn contains(value: impl Into<ExternStruct>) -> bool {
+    let storage = STORAGE.map.lock().unwrap();
+    let key = value.into();
+    storage.contains_key(&key)
 }
 
 pub fn set_userdata(value: impl Into<ExternStruct>, userdata: magnus::Value) -> Result<()> {
@@ -219,42 +225,49 @@ impl From<Vca> for ExternStruct {
 
 impl From<Reverb3D> for ExternStruct {
     fn from(r: Reverb3D) -> Self {
+        let _ = r.set_raw_userdata(DEFAULT_USERDATA_PTR);
         ExternStruct::Reverb3D(r)
     }
 }
 
 impl From<SoundGroup> for ExternStruct {
     fn from(s: SoundGroup) -> Self {
+        let _ = s.set_raw_userdata(DEFAULT_USERDATA_PTR);
         ExternStruct::SoundGroup(s)
     }
 }
 
 impl From<ChannelControl> for ExternStruct {
     fn from(c: ChannelControl) -> Self {
+        let _ = c.set_raw_userdata(DEFAULT_USERDATA_PTR);
         ExternStruct::ChannelControl(c)
     }
 }
 
 impl From<Dsp> for ExternStruct {
     fn from(d: Dsp) -> Self {
+        let _ = d.set_raw_userdata(DEFAULT_USERDATA_PTR);
         ExternStruct::Dsp(d)
     }
 }
 
 impl From<Sound> for ExternStruct {
     fn from(s: Sound) -> Self {
+        let _ = s.set_raw_userdata(DEFAULT_USERDATA_PTR);
         ExternStruct::Sound(s)
     }
 }
 
 impl From<Geometry> for ExternStruct {
     fn from(g: Geometry) -> Self {
+        let _ = g.set_raw_userdata(DEFAULT_USERDATA_PTR);
         ExternStruct::Geometry(g)
     }
 }
 
 impl From<DspConnection> for ExternStruct {
     fn from(c: DspConnection) -> Self {
+        let _ = c.set_raw_userdata(DEFAULT_USERDATA_PTR);
         ExternStruct::DspConnection(c)
     }
 }

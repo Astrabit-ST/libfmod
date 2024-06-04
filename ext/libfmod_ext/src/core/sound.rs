@@ -19,6 +19,32 @@ extern_struct! {
   struct Sound: fmod::Sound => "FMOD::Sound"
 }
 
+impl Sound {
+    fn release(&self) -> Result<()> {
+        use crate::{FromRuby, IntoRuby};
+        let sound: fmod::Sound = self.from_ruby()?;
+
+        let mut index = 0;
+        while let Ok(point) = sound.get_sync_point(index) {
+            crate::extern_struct_storage::remove(point);
+            index += 1;
+        }
+
+        crate::extern_struct_storage::remove(sound);
+        sound.release().into_ruby()
+    }
+
+    fn delete_sync_point(&self, point: RbSyncPoint) -> Result<()> {
+        use crate::{FromRuby, IntoRuby};
+
+        let sound: fmod::Sound = self.from_ruby()?;
+        let point = point.from_ruby()?;
+
+        crate::extern_struct_storage::remove(point);
+        sound.delete_sync_point(point).into_ruby()
+    }
+}
+
 extern_struct_fns! {
   impl Sound: fmod::Sound {
     fn get_open_state() -> (OpenState, u32, bool, bool);
@@ -35,7 +61,6 @@ extern_struct_fns! {
     fn get_loop_count() -> i32;
     fn set_loop_points(start: u32, start_type: TimeUnit, end: u32, end_type: TimeUnit) -> ();
     fn get_loop_points(start: TimeUnit, end: TimeUnit) -> (u32, u32);
-    fn release() -> ();
     // TODO userdata
     fn get_system() -> RbSystem;
     fn get_name() -> magnus::RString;
@@ -55,7 +80,6 @@ extern_struct_fns! {
     fn get_sync_point(index: i32) -> RbSyncPoint;
     fn get_sync_point_info(point: RbSyncPoint, unit: TimeUnit) -> (magnus::RString, u32);
     fn add_sync_point(offset: u32, unit: TimeUnit, name: magnus::RString) -> RbSyncPoint;
-    fn delete_sync_point(point: RbSyncPoint) -> ();
   }
 }
 

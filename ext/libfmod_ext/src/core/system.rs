@@ -33,6 +33,7 @@ impl System {
     }
 
     fn release(&self) -> Result<()> {
+        crate::extern_struct_storage::clear_storage();
         unsafe { self.0.release() }.into_ruby()
     }
 

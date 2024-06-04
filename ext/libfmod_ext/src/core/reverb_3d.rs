@@ -14,6 +14,15 @@ extern_struct! {
   struct Reverb3D: fmod::Reverb3D => "FMOD::Reverb3D"
 }
 
+impl Reverb3D {
+    fn release(&self) -> Result<()> {
+        use crate::{FromRuby, IntoRuby};
+        let reverb: fmod::Reverb3D = self.from_ruby()?;
+        crate::extern_struct_storage::remove(reverb);
+        reverb.release().into_ruby()
+    }
+}
+
 extern_struct_fns! {
   impl Reverb3D: fmod::Reverb3D {
     fn set_3d_attributes(position: Option<Vector>, min_distance: f32, max_distance: f32) -> ();
@@ -23,7 +32,6 @@ extern_struct_fns! {
     fn set_active(active: bool) -> ();
     fn get_active() -> bool;
     // TODO userdata
-    fn release() -> ();
   }
 }
 

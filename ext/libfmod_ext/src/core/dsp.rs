@@ -18,6 +18,15 @@ extern_struct! {
   struct DSP: fmod::Dsp => "FMOD::DSP"
 }
 
+impl DSP {
+    fn release(&self) -> Result<()> {
+        use crate::{FromRuby, IntoRuby};
+        let dsp: fmod::Dsp = self.from_ruby()?;
+        crate::extern_struct_storage::remove(dsp);
+        dsp.release().into_ruby()
+    }
+}
+
 extern_struct_fns! {
   impl DSP: fmod::Dsp {
     fn set_channel_format(mask: ChannelMask, channel_count: i32, speaker_mode: SpeakerMode) -> ();
@@ -31,7 +40,6 @@ extern_struct_fns! {
     fn disconnect_all(inputs: bool, outputs: bool) -> ();
     fn disconnect_from(target: Option<RbDSP>, connection: Option<RbDSPConnection>) -> ();
     fn reset() -> ();
-    fn release() -> ();
     fn get_type() -> DspType;
     fn get_cpu_usage() -> (u32, u32);
     // TODO userdata

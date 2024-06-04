@@ -14,6 +14,15 @@ extern_struct! {
   struct Geometry: fmod::Geometry => "FMOD::Geometry"
 }
 
+impl Geometry {
+    fn release(&self) -> Result<()> {
+        use crate::{FromRuby, IntoRuby};
+        let geometry: fmod::Geometry = self.from_ruby()?;
+        crate::extern_struct_storage::remove(geometry);
+        geometry.release().into_ruby()
+    }
+}
+
 extern_struct_fns! {
   impl Geometry: fmod::Geometry {
     fn set_active(active: bool) -> ();
@@ -21,7 +30,6 @@ extern_struct_fns! {
     fn get_max_polygons() -> (i32, i32);
     fn get_polygon_count() -> i32;
     // TODO userdata
-    fn release() -> ();
     fn set_polygon_attributes(index: i32, direct_occlusion: f32, reverb_occlusion: f32, double_sided: bool) -> ();
     fn get_polygon_attributes(index: i32) -> (f32, f32, bool);
     fn get_polygon_vertex_count(index: i32) -> i32;

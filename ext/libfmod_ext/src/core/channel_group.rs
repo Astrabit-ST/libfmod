@@ -39,12 +39,19 @@ impl FromRuby<fmod::ChannelGroup> for ChannelGroup {
     }
 }
 
+impl ChannelGroupImpl {
+    fn release(&self) -> Result<()> {
+        let group: fmod::ChannelGroup = self.from_ruby()?;
+        crate::extern_struct_storage::remove(*group);
+        group.release().into_ruby()
+    }
+}
+
 extern_struct_fns! {
   impl ChannelGroupImpl: fmod::ChannelGroup {
     fn get_channel_count() -> i32;
     fn get_channel(index: i32) -> Channel;
     fn get_name() -> magnus::RString;
-    fn release() -> ();
     fn add_group(group: ChannelGroup, propgate_dsp_clock: bool) -> RbDSPConnection;
     fn get_group_count() -> i32;
     fn get_group(index: i32) -> ChannelGroup;
