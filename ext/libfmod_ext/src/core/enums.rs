@@ -295,6 +295,19 @@ num_enum! {
     }
 }
 
+num_enum! {
+    #[repr(i32)]
+    enum DspParameterDataType: fmod::DspParameterDataType {
+        User,
+        OverAlign,
+        Attributes3D,
+        Sidechain,
+        FFT,
+        Attributes3DMulti,
+        AttenuationRange,
+    }
+}
+
 pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::SpeakerMode::bind(module)?;
     fmod::OutputType::bind(module)?;
@@ -310,6 +323,7 @@ pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::SoundType::bind(module)?;
     fmod::OpenState::bind(module)?;
     fmod::TagType::bind(module)?;
+    fmod::DspParameterDataType::bind(module)?;
 
     Ok(())
 }

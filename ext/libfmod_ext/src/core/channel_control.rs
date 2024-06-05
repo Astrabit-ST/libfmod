@@ -9,7 +9,7 @@ use magnus::{prelude::*, typed_data::Obj};
 
 use crate::{extern_struct_bind, extern_struct_fns};
 
-use super::{dsp::RbDSP, structs::Vector, system::RbSystem};
+use super::{dsp::RbDSP, flags::Mode, structs::Vector, system::RbSystem};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 #[magnus::wrap(class = "FMOD::ChannelControl", size, free_immediately)]
@@ -86,7 +86,7 @@ extern_struct_fns! {
     fn stop() -> ();
     fn set_paused(pause: bool) -> ();
     fn get_paused() -> bool;
-    // TODO mode
+    fn set_mode(mode: Mode) -> ();
     fn set_pitch(pitch: f32) -> ();
     fn get_pitch() -> f32;
     fn get_dsp_clock() -> (u64, u64);
@@ -145,6 +145,7 @@ extern_struct_bind! {
     fn stop -> 0;
     fn set_paused -> 1;
     fn get_paused -> 0;
+    fn set_mode -> 1;
     fn set_pitch -> 1;
     fn get_pitch -> 0;
     fn get_dsp_clock -> 0;

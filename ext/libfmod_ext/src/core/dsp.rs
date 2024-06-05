@@ -6,12 +6,12 @@
 #![allow(clippy::upper_case_acronyms)]
 use magnus::prelude::*;
 
-use crate::{Bindable, Result};
+use crate::{Bindable, FromRuby, IntoRuby, Result};
 
 use crate::{extern_struct, extern_struct_bind, extern_struct_fns};
 
 use super::dsp_connection::RbDSPConnection;
-use super::enums::{DspConnectionType, DspType, SpeakerMode};
+use super::enums::{DspConnectionType, DspParameterDataType, DspType, SpeakerMode};
 use super::flags::ChannelMask;
 use super::structs::DspMeteringInfo;
 use super::system::RbSystem;
@@ -36,6 +36,12 @@ impl DSP {
     fn set_userdata(rb_self: RbDSP, data: magnus::Value) -> Result<()> {
         rb_self.ivar_set("__userdata", data)
     }
+
+    fn set_parameter_data(rb_self: RbDSP, index: i32, data: magnus::RString) -> Result<()> {
+        let dsp = rb_self.from_ruby()?;
+        let data = data.from_ruby()?;
+        unsafe { dsp.set_parameter_data(index, data) }.into_ruby()
+    }
 }
 
 extern_struct_fns! {
@@ -57,12 +63,12 @@ extern_struct_fns! {
     fn get_metering_info() -> (DspMeteringInfo, DspMeteringInfo);
     fn set_metering_enabled(input_enabled: bool, output_enabled: bool) -> ();
     fn get_metering_enabled() -> (bool, bool);
-    // TODO data parameter
+    fn get_data_parameter_index(data_type: DspParameterDataType) -> i32;
     fn get_parameter_count() -> i32;
     // FIXME add type-agnostic version
     fn set_parameter_bool(index: i32, value: bool) -> ();
     fn get_parameter_bool(index: i32) -> bool;
-    // TODO parameter data
+    fn get_parameter_data(index: i32) -> magnus::RString;
     fn set_parameter_float(index: i32, value: f32) -> ();
     fn get_parameter_float(index: i32) -> f32;
     fn set_parameter_int(index: i32, value: i32) -> ();
@@ -100,9 +106,12 @@ extern_struct_bind! {
     fn get_metering_info -> 0;
     fn set_metering_enabled -> 2;
     fn get_metering_enabled -> 0;
+    fn get_data_parameter_index -> 1;
     fn get_parameter_count -> 0;
     fn set_parameter_bool -> 2;
     fn get_parameter_bool -> 1;
+    fn set_parameter_data -> 2;
+    fn get_parameter_data -> 1;
     fn set_parameter_float -> 2;
     fn get_parameter_float -> 1;
     fn set_parameter_int -> 2;

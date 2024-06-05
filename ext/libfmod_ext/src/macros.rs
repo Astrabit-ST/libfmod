@@ -518,6 +518,12 @@ where
     }
 }
 
+impl IntoRuby<magnus::RString> for Vec<u8> {
+    fn into_ruby(self) -> Result<magnus::RString> {
+        Ok(magnus::RString::from_slice(&self))
+    }
+}
+
 impl<T, TWrap> IntoRuby<TWrap> for fmod::Result<T>
 where
     T: IntoRuby<TWrap>,
