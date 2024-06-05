@@ -4,7 +4,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 #![allow(clippy::upper_case_acronyms)]
-use crate::{Bindable, FromRuby, Result};
+use crate::{Bindable, FromRuby, IntoRuby, Result};
 use magnus::{prelude::*, typed_data::Obj};
 
 use crate::{extern_struct_bind, extern_struct_fns};
@@ -21,6 +21,7 @@ type RbChannelControl = Obj<ChannelControl>;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum ChannelControlType {
+    Control,
     Channel,
     ChannelGroup,
 }
@@ -28,6 +29,15 @@ pub enum ChannelControlType {
 impl FromRuby<fmod::ChannelControl> for RbChannelControl {
     fn from_ruby(self) -> Result<fmod::ChannelControl> {
         Ok(self.0)
+    }
+}
+
+impl IntoRuby<RbChannelControl> for fmod::ChannelControl {
+    fn into_ruby(self) -> Result<RbChannelControl> {
+        let channel_control = ChannelControl(self, ChannelControlType::Control);
+        crate::extern_struct_storage::get_or_insert_with(self, || {
+            magnus::typed_data::Obj::wrap_as(channel_control, fmod::ChannelControl::class())
+        })
     }
 }
 

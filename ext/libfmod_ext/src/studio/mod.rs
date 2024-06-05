@@ -5,17 +5,17 @@ mod enums;
 mod flags;
 mod structs;
 
-mod bank;
-mod bus;
-mod command_replay;
-mod command_replay_callbacks;
-mod event_callback;
-mod event_description;
-mod event_instance;
-mod system;
-mod system_builder;
-mod system_callback;
-mod vca;
+pub mod bank;
+pub mod bus;
+pub mod command_replay;
+pub mod command_replay_callbacks;
+pub mod event_callback;
+pub mod event_description;
+pub mod event_instance;
+pub mod system;
+pub mod system_builder;
+pub mod system_callback;
+pub mod vca;
 
 pub fn bind(module: magnus::RModule) -> Result<()> {
     let module = module.define_module("Studio")?;

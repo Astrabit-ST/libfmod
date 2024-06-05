@@ -94,11 +94,37 @@ ruby_bitflags! {
   }
 }
 
+ruby_bitflags! {
+  #[repr(u32)]
+  mod SystemCallbackMask: fmod::SystemCallbackMask {
+    const DEVICELISTCHANGED;
+    const DEVICELOST;
+    const MEMORYALLOCATIONFAILED;
+    const THREADCREATED;
+    const THREADDESTROYED;
+    const BADDSPCONNECTION;
+    const PREMIX;
+    const POSTMIX;
+    const ERROR;
+    const MIDMIX;
+    const THREADDESTROYED;
+    const PREUPDATE;
+    const POSTUPDATE;
+    const RECORDLISTCHANGED;
+    const BUFFEREDNOMIX;
+    const DEVICEREINITIALIZE;
+    const OUTPUTUNDERRUN;
+    const RECORDPOSITIONCHANGED;
+    const ALL;
+  }
+}
+
 pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::InitFlags::bind(module)?;
     fmod::DriverState::bind(module)?;
     fmod::ChannelMask::bind(module)?;
     fmod::Mode::bind(module)?;
+    fmod::SystemCallbackMask::bind(module)?;
 
     Ok(())
 }

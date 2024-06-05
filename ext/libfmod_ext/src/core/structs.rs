@@ -112,6 +112,63 @@ const _: () = {
     }
 };
 
+pub type ErrorCallbackInfo = magnus::RStruct;
+
+const _: () = {
+    static CLASS: once_cell::sync::OnceCell<magnus::value::Opaque<magnus::RClass>> =
+        once_cell::sync::OnceCell::new();
+
+    impl IntoRuby<ErrorCallbackInfo> for fmod::ErrorCallbackInfo<'_> {
+        fn into_ruby(self) -> Result<ErrorCallbackInfo> {
+            let instance = match self.instance {
+                fmod::Instance::None => magnus::value::qnil().as_value(),
+                fmod::Instance::System(s) => s.into_ruby()?.as_value(),
+                fmod::Instance::Channel(c) => c.into_ruby()?.as_value(),
+                fmod::Instance::ChannelGroup(cg) => cg.into_ruby()?.as_value(),
+                fmod::Instance::ChannelControl(cc) => cc.into_ruby()?.as_value(),
+                fmod::Instance::Sound(s) => s.into_ruby()?.as_value(),
+                fmod::Instance::SoundGroup(sg) => sg.into_ruby()?.as_value(),
+                fmod::Instance::Dsp(d) => d.into_ruby()?.as_value(),
+                fmod::Instance::DspConnection(dc) => dc.into_ruby()?.as_value(),
+                fmod::Instance::Geometry(g) => g.into_ruby()?.as_value(),
+                fmod::Instance::Reverb3D(r) => r.into_ruby()?.as_value(),
+                fmod::Instance::StudioSystem(ss) => ss.into_ruby()?.as_value(),
+                fmod::Instance::StudioEventDescription(ed) => ed.into_ruby()?.as_value(),
+                fmod::Instance::StudioEventInstance(ei) => ei.into_ruby()?.as_value(),
+                fmod::Instance::StudioParameterInstance => magnus::value::qnil().as_value(),
+                fmod::Instance::StudioBus(b) => b.into_ruby()?.as_value(),
+                fmod::Instance::StudioVCA(v) => v.into_ruby()?.as_value(),
+                fmod::Instance::StudioBank(b) => b.into_ruby()?.as_value(),
+                fmod::Instance::StudioCommandReplay(cr) => cr.into_ruby()?.as_value(),
+            };
+            let rstruct = fmod::ErrorCallbackInfo::class().new_instance((
+                self.error.into_ruby()?,
+                instance,
+                self.function_name.into_ruby()?,
+                self.function_params.into_ruby()?,
+            ))?;
+            ErrorCallbackInfo::try_convert(rstruct)
+        }
+    }
+
+    impl Bindable for fmod::ErrorCallbackInfo<'_> {
+        fn bind(module: impl magnus::Module) -> Result<()> {
+            let rstruct = magnus::r_struct::define_struct(
+                Some("ErrorCallbackInfo"),
+                ("error", "instance", "function_name", "function_params"),
+            )?;
+            let _ = CLASS.set(rstruct.into());
+            module.const_set("ErrorCallbackInfo", rstruct)
+        }
+
+        #[allow(refining_impl_trait)]
+        fn class() -> magnus::RClass {
+            let ruby = magnus::Ruby::get().unwrap();
+            CLASS.get().unwrap().get_inner_with(&ruby)
+        }
+    }
+};
+
 pub fn bind(module: magnus::RModule) -> Result<()> {
     fmod::Guid::bind(module)?;
     fmod::Vector::bind(module)?;

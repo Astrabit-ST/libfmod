@@ -25,6 +25,10 @@ pub fn use_after_free(v: impl std::fmt::Debug) -> magnus::Error {
     )
 }
 
+pub fn from_fmod(error: fmod::Error) -> magnus::Error {
+    magnus::Error::new(class(), error.to_string())
+}
+
 pub fn bind(module: impl magnus::Module) -> Result<()> {
     let class = module.define_class("Error", magnus::exception::runtime_error().as_r_class())?;
     let exception_class = magnus::ExceptionClass::from_value(class.as_value()).unwrap();

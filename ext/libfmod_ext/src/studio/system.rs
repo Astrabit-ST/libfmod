@@ -157,8 +157,7 @@ impl System {
         let system: fmod::studio::System = rb_self.from_ruby()?;
         let key = key.from_ruby()?;
         // FIXME BAD BAD DANGER
-        let info = unsafe { system.get_sound_info(key) }
-            .map_err(|e| magnus::Error::new(crate::error::class(), e.to_string()))?;
+        let info = unsafe { system.get_sound_info(key) }.map_err(crate::error::from_fmod)?;
 
         info.into_ruby()
     }

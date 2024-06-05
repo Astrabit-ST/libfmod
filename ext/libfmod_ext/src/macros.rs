@@ -529,8 +529,7 @@ where
     T: IntoRuby<TWrap>,
 {
     fn into_ruby(self) -> Result<TWrap> {
-        self.map_err(|e| magnus::Error::new(crate::error::class(), e.to_string()))?
-            .into_ruby()
+        self.map_err(crate::error::from_fmod)?.into_ruby()
     }
 }
 

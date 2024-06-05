@@ -13,7 +13,7 @@ use super::{
     channel_group::RbChannelGroup,
     dsp::RbDSP,
     enums::{DspType, OutputType, PluginType, PortType, Speaker, SpeakerMode, TimeUnit},
-    flags::DriverState,
+    flags::{DriverState, SystemCallbackMask},
     geometry::RbGeometry,
     reverb_3d::RbReverb3D,
     sound::RbSound,
@@ -21,6 +21,7 @@ use super::{
     sound_group::RbSoundGroup,
     structs::{CPUUsage, Guid, ReverbProperties, Vector},
     system_builder::SystemBuilder,
+    system_callback::SystemCallback,
 };
 
 extern_struct! {
@@ -71,6 +72,28 @@ impl System {
 
     fn set_userdata(rb_self: RbSystem, data: magnus::Value) -> Result<()> {
         rb_self.ivar_set("__userdata", data)
+    }
+
+    fn set_callback(
+        rb_self: RbSystem,
+        mask: SystemCallbackMask,
+        callback: magnus::Value,
+    ) -> Result<()> {
+        let system: fmod::System = rb_self.from_ruby()?;
+        let mask = mask.from_ruby()?;
+
+        if !callback
+            .class()
+            .is_inherited(super::system_callback::class())
+        {
+            return Err(magnus::Error::new(
+                magnus::exception::runtime_error(),
+                "callback must be a SystemCallback",
+            ));
+        }
+
+        rb_self.ivar_set("__callback", callback)?;
+        system.set_callback::<SystemCallback>(mask).into_ruby()
     }
 }
 
@@ -151,6 +174,7 @@ extern_struct_fns! {
 
 extern_struct_bind! {
   impl Bindable for System: fmod::System {
+    fn set_callback -> 2;
     fn create_sound -> 1;
     fn create_stream -> 1;
     fn create_dsp_by_type -> 1;

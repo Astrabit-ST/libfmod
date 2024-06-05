@@ -17,6 +17,7 @@ mod sound_group;
 mod sync_point;
 pub mod system;
 mod system_builder;
+mod system_callback;
 
 pub fn bind(module: magnus::RModule) -> Result<()> {
     structs::bind(module)?;
@@ -27,6 +28,7 @@ pub fn bind(module: magnus::RModule) -> Result<()> {
     channel_group::bind(module)?;
     channel::bind(module)?;
     system_builder::bind(module)?;
+    system_callback::bind(module)?;
     system::bind(module)?;
     dsp::bind(module)?;
     sound_group::bind(module)?;
