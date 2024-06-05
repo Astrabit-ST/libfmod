@@ -3,7 +3,7 @@
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
-use crate::{Bindable, FromRuby, IntoRuby, Result};
+use crate::{thread, Bindable, FromRuby, IntoRuby, Result};
 use magnus::prelude::*;
 
 use crate::{extern_struct, extern_struct_bind, extern_struct_fns};
@@ -36,7 +36,7 @@ impl System {
 
     fn update(rb_self: RbSystem) -> Result<()> {
         let system: fmod::System = rb_self.from_ruby()?;
-        system.update().into_ruby()?;
+        unsafe { thread::without_gvl_no_ubf(|| system.update()) }.into_ruby()?;
         crate::extern_struct_storage::cleanup();
         Ok(())
     }
@@ -49,13 +49,18 @@ impl System {
         Ok(())
     }
 
+    fn lock_dsp(rb_self: RbSystem) -> Result<()> {
+        let system: fmod::System = rb_self.from_ruby()?;
+        unsafe { thread::without_gvl_no_ubf(|| system.lock_dsp()) }.into_ruby()
+    }
+
     fn create_sound(rb_self: RbSystem, builder: &SoundBuilder) -> Result<RbSound> {
         let system: fmod::System = rb_self.from_ruby()?;
         let borrow = builder.0.borrow();
         let builder = borrow
             .as_ref()
             .ok_or_else(SoundBuilder::invalid_state_error)?;
-        system.create_sound(builder).into_ruby()
+        unsafe { thread::without_gvl_no_ubf(|| system.create_sound(builder)) }.into_ruby()
     }
 
     fn create_stream(rb_self: RbSystem, builder: &SoundBuilder) -> Result<RbSound> {
@@ -64,7 +69,7 @@ impl System {
         let builder = borrow
             .as_ref()
             .ok_or_else(SoundBuilder::invalid_state_error)?;
-        system.create_stream(builder).into_ruby()
+        unsafe { thread::without_gvl_no_ubf(|| system.create_stream(builder)) }.into_ruby()
     }
 
     fn get_userdata(rb_self: RbSystem) -> Result<magnus::Value> {
@@ -135,7 +140,6 @@ extern_struct_fns! {
     fn get_driver_info(driver_id: i32) -> (magnus::RString, Guid, i32, SpeakerMode, i32);
     fn set_driver(driver_id: i32) -> ();
     fn get_driver() -> i32;
-    fn lock_dsp() -> (); // FIXME release gvl
     fn unlock_dsp() -> ();
     fn create_geometry(max_polygons: i32, max_vertices: i32) -> RbGeometry;
     fn set_geometry_settings(max_world_size: f32) -> ();

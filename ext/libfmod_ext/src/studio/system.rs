@@ -6,7 +6,7 @@
 
 use crate::{
     core::structs::{Attributes3D, CPUUsage, Guid, Vector},
-    Bindable, FromRuby, IntoRuby, Result,
+    thread, Bindable, FromRuby, IntoRuby, Result,
 };
 use magnus::prelude::*;
 
@@ -31,8 +31,6 @@ extern_struct! {
 
 extern_struct_fns! {
   impl System: fmod::studio::System {
-    fn load_bank_file(filename: magnus::RString, flags: LoadBankFlags) -> RbBank;
-    fn load_bank_memory(buffer: magnus::RString, flags: LoadBankFlags) -> RbBank;
     fn unload_all_banks() -> ();
     fn get_bank(path_or_id: magnus::RString) -> RbBank;
     fn get_bank_by_id(id: Guid) -> RbBank;
@@ -45,8 +43,6 @@ extern_struct_fns! {
     fn lookup_id(path: magnus::RString) -> Guid;
     fn lookup_path(id: Guid) -> magnus::RString;
     fn is_valid() -> bool;
-    fn flush_commands() -> ();
-    fn flush_sample_loading() -> ();
     // FIXME optional params
     fn set_listener_attributes(listener: i32, attributes: Attributes3D, attenuation_position: Option<Vector>) -> ();
     fn get_listener_attributes(listener: i32) -> (Attributes3D, Vector); // maybe add array accessors?
@@ -94,9 +90,43 @@ impl System {
 
     fn update(rb_self: RbSystem) -> Result<()> {
         let system: fmod::studio::System = rb_self.from_ruby()?;
-        system.update().into_ruby()?;
+        unsafe { thread::without_gvl_no_ubf(|| system.update()) }.into_ruby()?;
         crate::extern_struct_storage::cleanup();
         Ok(())
+    }
+
+    fn load_bank_file(
+        rb_self: RbSystem,
+        filename: magnus::RString,
+        flags: LoadBankFlags,
+    ) -> Result<RbBank> {
+        let system: fmod::studio::System = rb_self.from_ruby()?;
+        let filename = filename.from_ruby()?;
+        let flags = flags.from_ruby()?;
+
+        unsafe { thread::without_gvl_no_ubf(|| system.load_bank_file(filename, flags)) }.into_ruby()
+    }
+
+    fn load_bank_memory(
+        rb_self: RbSystem,
+        buffer: magnus::RString,
+        flags: LoadBankFlags,
+    ) -> Result<RbBank> {
+        let system: fmod::studio::System = rb_self.from_ruby()?;
+        let buffer = buffer.from_ruby()?;
+        let flags = flags.from_ruby()?;
+
+        unsafe { thread::without_gvl_no_ubf(|| system.load_bank_memory(buffer, flags)) }.into_ruby()
+    }
+
+    fn flush_commands(rb_self: RbSystem) -> Result<()> {
+        let system: fmod::studio::System = rb_self.from_ruby()?;
+        unsafe { thread::without_gvl_no_ubf(|| system.flush_commands()) }.into_ruby()
+    }
+
+    fn flush_sample_loading(rb_self: RbSystem) -> Result<()> {
+        let system: fmod::studio::System = rb_self.from_ruby()?;
+        unsafe { thread::without_gvl_no_ubf(|| system.flush_sample_loading()) }.into_ruby()
     }
 
     fn get_userdata(rb_self: RbSystem) -> Result<magnus::Value> {

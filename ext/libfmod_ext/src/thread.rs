@@ -45,6 +45,33 @@ pub unsafe fn without_gvl<F: FnOnce() -> R, R, Ubf: FnOnce()>(f: F, ubf: Ubf) ->
     result.assume_init()
 }
 
+pub unsafe fn without_gvl_no_ubf<F: FnOnce() -> R, R>(f: F) -> R {
+    unsafe extern "C" fn gvl_fun<F: FnOnce() -> R, R>(function: *mut c_void) -> *mut c_void {
+        let (f, r) = std::ptr::read::<(F, *mut R)>(function.cast());
+
+        let result = f();
+        std::ptr::write(r, result);
+
+        std::ptr::null_mut()
+    }
+
+    // f is initialized before we call rb_thread_call_without_gvl.
+    let function = MaybeUninit::new(f);
+    let mut result = MaybeUninit::uninit();
+
+    let mut param_tuple = (function, &mut result);
+
+    rb_sys::rb_thread_call_without_gvl(
+        Some(gvl_fun::<F, R>),
+        std::ptr::from_mut(&mut param_tuple).cast(), // we effectively move f into gvl_fun.
+        None,
+        std::ptr::null_mut(),
+    );
+    // f is now uninitialized.
+
+    result.assume_init()
+}
+
 /// # Safety
 ///
 /// Must be called on a ruby thread without the gvl acquired.

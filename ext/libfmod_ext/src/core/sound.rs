@@ -6,7 +6,7 @@
 #![allow(clippy::upper_case_acronyms)]
 use magnus::prelude::*;
 
-use crate::{Bindable, Result};
+use crate::{thread, Bindable, FromRuby, IntoRuby, Result};
 
 use crate::{extern_struct, extern_struct_bind, extern_struct_fns};
 
@@ -23,7 +23,6 @@ extern_struct! {
 
 impl Sound {
     fn release(rb_self: RbSound) -> Result<()> {
-        use crate::{FromRuby, IntoRuby};
         // we dont need to check if the sound is already removed, because FromRuby will return an error if it is
         let sound: fmod::Sound = rb_self.from_ruby()?;
 
@@ -34,12 +33,15 @@ impl Sound {
         }
 
         crate::extern_struct_storage::remove(sound);
-        sound.release().into_ruby()
+        unsafe { thread::without_gvl_no_ubf(|| sound.release()) }.into_ruby()
+    }
+
+    fn get_sub_sound(rb_self: RbSound, index: i32) -> Result<RbSound> {
+        let sound = rb_self.from_ruby()?;
+        unsafe { thread::without_gvl_no_ubf(|| sound.get_sub_sound(index)) }.into_ruby()
     }
 
     fn delete_sync_point(rb_self: RbSound, point: RbSyncPoint) -> Result<()> {
-        use crate::{FromRuby, IntoRuby};
-
         let sound: fmod::Sound = rb_self.from_ruby()?;
         let point = point.from_ruby()?;
 
@@ -85,7 +87,6 @@ extern_struct_fns! {
     fn set_sound_group(group: RbSoundGroup) -> ();
     fn sound_group() -> RbSoundGroup;
     fn get_sub_sound_count() -> i32;
-    fn get_sub_sound(index: i32) -> RbSound;
     fn get_sub_sound_parent() -> Option<RbSound>;
     fn get_sync_point(index: i32) -> RbSyncPoint;
     fn get_sync_point_info(point: RbSyncPoint, unit: TimeUnit) -> (magnus::RString, u32);
