@@ -6,7 +6,7 @@ pub mod structs;
 
 mod channel;
 mod channel_control;
-mod channel_group;
+pub mod channel_group;
 pub mod dsp;
 mod dsp_connection;
 mod geometry;

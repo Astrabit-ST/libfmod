@@ -4,6 +4,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+use crate::core::channel_group::RbChannelGroup;
 use crate::core::structs::Guid;
 use crate::{Bindable, Result};
 
@@ -27,7 +28,9 @@ extern_struct_fns! {
       fn get_mute() -> bool;
       fn set_port_index(port_index: u64) -> ();
       fn get_port_index() -> u64;
-      // TODO channel group
+      fn get_channel_group() -> RbChannelGroup;
+      fn lock_channel_group() -> ();
+      fn unlock_channel_group() -> ();
       fn get_cpu_usage() -> (u32, u32);
       fn get_memory_usage() -> MemoryUsage;
       fn get_id() -> Guid;
@@ -47,6 +50,9 @@ extern_struct_bind! {
         fn get_mute -> 0;
         fn set_port_index -> 1;
         fn get_port_index -> 0;
+        fn get_channel_group -> 0;
+        fn lock_channel_group -> 0;
+        fn unlock_channel_group -> 0;
         fn get_cpu_usage -> 0;
         fn get_memory_usage -> 0;
         fn get_id -> 0;

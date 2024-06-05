@@ -9,28 +9,21 @@ use magnus::prelude::*;
 
 use crate::{extern_struct_bind, extern_struct_fns};
 
-use super::channel::Channel;
+use super::channel::RbChannel;
 use super::channel_control::{ChannelControl, ChannelControlType};
 use super::dsp_connection::RbDSPConnection;
 
 // public api
-pub type ChannelGroup = magnus::typed_data::Obj<ChannelControl>;
+pub type RbChannelGroup = magnus::typed_data::Obj<ChannelControl>;
 // implementation details
-type ChannelGroupImpl = ChannelControl;
-type RbChannelGroupImpl = ChannelGroup;
+type ChannelGroup = ChannelControl;
 
-impl IntoRuby<ChannelGroup> for fmod::ChannelGroup {
-    fn into_ruby(self) -> Result<ChannelGroup> {
+impl IntoRuby<RbChannelGroup> for fmod::ChannelGroup {
+    fn into_ruby(self) -> Result<RbChannelGroup> {
         let channel_control = ChannelControl(*self, ChannelControlType::ChannelGroup);
         crate::extern_struct_storage::get_or_insert_with(*self, || {
             magnus::typed_data::Obj::wrap_as(channel_control, fmod::ChannelGroup::class())
         })
-    }
-}
-
-impl FromRuby<fmod::ChannelGroup> for ChannelGroupImpl {
-    fn from_ruby(self) -> Result<fmod::ChannelGroup> {
-        self.into_channel_group()
     }
 }
 
@@ -40,8 +33,14 @@ impl FromRuby<fmod::ChannelGroup> for ChannelGroup {
     }
 }
 
-impl ChannelGroupImpl {
-    fn release(rb_self: RbChannelGroupImpl) -> Result<()> {
+impl FromRuby<fmod::ChannelGroup> for RbChannelGroup {
+    fn from_ruby(self) -> Result<fmod::ChannelGroup> {
+        self.into_channel_group()
+    }
+}
+
+impl ChannelGroup {
+    fn release(rb_self: RbChannelGroup) -> Result<()> {
         // we dont need to check if the group is already removed, because FromRuby will return an error if it is
         let group: fmod::ChannelGroup = rb_self.from_ruby()?;
         crate::extern_struct_storage::remove(*group);
@@ -50,19 +49,19 @@ impl ChannelGroupImpl {
 }
 
 extern_struct_fns! {
-  impl ChannelGroupImpl: fmod::ChannelGroup {
+  impl ChannelGroup: fmod::ChannelGroup {
     fn get_channel_count() -> i32;
-    fn get_channel(index: i32) -> Channel;
+    fn get_channel(index: i32) -> RbChannel;
     fn get_name() -> magnus::RString;
-    fn add_group(group: ChannelGroup, propgate_dsp_clock: bool) -> RbDSPConnection;
+    fn add_group(group: RbChannelGroup, propgate_dsp_clock: bool) -> RbDSPConnection;
     fn get_group_count() -> i32;
-    fn get_group(index: i32) -> ChannelGroup;
-    fn get_parent_group() -> ChannelGroup;
+    fn get_group(index: i32) -> RbChannelGroup;
+    fn get_parent_group() -> RbChannelGroup;
   }
 }
 
 extern_struct_bind! {
-  impl Bindable for ChannelGroupImpl: fmod::ChannelGroup, super = fmod::ChannelControl::class, class_name = "ChannelGroup" {
+  impl Bindable for ChannelGroup: fmod::ChannelGroup, super = fmod::ChannelControl::class, class_name = "ChannelGroup" {
     fn get_channel_count -> 0;
     fn get_channel -> 1;
     fn get_name -> 0;

@@ -9,8 +9,8 @@ use magnus::prelude::*;
 use crate::{extern_struct, extern_struct_bind, extern_struct_fns};
 
 use super::{
-    channel::Channel,
-    channel_group::ChannelGroup,
+    channel::RbChannel,
+    channel_group::RbChannelGroup,
     dsp::RbDSP,
     enums::{DspType, OutputType, PluginType, PortType, Speaker, SpeakerMode, TimeUnit},
     flags::DriverState,
@@ -77,14 +77,14 @@ impl System {
 extern_struct_fns! {
   impl System: fmod::System {
     fn create_dsp_by_type(dsp_type: DspType) -> RbDSP;
-    fn create_channel_group(name: magnus::RString) -> ChannelGroup;
+    fn create_channel_group(name: magnus::RString) -> RbChannelGroup;
     fn create_sound_group(name: magnus::RString) -> RbSoundGroup;
     fn create_reverb_3d() -> RbReverb3D;
-    fn play_sound(sound: RbSound, channel_group: Option<ChannelGroup>, paused: bool) -> Channel;
-    fn play_dsp(dsp: RbDSP, channel_group: Option<ChannelGroup>, paused: bool) -> Channel;
-    fn get_channel(channel_id: i32) -> Channel;
+    fn play_sound(sound: RbSound, channel_group: Option<RbChannelGroup>, paused: bool) -> RbChannel;
+    fn play_dsp(dsp: RbDSP, channel_group: Option<RbChannelGroup>, paused: bool) -> RbChannel;
+    fn get_channel(channel_id: i32) -> RbChannel;
     // TODO get dsp info
-    fn get_master_channel_group() -> ChannelGroup;
+    fn get_master_channel_group() -> RbChannelGroup;
     fn get_master_sound_group() -> RbSoundGroup;
     fn set_output(output_type: OutputType) -> ();
     fn get_output_type() -> OutputType;
@@ -132,8 +132,8 @@ extern_struct_fns! {
     fn get_3d_listener_attributes(listener: i32) -> (Vector, Vector, Vector, Vector);
     fn set_reverb_properties(instance: i32, properties: Option<ReverbProperties>) -> ();
     fn get_reverb_properties(instance: i32) -> ReverbProperties;
-    fn attach_channel_group_to_port(kind: PortType, index: Option<u64>, channel_group: ChannelGroup, pass_through: bool) -> ();
-    fn detach_channel_group_from_port(channel_group: ChannelGroup) -> ();
+    fn attach_channel_group_to_port(kind: PortType, index: Option<u64>, channel_group: RbChannelGroup, pass_through: bool) -> ();
+    fn detach_channel_group_from_port(channel_group: RbChannelGroup) -> ();
     fn get_software_channels() -> i32;
     fn get_software_format() -> (i32, SpeakerMode, i32);
     fn get_dsp_buffer_size() -> (u32, i32);
