@@ -101,7 +101,6 @@ ruby_bitflags! {
     const DEVICELOST;
     const MEMORYALLOCATIONFAILED;
     const THREADCREATED;
-    const THREADDESTROYED;
     const BADDSPCONNECTION;
     const PREMIX;
     const POSTMIX;
