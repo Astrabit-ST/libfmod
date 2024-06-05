@@ -9,7 +9,10 @@ use magnus::{prelude::*, typed_data::Obj};
 
 use crate::{extern_struct_bind, extern_struct_fns};
 
-use super::{dsp::RbDSP, flags::Mode, structs::Vector, system::RbSystem};
+use super::{
+    channel_callback::ChannelControlCallback, dsp::RbDSP, flags::Mode, structs::Vector,
+    system::RbSystem,
+};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 #[magnus::wrap(class = "FMOD::ChannelControl", size, free_immediately)]
@@ -75,6 +78,23 @@ impl ChannelControl {
     fn set_userdata(rb_self: Obj<Self>, data: magnus::Value) -> Result<()> {
         rb_self.ivar_set("__userdata", data)
     }
+
+    fn set_callback(rb_self: Obj<Self>, callback: magnus::Value) -> Result<()> {
+        let control: fmod::ChannelControl = rb_self.from_ruby()?;
+
+        if !callback
+            .class()
+            .is_inherited(super::channel_callback::class())
+        {
+            return Err(magnus::Error::new(
+                magnus::exception::runtime_error(),
+                "callback must be a ChannelControlCallback",
+            ));
+        }
+
+        rb_self.ivar_set("__callback", callback)?;
+        control.set_callback::<ChannelControlCallback>().into_ruby()
+    }
 }
 
 extern_struct_fns! {
@@ -137,6 +157,7 @@ extern_struct_fns! {
 
 extern_struct_bind! {
   impl Bindable for ChannelControl: fmod::ChannelControl {
+    fn set_callback -> 1;
     fn add_dsp -> 2;
     fn remove_dsp -> 1;
     fn get_dsp_count -> 0;

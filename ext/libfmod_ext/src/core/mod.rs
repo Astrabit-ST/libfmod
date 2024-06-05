@@ -5,6 +5,7 @@ pub mod flags;
 pub mod structs;
 
 mod channel;
+mod channel_callback;
 mod channel_control;
 pub mod channel_group;
 pub mod dsp;
@@ -27,6 +28,7 @@ pub fn bind(module: magnus::RModule) -> Result<()> {
 
     channel_control::bind(module)?;
     channel_group::bind(module)?;
+    channel_callback::bind(module)?;
     channel::bind(module)?;
     system_builder::bind(module)?;
     system_callback::bind(module)?;
