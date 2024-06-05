@@ -6,10 +6,11 @@
 
 use magnus::prelude::*;
 
-use crate::{Bindable, Result};
+use crate::{Bindable, FromRuby, IntoRuby, Result};
 
 use crate::{extern_struct, extern_struct_bind, extern_struct_fns};
 
+use super::command_replay_callbacks::{CreateInstanceCallback, FrameCallback, LoadBankCallback};
 use super::enums::PlaybackState;
 use super::structs::CommandInfo;
 use super::system::RbSystem;
@@ -20,7 +21,6 @@ extern_struct! {
 
 extern_struct_fns! {
     impl CommandReplay: fmod::studio::CommandReplay {
-        // TODO callbacks
         fn release() -> ();
         fn start() -> ();
         fn stop() -> ();
@@ -49,10 +49,71 @@ impl CommandReplay {
     fn set_userdata(rb_self: RbCommandReplay, data: magnus::Value) -> Result<()> {
         rb_self.ivar_set("__userdata", data)
     }
+
+    fn set_create_instance_callback(
+        rb_self: RbCommandReplay,
+        callback: magnus::RObject,
+    ) -> Result<()> {
+        let instance: fmod::studio::CommandReplay = rb_self.from_ruby()?;
+
+        if !callback
+            .class()
+            .is_inherited(super::command_replay_callbacks::create_instance_class())
+        {
+            return Err(magnus::Error::new(
+                magnus::exception::runtime_error(),
+                "callback must be a CreateInstanceCallback",
+            ));
+        }
+
+        rb_self.ivar_set("__create_instance_callback", callback)?;
+        instance
+            .set_create_instance_callback::<CreateInstanceCallback>()
+            .into_ruby()
+    }
+
+    fn set_frame_callback(rb_self: RbCommandReplay, callback: magnus::RObject) -> Result<()> {
+        let instance: fmod::studio::CommandReplay = rb_self.from_ruby()?;
+
+        if !callback
+            .class()
+            .is_inherited(super::command_replay_callbacks::frame_class())
+        {
+            return Err(magnus::Error::new(
+                magnus::exception::runtime_error(),
+                "callback must be a FrameCallback",
+            ));
+        }
+
+        rb_self.ivar_set("__frame_callback", callback)?;
+        instance.set_frame_callback::<FrameCallback>().into_ruby()
+    }
+
+    fn set_load_bank_callback(rb_self: RbCommandReplay, callback: magnus::RObject) -> Result<()> {
+        let instance: fmod::studio::CommandReplay = rb_self.from_ruby()?;
+
+        if !callback
+            .class()
+            .is_inherited(super::command_replay_callbacks::load_bank_class())
+        {
+            return Err(magnus::Error::new(
+                magnus::exception::runtime_error(),
+                "callback must be a LoadBankCallback",
+            ));
+        }
+
+        rb_self.ivar_set("__load_bank_callback", callback)?;
+        instance
+            .set_load_bank_callback::<LoadBankCallback>()
+            .into_ruby()
+    }
 }
 
 extern_struct_bind! {
     impl Bindable for CommandReplay: fmod::studio::CommandReplay {
+        fn set_create_instance_callback -> 1;
+        fn set_frame_callback -> 1;
+        fn set_load_bank_callback -> 1;
         fn get_userdata -> 0;
         fn set_userdata -> 1;
         fn release -> 0;
