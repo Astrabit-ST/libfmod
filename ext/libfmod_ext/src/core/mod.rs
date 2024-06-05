@@ -11,6 +11,7 @@ pub mod dsp;
 mod dsp_connection;
 mod geometry;
 mod reverb_3d;
+mod rolloff_callback;
 pub mod sound;
 pub mod sound_builder;
 mod sound_group;
@@ -29,6 +30,7 @@ pub fn bind(module: magnus::RModule) -> Result<()> {
     channel::bind(module)?;
     system_builder::bind(module)?;
     system_callback::bind(module)?;
+    rolloff_callback::bind(module)?;
     system::bind(module)?;
     dsp::bind(module)?;
     sound_group::bind(module)?;

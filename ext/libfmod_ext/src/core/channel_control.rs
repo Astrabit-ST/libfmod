@@ -17,7 +17,7 @@ pub struct ChannelControl(
     pub(super) fmod::ChannelControl,
     pub(super) ChannelControlType,
 );
-type RbChannelControl = Obj<ChannelControl>;
+pub type RbChannelControl = Obj<ChannelControl>;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum ChannelControlType {

@@ -16,6 +16,7 @@ use super::{
     flags::{DriverState, SystemCallbackMask},
     geometry::RbGeometry,
     reverb_3d::RbReverb3D,
+    rolloff_callback::RolloffCallback,
     sound::RbSound,
     sound_builder::SoundBuilder,
     sound_group::RbSoundGroup,
@@ -95,6 +96,25 @@ impl System {
         rb_self.ivar_set("__callback", callback)?;
         system.set_callback::<SystemCallback>(mask).into_ruby()
     }
+
+    fn set_3d_rolloff_callback(rb_self: RbSystem, callback: magnus::Value) -> Result<()> {
+        let system: fmod::System = rb_self.from_ruby()?;
+
+        if !callback
+            .class()
+            .is_inherited(super::rolloff_callback::class())
+        {
+            return Err(magnus::Error::new(
+                magnus::exception::runtime_error(),
+                "callback must be a SystemCallback",
+            ));
+        }
+
+        rb_self.ivar_set("__rolloff_callback", callback)?;
+        system
+            .set_3d_rolloff_callback::<RolloffCallback>()
+            .into_ruby()
+    }
 }
 
 extern_struct_fns! {
@@ -168,7 +188,7 @@ extern_struct_fns! {
     fn get_3d_settings() -> (f32, f32, f32);
     fn set_3d_listener_count(count: i32) -> ();
     fn get_3d_listener_count() -> i32;
-    // TODO rolloff callback
+    fn unset_3d_rolloff_callback() -> ();
   }
 }
 
@@ -245,6 +265,8 @@ extern_struct_bind! {
     fn get_3d_settings -> 0;
     fn set_3d_listener_count -> 1;
     fn get_3d_listener_count -> 0;
+    fn set_3d_rolloff_callback -> 1;
+    fn unset_3d_rolloff_callback -> 0;
     ruby_compat_methods: true
 
     |class| {
