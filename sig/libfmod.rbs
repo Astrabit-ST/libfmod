@@ -1,4 +1,2089 @@
 module FMOD
-  VERSION: Integer
-  # See the writing guide of rbs: https://github.com/ruby/rbs#guides
+  MAX_CHANNEL_WIDTH: ::Integer
+
+  MAX_LISTENERS: ::Integer
+
+  MAX_SYSTEMS: ::Integer
+
+  VERSION: ::Integer
+
+  class Channel < ::FMOD::ChannelControl
+    public
+
+    def get_channel_group: () -> untyped
+
+    def get_current_sound: () -> untyped
+
+    def get_frequency: () -> untyped
+
+    def get_index: () -> untyped
+
+    def get_loop_count: () -> untyped
+
+    def get_loop_points: (untyped, untyped) -> untyped
+
+    def get_position: (untyped) -> untyped
+
+    def get_priority: () -> untyped
+
+    def is_virtual: () -> untyped
+
+    def set_channel_group: (untyped) -> untyped
+
+    def set_frequency: (untyped) -> untyped
+
+    def set_loop_count: (untyped) -> untyped
+
+    def set_loop_points: (untyped, untyped, untyped, untyped) -> untyped
+
+    def set_position: (untyped, untyped) -> untyped
+
+    def set_priority: (untyped) -> untyped
+  end
+
+  class ChannelControl
+    public
+
+    def add_dsp: (untyped, untyped) -> untyped
+
+    def add_fade_point: (untyped, untyped) -> untyped
+
+    def dup: () -> untyped
+
+    def eql?: (untyped) -> untyped
+
+    def get_3d_attributes: () -> untyped
+
+    def get_3d_cone_orientation: () -> untyped
+
+    def get_3d_cone_settings: () -> untyped
+
+    def get_3d_distance_filter: () -> untyped
+
+    def get_3d_doppler_level: () -> untyped
+
+    def get_3d_level: () -> untyped
+
+    def get_3d_min_max_distance: () -> untyped
+
+    def get_3d_occlusion: () -> untyped
+
+    def get_3d_spread: () -> untyped
+
+    def get_audibility: () -> untyped
+
+    def get_delay: () -> untyped
+
+    def get_dsp: (untyped) -> untyped
+
+    def get_dsp_clock: () -> untyped
+
+    def get_dsp_count: () -> untyped
+
+    def get_dsp_index: (untyped) -> untyped
+
+    def get_fade_points: () -> untyped
+
+    def get_low_pass_gain: () -> untyped
+
+    def get_mute: () -> untyped
+
+    def get_paused: () -> untyped
+
+    def get_pitch: () -> untyped
+
+    def get_reverb_properties: (untyped) -> untyped
+
+    def get_system: () -> untyped
+
+    def get_userdata: () -> untyped
+
+    def get_volume: () -> untyped
+
+    def get_volume_ramp: () -> untyped
+
+    def hash: () -> untyped
+
+    def inspect: () -> untyped
+
+    def is_playing: () -> untyped
+
+    def remove_dsp: (untyped) -> untyped
+
+    def remove_fade_points: (untyped, untyped) -> untyped
+
+    def set_3d_attributes: (untyped, untyped) -> untyped
+
+    def set_3d_cone_orientation: (untyped) -> untyped
+
+    def set_3d_cone_settings: (untyped, untyped, untyped) -> untyped
+
+    def set_3d_distance_filter: (untyped, untyped, untyped) -> untyped
+
+    def set_3d_doppler_level: (untyped) -> untyped
+
+    def set_3d_level: (untyped) -> untyped
+
+    def set_3d_min_max_distance: (untyped, untyped) -> untyped
+
+    def set_3d_occlusion: (untyped, untyped) -> untyped
+
+    def set_3d_spread: (untyped) -> untyped
+
+    def set_callback: (untyped) -> untyped
+
+    def set_delay: (untyped, untyped, untyped) -> untyped
+
+    def set_dsp_index: (untyped, untyped) -> untyped
+
+    def set_fade_point_ramp: (untyped, untyped) -> untyped
+
+    def set_low_pass_gain: (untyped) -> untyped
+
+    def set_mode: (untyped) -> untyped
+
+    def set_mute: (untyped) -> untyped
+
+    def set_pan: (untyped) -> untyped
+
+    def set_paused: (untyped) -> untyped
+
+    def set_pitch: (untyped) -> untyped
+
+    def set_reverb_properties: (untyped, untyped) -> untyped
+
+    def set_userdata: (untyped) -> untyped
+
+    def set_volume: (untyped) -> untyped
+
+    def set_volume_ramp: (untyped) -> untyped
+
+    def stop: () -> untyped
+
+    DSP_FADER: ::Integer
+
+    DSP_HEAD: ::Integer
+
+    DSP_TAIL: ::Integer
+  end
+
+  class ChannelControlCallback
+    public
+
+    def end: (untyped) -> untyped
+
+    def occlusion: (untyped) -> untyped
+
+    def sync_point: (untyped, untyped) -> untyped
+
+    def virtual_voice: (untyped, untyped) -> untyped
+  end
+
+  class ChannelGroup < ::FMOD::ChannelControl
+    public
+
+    def add_group: (untyped, untyped) -> untyped
+
+    def get_channel: (untyped) -> untyped
+
+    def get_channel_count: () -> untyped
+
+    def get_group: (untyped) -> untyped
+
+    def get_group_count: () -> untyped
+
+    def get_name: () -> untyped
+
+    def get_parent_group: () -> untyped
+
+    def release: () -> untyped
+  end
+
+  module ChannelMask
+    BACK_CENTER: ::Integer
+
+    BACK_LEFT: ::Integer
+
+    BACK_RIGHT: ::Integer
+
+    FRONT_CENTER: ::Integer
+
+    FRONT_LEFT: ::Integer
+
+    FRONT_RIGHT: ::Integer
+
+    LOW_FREQUENCY: ::Integer
+
+    LRC: ::Integer
+
+    MONO: ::Integer
+
+    QUAD: ::Integer
+
+    STEREO: ::Integer
+
+    SURROUND: ::Integer
+
+    SURROUND_LEFT: ::Integer
+
+    SURROUND_RIGHT: ::Integer
+  end
+
+  module ChannelOrder
+    AllMono: ::Integer
+
+    AllStereo: ::Integer
+
+    Alsa: ::Integer
+
+    Default: ::Integer
+
+    ProTools: ::Integer
+
+    WaveFormat: ::Integer
+  end
+
+  class DSP
+    public
+
+    def add_input: (untyped, untyped) -> untyped
+
+    def disconnect_all: (untyped, untyped) -> untyped
+
+    def disconnect_from: (untyped, untyped) -> untyped
+
+    def dup: () -> untyped
+
+    def eql?: (untyped) -> untyped
+
+    def get_active: () -> untyped
+
+    def get_bypass: () -> untyped
+
+    def get_channel_format: () -> untyped
+
+    def get_cpu_usage: () -> untyped
+
+    def get_data_parameter_index: (untyped) -> untyped
+
+    def get_idle: () -> untyped
+
+    def get_input: (untyped) -> untyped
+
+    def get_input_count: () -> untyped
+
+    def get_metering_enabled: () -> untyped
+
+    def get_metering_info: () -> untyped
+
+    def get_output: (untyped) -> untyped
+
+    def get_output_channel_format: (untyped, untyped, untyped) -> untyped
+
+    def get_output_count: () -> untyped
+
+    def get_parameter_bool: (untyped) -> untyped
+
+    def get_parameter_count: () -> untyped
+
+    def get_parameter_data: (untyped) -> untyped
+
+    def get_parameter_float: (untyped) -> untyped
+
+    def get_parameter_int: (untyped) -> untyped
+
+    def get_system: () -> untyped
+
+    def get_type: () -> untyped
+
+    def get_userdata: () -> untyped
+
+    def get_wet_dry_mix: () -> untyped
+
+    def hash: () -> untyped
+
+    def inspect: () -> untyped
+
+    def release: () -> untyped
+
+    def reset: () -> untyped
+
+    def set_active: (untyped) -> untyped
+
+    def set_bypass: (untyped) -> untyped
+
+    def set_channel_format: (untyped, untyped, untyped) -> untyped
+
+    def set_metering_enabled: (untyped, untyped) -> untyped
+
+    def set_parameter_bool: (untyped, untyped) -> untyped
+
+    def set_parameter_data: (untyped, untyped) -> untyped
+
+    def set_parameter_float: (untyped, untyped) -> untyped
+
+    def set_parameter_int: (untyped, untyped) -> untyped
+
+    def set_userdata: (untyped) -> untyped
+
+    def set_wet_dry_mix: (untyped, untyped, untyped) -> untyped
+  end
+
+  class DSPConnection
+    public
+
+    def dup: () -> untyped
+
+    def eql?: (untyped) -> untyped
+
+    def get_input: () -> untyped
+
+    def get_mix: () -> untyped
+
+    def get_output: () -> untyped
+
+    def get_type: () -> untyped
+
+    def get_userdata: () -> untyped
+
+    def hash: () -> untyped
+
+    def inspect: () -> untyped
+
+    def set_mix: (untyped) -> untyped
+
+    def set_userdata: (untyped) -> untyped
+  end
+
+  module DriverState
+    CONNECTED: ::Integer
+
+    DEFAULT: ::Integer
+  end
+
+  module DspConnectionType
+    Send: ::Integer
+
+    SendSidechain: ::Integer
+
+    Sidechain: ::Integer
+
+    Standard: ::Integer
+  end
+
+  module DspParameterDataType
+    AttenuationRange: ::Integer
+
+    Attributes3D: ::Integer
+
+    Attributes3DMulti: ::Integer
+
+    FFT: ::Integer
+
+    OverAlign: ::Integer
+
+    Sidechain: ::Integer
+
+    User: ::Integer
+  end
+
+  module DspType
+    ChannelMix: ::Integer
+
+    Chorus: ::Integer
+
+    Compressor: ::Integer
+
+    ConvolutionReverb: ::Integer
+
+    Delay: ::Integer
+
+    Distortion: ::Integer
+
+    Echo: ::Integer
+
+    EnvelopeFollower: ::Integer
+
+    Fader: ::Integer
+
+    Fft: ::Integer
+
+    Flange: ::Integer
+
+    Highpass: ::Integer
+
+    HighpassSimple: ::Integer
+
+    ItEcho: ::Integer
+
+    ItLowpass: ::Integer
+
+    LadspaPlugin: ::Integer
+
+    Limiter: ::Integer
+
+    LoudnessMeter: ::Integer
+
+    Lowpass: ::Integer
+
+    LowpassSimple: ::Integer
+
+    Mixer: ::Integer
+
+    MultibandEq: ::Integer
+
+    Normalize: ::Integer
+
+    ObjectPan: ::Integer
+
+    Oscillator: ::Integer
+
+    Pan: ::Integer
+
+    ParamEq: ::Integer
+
+    PitchShift: ::Integer
+
+    Return: ::Integer
+
+    Send: ::Integer
+
+    SfxReverb: ::Integer
+
+    ThreeEq: ::Integer
+
+    Tremolo: ::Integer
+
+    Unknown: ::Integer
+
+    VstPlugin: ::Integer
+
+    WinampPlugin: ::Integer
+  end
+
+  class Error < ::RuntimeError
+  end
+
+  class ExternStructStorage < ::BasicObject
+  end
+
+  class Geometry
+    public
+
+    def add_polygon: (untyped, untyped, untyped, untyped) -> untyped
+
+    def dup: () -> untyped
+
+    def eql?: (untyped) -> untyped
+
+    def get_active: () -> untyped
+
+    def get_max_polygons: () -> untyped
+
+    def get_polygon_attributes: (untyped) -> untyped
+
+    def get_polygon_count: () -> untyped
+
+    def get_polygon_vertex: (untyped, untyped) -> untyped
+
+    def get_polygon_vertex_count: (untyped) -> untyped
+
+    def get_position: () -> untyped
+
+    def get_rotation: () -> untyped
+
+    def get_scale: () -> untyped
+
+    def get_userdata: () -> untyped
+
+    def hash: () -> untyped
+
+    def inspect: () -> untyped
+
+    def release: () -> untyped
+
+    def save: () -> untyped
+
+    def set_active: (untyped) -> untyped
+
+    def set_polygon_attributes: (untyped, untyped, untyped, untyped) -> untyped
+
+    def set_polygon_vertex: (untyped, untyped, untyped) -> untyped
+
+    def set_position: (untyped) -> untyped
+
+    def set_rotation: (untyped, untyped) -> untyped
+
+    def set_scale: (untyped) -> untyped
+
+    def set_userdata: (untyped) -> untyped
+  end
+
+  module InitFlags
+    CHANNEL_DISTANCE_FILTER: ::Integer
+
+    CHANNEL_LOWPASS: ::Integer
+
+    CLIP_OUTPUT: ::Integer
+
+    GEOMETRY_USE_CLOSEST: ::Integer
+
+    MEMORY_TRACKING: ::Integer
+
+    MIX_FROM_UPDATE: ::Integer
+
+    NORMAL: ::Integer
+
+    PREFER_DOLBY_DOWNMIX: ::Integer
+
+    PROFILE_ENABLE: ::Integer
+
+    PROFILE_METER_ALL: ::Integer
+
+    RIGHTHANDED_3D: ::Integer
+
+    STREAM_FROM_UPDATE: ::Integer
+
+    THREAD_UNSAFE: ::Integer
+
+    VOL_0_BECOMES_VIRTUAL: ::Integer
+  end
+
+  module Mode
+    ACCURATE_TIME: ::Integer
+
+    CREATE_COMPRESSED_SAMPLE: ::Integer
+
+    CREATE_SAMPLE: ::Integer
+
+    CREATE_STREAM: ::Integer
+
+    CUSTOM_ROLLOFF_3D: ::Integer
+
+    D2: ::Integer
+
+    D3: ::Integer
+
+    DEFAULT: ::Integer
+
+    HEADRELATIVE_3D: ::Integer
+
+    IGNORE_GEOMETRY_3D: ::Integer
+
+    IGNORE_TAGS: ::Integer
+
+    INVERSE_ROLLOFF_3D: ::Integer
+
+    INVERSE_TAPERED_ROLLOFF_3D: ::Integer
+
+    LINEAR_ROLLOFF_3D: ::Integer
+
+    LINEAR_SQUARE_ROLLOFF_3D: ::Integer
+
+    LOOP_BIDI: ::Integer
+
+    LOOP_NORMAL: ::Integer
+
+    LOOP_OFF: ::Integer
+
+    LOWMEM: ::Integer
+
+    MPEG_SEARCH: ::Integer
+
+    NONBLOCKING: ::Integer
+
+    OPEN_MEMORY: ::Integer
+
+    OPEN_MEMORY_POINT: ::Integer
+
+    OPEN_ONLY: ::Integer
+
+    OPEN_RAW: ::Integer
+
+    OPEN_USER: ::Integer
+
+    UNIQUE: ::Integer
+
+    VIRTUAL_PLAYFROM_START: ::Integer
+
+    WORLDRELATIVE_3D: ::Integer
+  end
+
+  module OpenState
+    Buffering: ::Integer
+
+    Connecting: ::Integer
+
+    Error: ::Integer
+
+    Loading: ::Integer
+
+    Playing: ::Integer
+
+    Ready: ::Integer
+
+    Seeking: ::Integer
+
+    SetPosition: ::Integer
+  end
+
+  module OutputType
+    AAudio: ::Integer
+
+    ASIO: ::Integer
+
+    Alsa: ::Integer
+
+    AudioOut: ::Integer
+
+    AudioTrack: ::Integer
+
+    AudioWorklet: ::Integer
+
+    AutoDetect: ::Integer
+
+    CoreAudio: ::Integer
+
+    NNAudio: ::Integer
+
+    NoSound: ::Integer
+
+    NoSoundNRT: ::Integer
+
+    OHAudio: ::Integer
+
+    OpenSL: ::Integer
+
+    Phase: ::Integer
+
+    PulseAudio: ::Integer
+
+    Unknown: ::Integer
+
+    WASAPI: ::Integer
+
+    WavWriter: ::Integer
+
+    WavWriterNRT: ::Integer
+
+    WebAudio: ::Integer
+
+    WinSonic: ::Integer
+  end
+
+  module PluginType
+    Codec: ::Integer
+
+    DSP: ::Integer
+
+    Output: ::Integer
+  end
+
+  module PortType
+    AUX: ::Integer
+
+    Controller: ::Integer
+
+    CopyrightMusic: ::Integer
+
+    Music: ::Integer
+
+    Personal: ::Integer
+
+    Vibration: ::Integer
+
+    Voice: ::Integer
+  end
+
+  class Reverb3D
+    public
+
+    def dup: () -> untyped
+
+    def eql?: (untyped) -> untyped
+
+    def get_3d_attributes: () -> untyped
+
+    def get_active: () -> untyped
+
+    def get_properties: () -> untyped
+
+    def get_userdata: () -> untyped
+
+    def hash: () -> untyped
+
+    def inspect: () -> untyped
+
+    def release: () -> untyped
+
+    def set_3d_attributes: (untyped, untyped, untyped) -> untyped
+
+    def set_active: (untyped) -> untyped
+
+    def set_properties: (untyped) -> untyped
+
+    def set_userdata: (untyped) -> untyped
+  end
+
+  class RolloffCallback
+    public
+
+    def rolloff: (untyped, untyped) -> untyped
+  end
+
+  class Sound
+    public
+
+    def add_sync_point: (untyped, untyped, untyped) -> untyped
+
+    def delete_sync_point: (untyped) -> untyped
+
+    def dup: () -> untyped
+
+    def eql?: (untyped) -> untyped
+
+    def get_3d_cone_settings: () -> untyped
+
+    def get_3d_custom_rolloff: () -> untyped
+
+    def get_3d_min_max_distance: () -> untyped
+
+    def get_defaults: () -> untyped
+
+    def get_length: (untyped) -> untyped
+
+    def get_loop_count: () -> untyped
+
+    def get_loop_points: (untyped, untyped) -> untyped
+
+    def get_mode: () -> untyped
+
+    def get_music_channel_count: () -> untyped
+
+    def get_music_channel_volume: (untyped) -> untyped
+
+    def get_music_speed: () -> untyped
+
+    def get_name: () -> untyped
+
+    def get_open_state: () -> untyped
+
+    def get_sub_sound: (untyped) -> untyped
+
+    def get_sub_sound_count: () -> untyped
+
+    def get_sub_sound_parent: () -> untyped
+
+    def get_sync_point: (untyped) -> untyped
+
+    def get_sync_point_info: (untyped, untyped) -> untyped
+
+    def get_system: () -> untyped
+
+    def get_tag: (untyped, untyped) -> untyped
+
+    def get_tag_count: () -> untyped
+
+    def get_userdata: () -> untyped
+
+    def hash: () -> untyped
+
+    def inspect: () -> untyped
+
+    def release: () -> untyped
+
+    def set_3d_cone_settings: (untyped, untyped, untyped) -> untyped
+
+    def set_3d_min_max_distance: (untyped, untyped) -> untyped
+
+    def set_defaults: (untyped, untyped) -> untyped
+
+    def set_loop_count: (untyped) -> untyped
+
+    def set_loop_points: (untyped, untyped, untyped, untyped) -> untyped
+
+    def set_music_channel_volume: (untyped, untyped) -> untyped
+
+    def set_music_speed: (untyped) -> untyped
+
+    def set_sound_group: (untyped) -> untyped
+
+    def set_userdata: (untyped) -> untyped
+
+    def sound_group: () -> untyped
+  end
+
+  class SoundBuilder
+    def self.open: (untyped) -> untyped
+
+    def self.open_memory: (untyped) -> untyped
+
+    public
+
+    def channel_order: () -> untyped
+
+    def data: () -> untyped
+
+    def decode_buffer_size: () -> untyped
+
+    def default_frequency: () -> untyped
+
+    def dls_name: () -> untyped
+
+    def encryption_key: () -> untyped
+
+    def file_buffer_size: () -> untyped
+
+    def file_offset: () -> untyped
+
+    def format: () -> untyped
+
+    def ignore_set_filesystem: () -> untyped
+
+    def initial_seek_position: () -> untyped
+
+    def initial_sound_group: () -> untyped
+
+    def initial_subsound: () -> untyped
+
+    def length: () -> untyped
+
+    def max_polyphony: () -> untyped
+
+    def min_midi_granularity: () -> untyped
+
+    def mode: () -> untyped
+
+    def name_or_url: () -> untyped
+
+    def non_block_thread_id: () -> untyped
+
+    def subsound_count: () -> untyped
+
+    def suggested_sound_type: () -> untyped
+
+    def with_channel_order: (untyped) -> untyped
+
+    def with_decode_buffer_size: (untyped) -> untyped
+
+    def with_dls_name: (untyped) -> untyped
+
+    def with_encryption_key: (untyped) -> untyped
+
+    def with_file_buffer_size: (untyped) -> untyped
+
+    def with_file_offset: (untyped) -> untyped
+
+    def with_ignore_set_filesystem: (untyped) -> untyped
+
+    def with_initial_seek_position: (untyped, untyped) -> untyped
+
+    def with_initial_sound_group: (untyped) -> untyped
+
+    def with_initial_subsound: (untyped) -> untyped
+
+    def with_max_polyphony: (untyped) -> untyped
+
+    def with_min_midi_granularity: (untyped) -> untyped
+
+    def with_mode: (untyped) -> untyped
+
+    def with_non_block_thread_id: (untyped) -> untyped
+
+    def with_open_raw: (untyped, untyped, untyped) -> untyped
+
+    def with_suggested_sound_type: (untyped) -> untyped
+  end
+
+  module SoundFormat
+    BitStream: ::Integer
+
+    None: ::Integer
+
+    PCM16: ::Integer
+
+    PCM24: ::Integer
+
+    PCM32: ::Integer
+
+    PCM8: ::Integer
+
+    PCMFloat: ::Integer
+  end
+
+  class SoundGroup
+    public
+
+    def dup: () -> untyped
+
+    def eql?: (untyped) -> untyped
+
+    def get_max_audible: () -> untyped
+
+    def get_max_audible_behavior: () -> untyped
+
+    def get_mute_fade_speed: () -> untyped
+
+    def get_name: () -> untyped
+
+    def get_playing_count: () -> untyped
+
+    def get_sound: (untyped) -> untyped
+
+    def get_sound_count: () -> untyped
+
+    def get_system: () -> untyped
+
+    def get_userdata: () -> untyped
+
+    def get_volume: () -> untyped
+
+    def hash: () -> untyped
+
+    def inspect: () -> untyped
+
+    def release: () -> untyped
+
+    def set_max_audible: (untyped) -> untyped
+
+    def set_max_audible_behavior: (untyped) -> untyped
+
+    def set_mute_fade_speed: (untyped) -> untyped
+
+    def set_userdata: (untyped) -> untyped
+
+    def set_volume: (untyped) -> untyped
+
+    def stop: () -> untyped
+  end
+
+  module SoundGroupBehavior
+    Fail: ::Integer
+
+    Mute: ::Integer
+
+    StealLowest: ::Integer
+  end
+
+  module SoundType
+    AIFF: ::Integer
+
+    ASF: ::Integer
+
+    AT9: ::Integer
+
+    AudioQueue: ::Integer
+
+    DLS: ::Integer
+
+    FADPCM: ::Integer
+
+    FLAC: ::Integer
+
+    FSB: ::Integer
+
+    IT: ::Integer
+
+    MIDI: ::Integer
+
+    MOD: ::Integer
+
+    MPEG: ::Integer
+
+    MediaCodec: ::Integer
+
+    MediaFoundation: ::Integer
+
+    OGGVORBIS: ::Integer
+
+    OPUS: ::Integer
+
+    Playlist: ::Integer
+
+    RAW: ::Integer
+
+    S3M: ::Integer
+
+    Unknown: ::Integer
+
+    User: ::Integer
+
+    Vorbis: ::Integer
+
+    WAV: ::Integer
+
+    XM: ::Integer
+
+    XMA: ::Integer
+  end
+
+  module Speaker
+    BackLeft: ::Integer
+
+    BackRight: ::Integer
+
+    FrontCenter: ::Integer
+
+    FrontLeft: ::Integer
+
+    FrontRight: ::Integer
+
+    LowFrequency: ::Integer
+
+    None: ::Integer
+
+    SurroundLeft: ::Integer
+
+    SurroundRight: ::Integer
+
+    TopBackLeft: ::Integer
+
+    TopBackRight: ::Integer
+
+    TopFrontLeft: ::Integer
+
+    TopFrontRight: ::Integer
+  end
+
+  module SpeakerMode
+    Default: ::Integer
+
+    FivePointOne: ::Integer
+
+    Mono: ::Integer
+
+    Quad: ::Integer
+
+    Raw: ::Integer
+
+    SevenPointOne: ::Integer
+
+    SevenPointOneFour: ::Integer
+
+    Stereo: ::Integer
+
+    Surround: ::Integer
+  end
+
+  module Studio
+    class Bank
+      public
+
+      def bus_count: () -> untyped
+
+      def dup: () -> untyped
+
+      def eql?: (untyped) -> untyped
+
+      def event_count: () -> untyped
+
+      def get_bus_list: () -> untyped
+
+      def get_event_list: () -> untyped
+
+      def get_id: () -> untyped
+
+      def get_loading_state: () -> untyped
+
+      def get_path: () -> untyped
+
+      def get_sample_loading_state: () -> untyped
+
+      def get_string_info: (untyped) -> untyped
+
+      def get_userdata: () -> untyped
+
+      def get_vca_list: () -> untyped
+
+      def hash: () -> untyped
+
+      def inspect: () -> untyped
+
+      def is_valid: () -> untyped
+
+      def load_sample_data: () -> untyped
+
+      def set_userdata: (untyped) -> untyped
+
+      def string_count: () -> untyped
+
+      def unload: () -> untyped
+
+      def unload_sample_data: () -> untyped
+
+      def vca_count: () -> untyped
+    end
+
+    class Bus
+      public
+
+      def dup: () -> untyped
+
+      def eql?: (untyped) -> untyped
+
+      def get_channel_group: () -> untyped
+
+      def get_cpu_usage: () -> untyped
+
+      def get_id: () -> untyped
+
+      def get_memory_usage: () -> untyped
+
+      def get_mute: () -> untyped
+
+      def get_path: () -> untyped
+
+      def get_paused: () -> untyped
+
+      def get_port_index: () -> untyped
+
+      def get_volume: () -> untyped
+
+      def hash: () -> untyped
+
+      def inspect: () -> untyped
+
+      def is_valid: () -> untyped
+
+      def lock_channel_group: () -> untyped
+
+      def set_mute: (untyped) -> untyped
+
+      def set_paused: (untyped) -> untyped
+
+      def set_port_index: (untyped) -> untyped
+
+      def set_volume: (untyped) -> untyped
+
+      def stop_all_events: (untyped) -> untyped
+
+      def unlock_channel_group: () -> untyped
+    end
+
+    module CommandCaptureFlags
+      FILE_FLUSH: ::Integer
+
+      NORMAL: ::Integer
+
+      SKIP_INITIAL_STATE: ::Integer
+    end
+
+    class CommandReplay
+      public
+
+      def command_at_time: (untyped) -> untyped
+
+      def dup: () -> untyped
+
+      def eql?: (untyped) -> untyped
+
+      def get_command_count: () -> untyped
+
+      def get_command_info: (untyped) -> untyped
+
+      def get_command_string: (untyped) -> untyped
+
+      def get_current_command: () -> untyped
+
+      def get_length: () -> untyped
+
+      def get_paused: () -> untyped
+
+      def get_playback_state: () -> untyped
+
+      def get_system: () -> untyped
+
+      def get_userdata: () -> untyped
+
+      def hash: () -> untyped
+
+      def inspect: () -> untyped
+
+      def is_valid: () -> untyped
+
+      def release: () -> untyped
+
+      def seek_to_command: (untyped) -> untyped
+
+      def seek_to_time: (untyped) -> untyped
+
+      def set_bank_path: (untyped) -> untyped
+
+      def set_create_instance_callback: (untyped) -> untyped
+
+      def set_frame_callback: (untyped) -> untyped
+
+      def set_load_bank_callback: (untyped) -> untyped
+
+      def set_paused: (untyped) -> untyped
+
+      def set_userdata: (untyped) -> untyped
+
+      def start: () -> untyped
+
+      def stop: () -> untyped
+    end
+
+    module CommandReplayFlags
+      FAST_FORWARD: ::Integer
+
+      NORMAL: ::Integer
+
+      SKIP_BANK_LOAD: ::Integer
+
+      SKIP_CLEANUP: ::Integer
+    end
+
+    class CreateInstanceCallback
+      public
+
+      def create_instance_callback: (untyped, untyped, untyped, untyped) -> untyped
+    end
+
+    module EventCallbackMask
+      ALL: ::Integer
+
+      CREATED: ::Integer
+
+      CREATE_PROGRAMMER_SOUND: ::Integer
+
+      DESTROYED: ::Integer
+
+      DESTROY_PROGRAMMER_SOUND: ::Integer
+
+      NESTED_TIMELINE_BEAT: ::Integer
+
+      PLUGIN_CREATED: ::Integer
+
+      PLUGIN_DESTROYED: ::Integer
+
+      REAL_TO_VIRTUAL: ::Integer
+
+      SOUND_PLAYED: ::Integer
+
+      SOUND_STOPPED: ::Integer
+
+      STARTED: ::Integer
+
+      STARTING: ::Integer
+
+      START_EVENT_COMMAND: ::Integer
+
+      START_FAILED: ::Integer
+
+      STOPPED: ::Integer
+
+      TIMELINE_BEAT: ::Integer
+
+      TIMELINE_MARKER: ::Integer
+
+      VIRTUAL_TO_REAL: ::Integer
+    end
+
+    class EventDescription
+      public
+
+      def create_instance: () -> untyped
+
+      def dup: () -> untyped
+
+      def eql?: (untyped) -> untyped
+
+      def get_id: () -> untyped
+
+      def get_instance_list: () -> untyped
+
+      def get_length: () -> untyped
+
+      def get_min_max_distance: () -> untyped
+
+      def get_parameter_description_by_id: (untyped) -> untyped
+
+      def get_parameter_description_by_index: (untyped) -> untyped
+
+      def get_parameter_description_by_name: (untyped) -> untyped
+
+      def get_parameter_label_by_id: (untyped, untyped) -> untyped
+
+      def get_parameter_label_by_index: (untyped, untyped) -> untyped
+
+      def get_parameter_label_by_name: (untyped, untyped) -> untyped
+
+      def get_path: () -> untyped
+
+      def get_sample_loading_state: () -> untyped
+
+      def get_sound_size: () -> untyped
+
+      def get_userdata: () -> untyped
+
+      def has_sustain_point: () -> untyped
+
+      def hash: () -> untyped
+
+      def inspect: () -> untyped
+
+      def instance_count: () -> untyped
+
+      def is_3d: () -> untyped
+
+      def is_doppler_enabled: () -> untyped
+
+      def is_oneshot: () -> untyped
+
+      def is_snapshot: () -> untyped
+
+      def is_stream: () -> untyped
+
+      def is_valid: () -> untyped
+
+      def load_sample_data: () -> untyped
+
+      def parameter_description_count: () -> untyped
+
+      def release_all_instances: () -> untyped
+
+      def set_callback: (untyped, untyped) -> untyped
+
+      def set_userdata: (untyped) -> untyped
+
+      def unload_sample_data: () -> untyped
+    end
+
+    class EventInstance
+      public
+
+      def dup: () -> untyped
+
+      def eql?: (untyped) -> untyped
+
+      def get_3d_attributes: () -> untyped
+
+      def get_description: () -> untyped
+
+      def get_listener_mask: () -> untyped
+
+      def get_min_max_distance: () -> untyped
+
+      def get_parameter_by_id: (untyped) -> untyped
+
+      def get_parameter_by_name: (untyped) -> untyped
+
+      def get_paused: () -> untyped
+
+      def get_pitch: () -> untyped
+
+      def get_playback_state: () -> untyped
+
+      def get_property: (untyped) -> untyped
+
+      def get_timeline_position: () -> untyped
+
+      def get_userdata: () -> untyped
+
+      def get_volume: () -> untyped
+
+      def hash: () -> untyped
+
+      def inspect: () -> untyped
+
+      def is_valid: () -> untyped
+
+      def is_virtual: () -> untyped
+
+      def key_off: () -> untyped
+
+      def release: () -> untyped
+
+      def set_3d_attributes: (untyped) -> untyped
+
+      def set_callback: (untyped, untyped) -> untyped
+
+      def set_listener_mask: (untyped) -> untyped
+
+      def set_parameter_by_id: (untyped, untyped, untyped) -> untyped
+
+      def set_parameter_by_id_with_label: (untyped, untyped, untyped) -> untyped
+
+      def set_parameter_by_ids: (untyped, untyped, untyped) -> untyped
+
+      def set_parameter_by_name: (untyped, untyped, untyped) -> untyped
+
+      def set_parameter_by_name_with_label: (untyped, untyped, untyped) -> untyped
+
+      def set_paused: (untyped) -> untyped
+
+      def set_pitch: (untyped) -> untyped
+
+      def set_property: (untyped, untyped) -> untyped
+
+      def set_timeline_position: (untyped) -> untyped
+
+      def set_userdata: (untyped) -> untyped
+
+      def set_volume: (untyped) -> untyped
+
+      def start: () -> untyped
+
+      def stop: (untyped) -> untyped
+    end
+
+    class EventInstanceCallback
+      public
+
+      def create_programmer_sound: (untyped, untyped) -> untyped
+
+      def created: (untyped) -> untyped
+
+      def destroy_programmer_sound: (untyped, untyped, untyped, untyped) -> untyped
+
+      def destroyed: (untyped) -> untyped
+
+      def nested_timeline_beat: (untyped, untyped) -> untyped
+
+      def plugin_created: (untyped, untyped) -> untyped
+
+      def plugin_destroyed: (untyped, untyped) -> untyped
+
+      def real_to_virtual: (untyped) -> untyped
+
+      def restarted: (untyped) -> untyped
+
+      def sound_played: (untyped, untyped) -> untyped
+
+      def sound_stopped: (untyped, untyped) -> untyped
+
+      def start_event_command: (untyped, untyped) -> untyped
+
+      def start_failed: (untyped) -> untyped
+
+      def started: (untyped) -> untyped
+
+      def starting: (untyped) -> untyped
+
+      def stopped: (untyped) -> untyped
+
+      def timeline_beat: (untyped, untyped) -> untyped
+
+      def timeline_marker: (untyped, untyped) -> untyped
+
+      def virtual_to_real: (untyped) -> untyped
+    end
+
+    module EventProperty
+      ChannelPriority: ::Integer
+
+      Cooldown: ::Integer
+
+      MaximumDistance: ::Integer
+
+      MinimumDistance: ::Integer
+
+      ScheduleDelay: ::Integer
+
+      ScheduleLookahead: ::Integer
+    end
+
+    class FrameCallback
+      public
+
+      def frame_callback: (untyped, untyped, untyped, untyped) -> untyped
+    end
+
+    module InitFlags
+      ALLOW_MISSING_PLUGINS: ::Integer
+
+      DEFERRED_CALLBACKS: ::Integer
+
+      LIVEUPDATE: ::Integer
+
+      LOAD_FROM_UPDATE: ::Integer
+
+      MEMORY_TRACKING: ::Integer
+
+      NORMAL: ::Integer
+
+      SYNCHRONOUS_UPDATE: ::Integer
+    end
+
+    module InstanceType
+      Bank: ::Integer
+
+      Bus: ::Integer
+
+      CommandReplay: ::Integer
+
+      EventDescription: ::Integer
+
+      EventInstance: ::Integer
+
+      None: ::Integer
+
+      ParameterInstance: ::Integer
+
+      System: ::Integer
+
+      Vca: ::Integer
+    end
+
+    class LoadBankCallback
+      public
+
+      def load_bank_callback: (untyped, untyped, untyped, untyped, untyped, untyped) -> untyped
+    end
+
+    module LoadBankFlags
+      DECOMPRESS_SAMPLES: ::Integer
+
+      NONBLOCKING: ::Integer
+
+      NORMAL: ::Integer
+
+      UNENCRYPTED: ::Integer
+    end
+
+    module LoadingState
+      Error: ::Integer
+
+      Loaded: ::Integer
+
+      Loading: ::Integer
+
+      Unloaded: ::Integer
+
+      Unloading: ::Integer
+    end
+
+    module ParameterFlags
+      AUTOMATIC: ::Integer
+
+      DISCRETE: ::Integer
+
+      GLOBAL: ::Integer
+
+      LABELED: ::Integer
+
+      READONLY: ::Integer
+    end
+
+    module ParameterKind
+      AutomaticDirection: ::Integer
+
+      AutomaticDistance: ::Integer
+
+      AutomaticDistanceNormalized: ::Integer
+
+      AutomaticElevation: ::Integer
+
+      AutomaticEventConeAngle: ::Integer
+
+      AutomaticEventOrientation: ::Integer
+
+      AutomaticListenerOrientation: ::Integer
+
+      AutomaticSpeed: ::Integer
+
+      AutomaticSpeedAbsolute: ::Integer
+
+      GameControlled: ::Integer
+    end
+
+    module PlaybackState
+      Playing: ::Integer
+
+      Starting: ::Integer
+
+      Stopped: ::Integer
+
+      Stopping: ::Integer
+
+      Sustaining: ::Integer
+    end
+
+    module StopMode
+      AllowFadeout: ::Integer
+
+      Immediate: ::Integer
+    end
+
+    class System
+      def self.new: () -> untyped
+
+      public
+
+      def bank_count: () -> untyped
+
+      def dup: () -> untyped
+
+      def eql?: (untyped) -> untyped
+
+      def flush_commands: () -> untyped
+
+      def flush_sample_loading: () -> untyped
+
+      def get_advanced_settings: () -> untyped
+
+      def get_bank: (untyped) -> untyped
+
+      def get_bank_by_id: (untyped) -> untyped
+
+      def get_bank_list: () -> untyped
+
+      def get_buffer_usage: () -> untyped
+
+      def get_bus: (untyped) -> untyped
+
+      def get_bus_by_id: (untyped) -> untyped
+
+      def get_core_system: () -> untyped
+
+      def get_cpu_usage: () -> untyped
+
+      def get_listener_attributes: (untyped) -> untyped
+
+      def get_listener_count: () -> untyped
+
+      def get_listener_weight: (untyped) -> untyped
+
+      def get_memory_usage: () -> untyped
+
+      def get_parameter_by_id: (untyped) -> untyped
+
+      def get_parameter_by_name: (untyped) -> untyped
+
+      def get_parameter_description_by_id: (untyped) -> untyped
+
+      def get_parameter_description_by_name: (untyped) -> untyped
+
+      def get_parameter_description_list: () -> untyped
+
+      def get_parameter_label_by_id: (untyped, untyped) -> untyped
+
+      def get_parameter_label_by_name: (untyped, untyped) -> untyped
+
+      def get_sound_info: (untyped) -> untyped
+
+      def get_userdata: () -> untyped
+
+      def get_vca: (untyped) -> untyped
+
+      def get_vca_by_id: (untyped) -> untyped
+
+      def hash: () -> untyped
+
+      def inspect: () -> untyped
+
+      def is_valid: () -> untyped
+
+      def load_bank_file: (untyped, untyped) -> untyped
+
+      def load_bank_memory: (untyped, untyped) -> untyped
+
+      def load_command_replay: (untyped, untyped) -> untyped
+
+      def lookup_id: (untyped) -> untyped
+
+      def lookup_path: (untyped) -> untyped
+
+      def parameter_description_count: () -> untyped
+
+      def release: () -> untyped
+
+      def reset_buffer_usage: () -> untyped
+
+      def set_callback: (untyped, untyped) -> untyped
+
+      def set_listener_attributes: (untyped, untyped, untyped) -> untyped
+
+      def set_listener_count: (untyped) -> untyped
+
+      def set_listener_weight: (untyped, untyped) -> untyped
+
+      def set_parameter_by_id: (untyped, untyped, untyped) -> untyped
+
+      def set_parameter_by_id_with_label: (untyped, untyped, untyped) -> untyped
+
+      def set_parameter_by_ids: (untyped, untyped, untyped) -> untyped
+
+      def set_parameter_by_name: (untyped, untyped, untyped) -> untyped
+
+      def set_parameter_by_name_with_label: (untyped, untyped, untyped) -> untyped
+
+      def set_userdata: (untyped) -> untyped
+
+      def start_command_capture: (untyped, untyped) -> untyped
+
+      def stop_command_capture: () -> untyped
+
+      def unload_all_banks: () -> untyped
+
+      def update: () -> untyped
+    end
+
+    class SystemBuilder
+      def self.new: () -> untyped
+
+      public
+
+      def build: (untyped, untyped, untyped) -> untyped
+
+      def settings: (untyped) -> untyped
+    end
+
+    class SystemCallback
+      public
+
+      def bank_unload: (untyped, untyped, untyped) -> untyped
+
+      def liveupdate_connected: (untyped, untyped) -> untyped
+
+      def liveupdate_disconnected: (untyped, untyped) -> untyped
+
+      def postupdate: (untyped, untyped) -> untyped
+
+      def preupdate: (untyped, untyped) -> untyped
+    end
+
+    module SystemCallbackMask
+      BANK_UNLOAD: ::Integer
+
+      LIVEUPDATE_CONNECTED: ::Integer
+
+      LIVEUPDATE_DISCONNECTED: ::Integer
+
+      POSTUPDATE: ::Integer
+
+      PREUPDATE: ::Integer
+    end
+
+    class VCA
+      public
+
+      def dup: () -> untyped
+
+      def eql?: (untyped) -> untyped
+
+      def get_id: () -> untyped
+
+      def get_path: () -> untyped
+
+      def get_volume: () -> untyped
+
+      def hash: () -> untyped
+
+      def inspect: () -> untyped
+
+      def is_valid: () -> untyped
+
+      def set_volume: (untyped) -> untyped
+    end
+  end
+
+  class SyncPoint
+    public
+
+    def dup: () -> untyped
+
+    def eql?: (untyped) -> untyped
+
+    def hash: () -> untyped
+
+    def inspect: () -> untyped
+  end
+
+  class System
+    def self.new: () -> untyped
+
+    public
+
+    def attach_channel_group_to_port: (untyped, untyped, untyped, untyped) -> untyped
+
+    def close: () -> untyped
+
+    def create_channel_group: (untyped) -> untyped
+
+    def create_dsp_by_plugin: (untyped) -> untyped
+
+    def create_dsp_by_type: (untyped) -> untyped
+
+    def create_geometry: (untyped, untyped) -> untyped
+
+    def create_reverb_3d: () -> untyped
+
+    def create_sound: (untyped) -> untyped
+
+    def create_sound_group: (untyped) -> untyped
+
+    def create_stream: (untyped) -> untyped
+
+    def detach_channel_group_from_port: (untyped) -> untyped
+
+    def dup: () -> untyped
+
+    def eql?: (untyped) -> untyped
+
+    def get_3d_listener_attributes: (untyped) -> untyped
+
+    def get_3d_listener_count: () -> untyped
+
+    def get_3d_settings: () -> untyped
+
+    def get_channel: (untyped) -> untyped
+
+    def get_cpu_usage: () -> untyped
+
+    def get_driver: () -> untyped
+
+    def get_driver_count: () -> untyped
+
+    def get_driver_info: (untyped) -> untyped
+
+    def get_dsp_buffer_size: () -> untyped
+
+    def get_file_usage: () -> untyped
+
+    def get_geometry_settings: () -> untyped
+
+    def get_master_channel_group: () -> untyped
+
+    def get_master_sound_group: () -> untyped
+
+    def get_nested_plugin: (untyped, untyped) -> untyped
+
+    def get_nested_plugin_count: (untyped) -> untyped
+
+    def get_network_proxy: () -> untyped
+
+    def get_network_timeout: () -> untyped
+
+    def get_output_by_plugin: () -> untyped
+
+    def get_output_type: () -> untyped
+
+    def get_playing_channels: () -> untyped
+
+    def get_plugin_info: (untyped) -> untyped
+
+    def get_record_driver_info: (untyped) -> untyped
+
+    def get_record_position: (untyped) -> untyped
+
+    def get_recording_driver_count: () -> untyped
+
+    def get_reverb_properties: (untyped) -> untyped
+
+    def get_software_channels: () -> untyped
+
+    def get_software_format: () -> untyped
+
+    def get_speaker_mode_channels: (untyped) -> untyped
+
+    def get_speaker_position: (untyped) -> untyped
+
+    def get_stream_buffer_size: () -> untyped
+
+    def get_userdata: () -> untyped
+
+    def get_version: () -> untyped
+
+    def hash: () -> untyped
+
+    def inspect: () -> untyped
+
+    def is_recording: (untyped) -> untyped
+
+    def load_geometry: (untyped) -> untyped
+
+    def lock_dsp: () -> untyped
+
+    def play_dsp: (untyped, untyped, untyped) -> untyped
+
+    def play_sound: (untyped, untyped, untyped) -> untyped
+
+    def record_start: (untyped, untyped, untyped) -> untyped
+
+    def record_stop: (untyped) -> untyped
+
+    def release: () -> untyped
+
+    def resume_mixer: () -> untyped
+
+    def set_3d_listener_attributes: (untyped, untyped, untyped, untyped, untyped) -> untyped
+
+    def set_3d_listener_count: (untyped) -> untyped
+
+    def set_3d_rolloff_callback: (untyped) -> untyped
+
+    def set_3d_settings: (untyped, untyped, untyped) -> untyped
+
+    def set_callback: (untyped, untyped) -> untyped
+
+    def set_driver: (untyped) -> untyped
+
+    def set_geometry_settings: (untyped) -> untyped
+
+    def set_network_proxy: (untyped) -> untyped
+
+    def set_network_timeout: (untyped) -> untyped
+
+    def set_output: (untyped) -> untyped
+
+    def set_output_by_plugin: (untyped) -> untyped
+
+    def set_plugin_path: (untyped) -> untyped
+
+    def set_reverb_properties: (untyped, untyped) -> untyped
+
+    def set_speaker_position: (untyped, untyped, untyped, untyped) -> untyped
+
+    def set_stream_buffer_size: (untyped, untyped) -> untyped
+
+    def set_userdata: (untyped) -> untyped
+
+    def suspend_mixer: () -> untyped
+
+    def unload_plugin: (untyped) -> untyped
+
+    def unlock_dsp: () -> untyped
+
+    def unset_3d_rolloff_callback: () -> untyped
+
+    def update: () -> untyped
+  end
+
+  class SystemBuilder
+    def self.new: () -> untyped
+
+    public
+
+    def build: (untyped, untyped) -> untyped
+
+    def dsp_buffer_size: (untyped, untyped) -> untyped
+
+    def output: (untyped) -> untyped
+
+    def output_by_plugin: (untyped) -> untyped
+
+    def software_channels: (untyped) -> untyped
+
+    def software_format: (untyped, untyped, untyped) -> untyped
+  end
+
+  class SystemCallback
+    public
+
+    def bad_dsp_connection: (untyped, untyped) -> untyped
+
+    def buffered_no_mix: (untyped, untyped) -> untyped
+
+    def device_list_changed: (untyped, untyped) -> untyped
+
+    def device_lost: (untyped, untyped) -> untyped
+
+    def device_reinitialize: (untyped, untyped, untyped, untyped) -> untyped
+
+    def error: (untyped, untyped, untyped) -> untyped
+
+    def memory_allocation_failed: (untyped, untyped, untyped, untyped) -> untyped
+
+    def mid_mix: (untyped, untyped) -> untyped
+
+    def output_underrun: (untyped, untyped) -> untyped
+
+    def post_update: (untyped, untyped) -> untyped
+
+    def postmix: (untyped, untyped) -> untyped
+
+    def pre_update: (untyped, untyped) -> untyped
+
+    def premix: (untyped, untyped) -> untyped
+
+    def record_list_changed: (untyped, untyped) -> untyped
+
+    def record_position_changed: (untyped, untyped, untyped, untyped) -> untyped
+
+    def thread_created: (untyped, untyped, untyped) -> untyped
+
+    def thread_destroyed: (untyped, untyped, untyped) -> untyped
+  end
+
+  module SystemCallbackMask
+    ALL: ::Integer
+
+    BADDSPCONNECTION: ::Integer
+
+    BUFFEREDNOMIX: ::Integer
+
+    DEVICELISTCHANGED: ::Integer
+
+    DEVICELOST: ::Integer
+
+    DEVICEREINITIALIZE: ::Integer
+
+    ERROR: ::Integer
+
+    MEMORYALLOCATIONFAILED: ::Integer
+
+    MIDMIX: ::Integer
+
+    OUTPUTUNDERRUN: ::Integer
+
+    POSTMIX: ::Integer
+
+    POSTUPDATE: ::Integer
+
+    PREMIX: ::Integer
+
+    PREUPDATE: ::Integer
+
+    RECORDLISTCHANGED: ::Integer
+
+    RECORDPOSITIONCHANGED: ::Integer
+
+    THREADCREATED: ::Integer
+
+    THREADDESTROYED: ::Integer
+  end
+
+  module TagType
+    ASF: ::Integer
+
+    Fmod: ::Integer
+
+    ID3V1: ::Integer
+
+    ID3V2: ::Integer
+
+    IceCast: ::Integer
+
+    MIDI: ::Integer
+
+    Playlist: ::Integer
+
+    ShoutCast: ::Integer
+
+    Unknown: ::Integer
+
+    User: ::Integer
+
+    VorbisComment: ::Integer
+  end
+
+  module TimeUnit
+    MS: ::Integer
+
+    ModOrder: ::Integer
+
+    ModPattern: ::Integer
+
+    ModRow: ::Integer
+
+    PCM: ::Integer
+
+    PCMBytes: ::Integer
+
+    PCMFraction: ::Integer
+
+    RawBytes: ::Integer
+  end
 end
