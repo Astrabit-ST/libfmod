@@ -32,20 +32,21 @@ pub fn bind() {
         thread::spawn_ruby_thread(move |ruby| {
             thread::without_gvl(
                 || {
-                    let mut running = true;
-                    while running {
+                    // let mut running = true;
+                    // while running {
+                    loop {
                         let Ok(Some(callback)) = reciever.recv() else {
                             return;
                         };
                         thread::with_gvl(|ruby| {
                             callback(ruby);
-                            for callback in reciever.try_iter() {
-                                let Some(callback) = callback else {
-                                    running = false;
-                                    break;
-                                };
-                                callback(ruby);
-                            }
+                            // for callback in reciever.try_iter() {
+                            //    let Some(callback) = callback else {
+                            //        running = false;
+                            //        break;
+                            //    };
+                            //    callback(ruby);
+                            // }
                         });
                     }
                 },
