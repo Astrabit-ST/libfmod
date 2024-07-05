@@ -55,7 +55,10 @@ macro_rules! extern_struct_fns {
               #[allow(unused_imports)]
               use $crate::{FromRuby, IntoRuby};
               let this: $fmod_ty = rb_self.from_ruby()?;
-              this.$fn_name($($arg_name.from_ruby()?),*).into_ruby()
+              $(
+                let $arg_name = $arg_name.from_ruby()?;
+              )*
+              unsafe { $crate::thread::without_gvl_no_ubf(|| this.$fn_name($($arg_name),*)) }.into_ruby() // fmod is deadlocking quite a lot
             }
           }
         )*
